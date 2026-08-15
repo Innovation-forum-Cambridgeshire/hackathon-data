@@ -3,6 +3,7 @@ main = "src/worker.js"
 compatibility_date = "2026-08-01"
 workers_dev = false
 
+
 # The branded, stable participant-facing hostname. Everything published to teams
 # points here — never at github.com directly — so the hosting account underneath
 # can change without breaking a single URL anyone has bookmarked.
@@ -27,3 +28,23 @@ enabled = false
 # This Worker only proxies and caches public files, so there is nothing to gain from it.
 # [placement]
 # mode = "smart"
+
+# The DuckDB-WASM playground, served as a static asset at the root.
+#
+# `run_worker_first = false` means Cloudflare serves a matching static file BEFORE
+# invoking the Worker, and falls through to the Worker for everything else. So "/"
+# gets the playground and "/c03-.../v.../gold/x.parquet" is still proxied — no
+# routing code needed and the data path is untouched.
+#
+# THIS TABLE MUST STAY AT THE END OF THE FILE. In TOML every bare key after a
+# table header belongs to that table, so putting [assets] above `routes` silently
+# turns it into `assets.routes` and the Worker deploys bound to nothing. That
+# happened once while writing this.
+#
+# The page loads DuckDB from a CDN — a third-party request on page load — so it
+# CANNOT go on the marketing site, which publishes a claim that it makes none and
+# enforces it with a deploy gate. See organisers#11.
+[assets]
+directory = "public"
+not_found_handling = "none"
+run_worker_first = false
