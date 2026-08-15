@@ -63,6 +63,16 @@ jobs:
       - name: Install dependencies
         run: pip install -r build/requirements.txt
 
+      - name: Run contract tests
+        # Before the catalogue is even read. These assert the things that fail
+        # SILENTLY if they regress — a CSV that Excel mangles, a generator that
+        # stopped honouring its seed (which would break judging reproducibility
+        # against an already-published tag), a chargeback table that no longer
+        # reconciles to the cost table it is rolled up from.
+        run: |
+          python build/test_csv_contract.py
+          python build/test_synthetic_finops.py
+
       - name: Validate catalogue
         # Fails on schema drift or a missing licence rather than shipping a broken
         # column into a live event. This is the gate, not a formality.
