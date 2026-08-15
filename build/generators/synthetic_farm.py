@@ -158,7 +158,9 @@ def build_station_weather(rng: np.random.Generator, st: dict) -> tuple[list[str]
     return header, rows
 
 
-def build_field_daily(rng: np.random.Generator, st: dict) -> tuple[list[str], list[list]]:
+def build_field_daily(
+    rng: np.random.Generator, st: dict, station_temps: dict[str, "np.ndarray"] | None = None
+) -> tuple[list[str], list[list]]:
     header = [
         "field_id", "observation_date", "farm_id", "crop", "soil_type", "area_ha",
         "nearest_station_id", "distance_to_station_km", "ndvi", "soil_moisture_pct",
@@ -189,13 +191,33 @@ def build_field_daily(rng: np.random.Generator, st: dict) -> tuple[list[str], li
         # thing a yield model should not be silently conditioned on.
         missing = np.zeros(FIELD_DAYS, dtype=bool)
         target = int(FIELD_DAYS * NDVI_MISSING_SHARE)
-        # Lay down cloud runs until the target is met, then stop. The earlier
-        # version topped up in 3-day blocks after the runs, which overshot to ~30%
-        # — the share has to be close to the declared 20% or the notebook's
-        # "how much are you throwing away" arithmetic misleads.
+
+        # CLOUD FALLS ON THE COLDER DAYS AT THIS FIELD'S OWN STATION.
+        #
+        # An earlier version scattered runs at random dates. That gave clustered
+        # gaps — half the point — but the surviving days were only 0.15C warmer
+        # than the lost ones, so the sampling bias the catalogue and notebook both
+        # CLAIM was not actually present. A corpus that fails to demonstrate its
+        # own stated lesson is worse than one that never claimed it, because
+        # somebody checks and finds nothing.
+        #
+        # Cloud really does depress daytime temperature, so weighting run starts
+        # toward this station's colder days is both more realistic and what makes
+        # dropna() genuinely biased: what survives is the warmer, clearer weather,
+        # and a yield model fitted on it has been conditioned on sunshine.
+        temps = (station_temps or {}).get(station)
+        if temps is not None:
+            weight = np.exp(-(temps - temps.mean()) / max(float(temps.std()), 0.5))
+            weight = weight / weight.sum()
+        else:
+            weight = None
+
         while missing.sum() < target:
             run = int(rng.integers(2, 14))
-            j = int(rng.integers(0, max(1, FIELD_DAYS - run)))
+            if weight is not None:
+                j = min(int(rng.choice(FIELD_DAYS, p=weight)), FIELD_DAYS - run)
+            else:
+                j = int(rng.integers(0, max(1, FIELD_DAYS - run)))
             missing[j:j + run] = True
 
         for i in range(FIELD_DAYS):
@@ -211,9 +233,28 @@ def build_field_daily(rng: np.random.Generator, st: dict) -> tuple[list[str], li
 def generate(seed: int = DEFAULT_SEED) -> dict[str, tuple[list[str], list[list]]]:
     rng = np.random.default_rng(seed)
     st = build_stations(rng)
+    weather = build_station_weather(rng, st)
+
+    # Each station's temperature over the FIELD window, so cloud can be placed on
+    # its colder days — see the note in build_field_daily on why that coupling is
+    # what makes the missingness informative rather than merely clustered.
+    wh, wr = weather
+    wi = {n: i for i, n in enumerate(wh)}
+    field_start = WINDOW_END - timedelta(days=FIELD_DAYS - 1)
+    per_station: dict = {}
+    for r in wr:
+        d = r[wi["observation_date"]]
+        if d >= field_start:
+            per_station.setdefault(r[wi["station_id"]], {})[d] = r[wi["temp_max_c"]]
+
+    days = [field_start + timedelta(days=i) for i in range(FIELD_DAYS)]
+    station_temps = {
+        sid: np.array([vals.get(d, 14.0) for d in days]) for sid, vals in per_station.items()
+    }
+
     return {
-        "station_weather": build_station_weather(rng, st),
-        "field_daily": build_field_daily(rng, st),
+        "station_weather": weather,
+        "field_daily": build_field_daily(rng, st, station_temps),
     }
 
 
