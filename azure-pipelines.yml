@@ -1,0 +1,118 @@
+# Azure Pipelines equivalent of .github/workflows/build-release.yml
+#
+# ─────────────────────────────────────────────────────────────────────────────
+#  READ THIS BEFORE USING. This is the FALLBACK, not the recommended path.
+#
+#  Azure Pipelines cannot run this for free without clearing one of three gates,
+#  because public Azure DevOps projects are RETIRED (Microsoft, 2026): new public
+#  projects can no longer be created, and existing ones convert to private in 2027.
+#  So this project is necessarily private, and private projects need:
+#
+#    "To receive the free grant of parallel jobs, link your Azure DevOps
+#     organization to a valid Azure subscription."   — Microsoft Learn
+#
+#  Yavin holds no role on either R1X subscription (Keith Brown is sole Owner), so
+#  that link is a hard external dependency. Options, best first:
+#
+#    (a) Use GitHub Actions instead. Public repos get unlimited free minutes, no
+#        form, no subscription, no waiting. This is why build-release.yml exists
+#        and is the default. Microsoft's own documented migration path for retired
+#        public projects is, literally, "migrate to GitHub".
+#    (b) Ask Keith to link a subscription, then request the grant at
+#        https://aka.ms/azpipelines-parallelism-request (2–3 business days).
+#    (c) Register a SELF-HOSTED agent. The self-hosted free tier is granted
+#        automatically, has unlimited minutes, and needs no subscription link.
+#        Set `pool: SelfHosted` below. Fine for a build that runs yearly.
+#
+#  Azure DevOps still earns its place in this programme — Boards and private Repos
+#  for the organiser plane (see scripts/setup-azure-devops.sh). It is the *build*
+#  that belongs on GitHub, next to the Releases it publishes to.
+# ─────────────────────────────────────────────────────────────────────────────
+
+trigger: none # manual only; data refreshes yearly
+
+parameters:
+  - name: challenge
+    displayName: Challenge slug
+    type: string
+    default: c03-beyond-the-mainframe
+    values:
+      - c01-one-farm-one-picture
+      - c02-mapping-the-gaps
+      - c03-beyond-the-mainframe
+      - c04-safe-in-the-open
+      - c05-ahead-of-the-heat
+  - name: version
+    displayName: Version tag (vYYYY-MM-DD, immutable)
+    type: string
+  - name: dryRun
+    displayName: Validate and build only
+    type: boolean
+    default: true
+
+pool:
+  vmImage: ubuntu-latest
+  # Switch to option (c) above by replacing the two lines with:
+  #   name: SelfHosted
+
+variables:
+  - name: TAG
+    value: ${{ parameters.challenge }}-${{ parameters.version }}
+
+steps:
+  - task: UsePythonVersion@0
+    inputs:
+      versionSpec: "3.12"
+    displayName: Use Python 3.12
+
+  - script: pip install -r build/requirements.txt
+    displayName: Install dependencies
+
+  - script: python build/build.py validate --challenge "${{ parameters.challenge }}"
+    displayName: Validate catalogue
+
+  - script: |
+        set -euo pipefail
+        python build/build.py build \
+          --challenge "${{ parameters.challenge }}" \
+          --version   "${{ parameters.version }}" \
+          --out       dist/
+    displayName: Build
+
+  - script: |
+        set -euo pipefail
+        mkdir -p upload
+        cd dist
+        find . -type f | while read -r f; do
+          rel="${f#./}"
+          cp "$f" "../upload/${rel//\//__}"
+        done
+        cd ..
+        ls -lh upload/
+        if find upload -type f -size +2000M | grep -q .; then
+          echo "##vso[task.logissue type=error]Asset exceeds the 2 GiB release limit"
+          exit 1
+        fi
+    displayName: Flatten for release upload
+
+  # Publishing goes to GITHUB Releases, not Azure Artifacts. Azure Artifacts is
+  # capped at 2 GiB free and is authenticated — it cannot serve participants.
+  # Requires a GitHub service connection named 'innovation-forum-github'.
+  - task: GitHubRelease@1
+    condition: and(succeeded(), eq('${{ parameters.dryRun }}', false))
+    displayName: Publish GitHub release
+    inputs:
+      gitHubConnection: innovation-forum-github
+      repositoryName: Innovation-forum-Cambridgeshire/hackathon-data
+      action: create
+      tagSource: userSpecifiedTag
+      tag: $(TAG)
+      title: ${{ parameters.challenge }} ${{ parameters.version }}
+      releaseNotesFilePath: dist/RELEASE_NOTES.md
+      assets: $(Build.SourcesDirectory)/upload/*
+      addChangeLog: false
+
+  - script: |
+        echo "Published to https://data.inno-forum.co.uk/${{ parameters.challenge }}/${{ parameters.version }}/"
+    condition: and(succeeded(), eq('${{ parameters.dryRun }}', false))
+    displayName: Summary

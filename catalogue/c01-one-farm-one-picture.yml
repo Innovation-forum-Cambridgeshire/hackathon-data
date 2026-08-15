@@ -1,0 +1,103 @@
+# Challenge 01 — One Farm, One Picture (AgTech data)
+#
+# See catalogue/c02-mapping-the-gaps.yml for the fully worked example and the reasoning
+# behind the `redistributable` / `licence_reviewed` gates. The build refuses to mirror
+# bytes for any source that has not cleared both.
+
+challenge: c01-one-farm-one-picture
+title: One Farm, One Picture
+domain: AgTech data
+event_date: 2027-06-01
+publisher: Innovation Forum
+contact: info@inno-forum.co.uk
+
+
+attribution: >-
+  Contains public sector information licensed under the Open Government Licence v3.0. Contains modified Copernicus Sentinel data.
+
+
+handle_with_care: >-
+  Sensor data is often miscalibrated, duplicated or missing. Strong entries surface data
+  quality rather than hiding it behind a clean-looking chart.
+
+
+sensitivity:
+  personal_data: false
+  special_category: false
+  note: >-
+    Farm business data is commercially sensitive — use published/open sources only, never a
+    named holding.
+
+
+sources:
+  - id: copernicus-sentinel
+    name: Copernicus / Sentinel
+    publisher: European Space Agency
+    url: https://dataspace.copernicus.eu/
+    licence: review-required
+    redistributable: false
+    licence_reviewed: false   # D4 — blocks mirroring until true
+    format: tiff
+    notes: >-
+      Far too large to mirror — a single tile dwarfs the whole release budget. Ship
+      loader code and a pointer, plus a small pre-computed NDVI extract for the study
+      area once licensing is confirmed.
+  - id: midas-open
+    name: Met Office MIDAS Open
+    publisher: Met Office / CEDA
+    url: https://catalogue.ceda.ac.uk/
+    licence: OGL-3.0
+    redistributable: true
+    licence_reviewed: false   # D4 — blocks mirroring until true
+    format: csv
+    approx_size_mb: 1200
+    notes: >-
+      Requires a free CEDA account to fetch, but the data is OGL. Mirror a curated
+      station subset, not the national archive.
+  - id: defra
+    name: Defra data (soils, water, field boundaries)
+    publisher: Defra
+    url: https://environment.data.gov.uk/
+    licence: OGL-3.0
+    redistributable: true
+    licence_reviewed: false   # D4 — blocks mirroring until true
+    format: geojson
+    approx_size_mb: 450
+  - id: ahdb
+    name: AHDB market intelligence
+    publisher: AHDB
+    url: https://ahdb.org.uk/
+    licence: review-required
+    redistributable: false
+    licence_reviewed: false   # D4 — blocks mirroring until true
+    format: csv
+    approx_size_mb: 20
+    notes: >-
+      Levy-body data behind a free account. Redistribution rights unconfirmed — one of
+      the three sources named in decision D4.
+
+gold_tables:
+  - name: field_daily
+    description: Daily weather joined to field-level NDVI and soil type.
+    grain: One row per field × day
+    approx_rows: 180000
+    csv_twin: true
+  - name: station_weather
+    description: Cleaned MIDAS station observations.
+    grain: One row per station × day
+    approx_rows: 900000
+    csv_twin: true
+  - name: market_prices
+    description: Commodity prices for real-world context.
+    grain: One row per commodity × week
+    approx_rows: 5200
+    csv_twin: true
+    blocked_by: ahdb
+
+documents:
+  - id: midas-user-guide
+    name: MIDAS Open user guide
+    format: pdf
+    url: https://catalogue.ceda.ac.uk/
+    extract_markdown: true
+    chunk: true

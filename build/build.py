@@ -1,0 +1,350 @@
+#!/usr/bin/env python3
+"""
+Build and validate Innovation Forum hackathon challenge data.
+
+    python build/build.py validate --challenge c02-mapping-the-gaps
+    python build/build.py build    --challenge c02-mapping-the-gaps --version v2026-10-01 --out dist/
+
+Design rules this enforces mechanically, so nobody has to remember them:
+
+  1. A source is only mirrored when `redistributable: true` AND `licence_reviewed: true`.
+     Anything else ships loader code and a pointer. This is decision D4 made structural.
+  2. No personal or special-category data. A catalogue declaring either is rejected.
+  3. Every gold table over the CSV threshold gets a sample instead of a full twin —
+     because free Tableau Public and every non-Microsoft team can only use files, but
+     a 2.4M-row CSV helps nobody.
+  4. Attribution is mandatory where the licence requires it. Missing it is a breach,
+     so it fails the build rather than warning.
+
+Exit codes: 0 ok, 1 validation failure, 2 usage error.
+"""
+
+from __future__ import annotations
+
+import argparse
+import json
+import sys
+from dataclasses import dataclass, field
+from pathlib import Path
+
+try:
+    import yaml
+except ImportError:  # pragma: no cover
+    sys.exit("PyYAML is required: pip install -r build/requirements.txt")
+
+REPO_ROOT = Path(__file__).resolve().parent.parent
+CATALOGUE_DIR = REPO_ROOT / "catalogue"
+
+# Licences we accept for mirroring without further review.
+OPEN_LICENCES = {"OGL-3.0", "CC0-1.0", "CC-BY-4.0", "ODbL-1.0", "public-domain"}
+
+# Above this, a full CSV twin is unhelpful — ship parquet plus a sample.
+CSV_TWIN_MAX_ROWS = 1_000_000
+
+# GitHub release asset hard limit.
+MAX_ASSET_BYTES = 2 * 1024**3
+
+
+@dataclass
+class Result:
+    errors: list[str] = field(default_factory=list)
+    warnings: list[str] = field(default_factory=list)
+
+    def error(self, msg: str) -> None:
+        self.errors.append(msg)
+
+    def warn(self, msg: str) -> None:
+        self.warnings.append(msg)
+
+    @property
+    def ok(self) -> bool:
+        return not self.errors
+
+
+def load_catalogue(challenge: str) -> dict:
+    path = CATALOGUE_DIR / f"{challenge}.yml"
+    if not path.exists():
+        available = sorted(p.stem for p in CATALOGUE_DIR.glob("*.yml"))
+        sys.exit(f"No catalogue for {challenge!r}.\nAvailable: {', '.join(available) or '(none)'}")
+    with path.open() as fh:
+        return yaml.safe_load(fh)
+
+
+def validate(cat: dict) -> Result:
+    r = Result()
+    challenge = cat.get("challenge", "<unknown>")
+
+    for key in ("challenge", "title", "publisher", "sources", "gold_tables"):
+        if not cat.get(key):
+            r.error(f"missing required top-level key: {key}")
+    if not r.ok:
+        return r
+
+    # --- Rule 2: no personal or special-category data, ever. ---
+    sens = cat.get("sensitivity") or {}
+    if sens.get("personal_data"):
+        r.error(
+            f"{challenge}: declares personal_data: true. This layer must never carry "
+            f"personal data — use synthetic or aggregate sources."
+        )
+    if sens.get("special_category"):
+        r.error(
+            f"{challenge}: declares special_category: true. Special-category data is "
+            f"prohibited here without exception (see challenges 04 and 05 briefs)."
+        )
+
+    # --- Rule 1 + 4: licence gates. ---
+    mirrorable: list[str] = []
+    for src in cat["sources"]:
+        sid = src.get("id", "<no id>")
+        for key in ("id", "name", "publisher", "url", "licence", "redistributable"):
+            if key not in src:
+                r.error(f"{challenge}/{sid}: source missing '{key}'")
+
+        redistributable = src.get("redistributable") is True
+        reviewed = src.get("licence_reviewed") is True
+        licence = src.get("licence", "")
+
+        if redistributable and licence not in OPEN_LICENCES:
+            r.error(
+                f"{challenge}/{sid}: redistributable: true but licence {licence!r} is not "
+                f"a recognised open licence. Recognised: {', '.join(sorted(OPEN_LICENCES))}"
+            )
+
+        if redistributable and not reviewed:
+            r.warn(
+                f"{challenge}/{sid}: awaiting licence review (decision D4). Will ship as "
+                f"pointer + loader code, not bytes, until licence_reviewed: true."
+            )
+        elif not redistributable:
+            r.warn(f"{challenge}/{sid}: not redistributable — pointer + loader code only.")
+        else:
+            mirrorable.append(sid)
+
+        size = src.get("approx_size_mb")
+        if isinstance(size, (int, float)) and size * 1024**2 > MAX_ASSET_BYTES:
+            r.error(
+                f"{challenge}/{sid}: ~{size} MB exceeds the 2 GiB per-asset release limit. "
+                f"Partition it or mirror a curated slice."
+            )
+
+    needs_attribution = any(
+        s.get("licence") == "OGL-3.0" and s.get("redistributable") for s in cat["sources"]
+    )
+    if needs_attribution and not cat.get("attribution"):
+        r.error(
+            f"{challenge}: sources are OGL-licensed but no 'attribution' string is set. "
+            f"OGL requires attribution — omitting it is a licence breach."
+        )
+
+    # --- Rule 3: CSV twins. ---
+    for tbl in cat["gold_tables"]:
+        name = tbl.get("name", "<no name>")
+        rows = tbl.get("approx_rows")
+        if tbl.get("csv_twin") and isinstance(rows, int) and rows > CSV_TWIN_MAX_ROWS:
+            r.error(
+                f"{challenge}/{name}: csv_twin: true with ~{rows:,} rows exceeds the "
+                f"{CSV_TWIN_MAX_ROWS:,} threshold. Set csv_twin: false and give a csv_sample_rows."
+            )
+        if tbl.get("csv_twin") is False and not tbl.get("csv_sample_rows"):
+            r.warn(f"{challenge}/{name}: no CSV twin and no sample — file-only tools get nothing.")
+
+        blocker = tbl.get("blocked_by")
+        if blocker:
+            if blocker not in {s.get("id") for s in cat["sources"]}:
+                r.error(f"{challenge}/{name}: blocked_by {blocker!r} is not a known source id")
+            elif blocker not in mirrorable:
+                r.warn(f"{challenge}/{name}: blocked — source {blocker!r} is not yet mirrorable.")
+
+    return r
+
+
+def build_manifest(cat: dict, version: str) -> dict:
+    """The machine- and LLM-readable index. Everything a model needs without guessing."""
+    challenge = cat["challenge"]
+    base = f"https://data.inno-forum.co.uk/{challenge}/{version}"
+
+    mirrorable = {
+        s["id"]
+        for s in cat["sources"]
+        if s.get("redistributable") is True and s.get("licence_reviewed") is True
+    }
+
+    tables = []
+    for tbl in cat["gold_tables"]:
+        if tbl.get("blocked_by") and tbl["blocked_by"] not in mirrorable:
+            continue
+        entry = {
+            "name": tbl["name"],
+            "description": tbl.get("description"),
+            "grain": tbl.get("grain"),
+            "approx_rows": tbl.get("approx_rows"),
+            "parquet": f"{base}/gold/{tbl['name']}.parquet",
+        }
+        if tbl.get("csv_twin"):
+            entry["csv"] = f"{base}/gold/{tbl['name']}.csv"
+        elif tbl.get("csv_sample_rows"):
+            entry["csv_sample"] = f"{base}/samples/{tbl['name']}_{tbl['csv_sample_rows']}.csv"
+        tables.append(entry)
+
+    return {
+        "challenge": challenge,
+        "title": cat["title"],
+        "version": version,
+        "publisher": cat.get("publisher"),
+        "contact": cat.get("contact"),
+        "attribution": cat.get("attribution"),
+        "handle_with_care": cat.get("handle_with_care"),
+        "base_url": base,
+        "licence_note": (
+            "Sources not listed under 'mirrored' are NOT redistributed by us. Use the "
+            "loader code in the repo to fetch them from the original publisher."
+        ),
+        "mirrored": sorted(mirrorable),
+        "pointer_only": sorted({s["id"] for s in cat["sources"]} - mirrorable),
+        "tables": tables,
+        "documents": [
+            {
+                "id": d["id"],
+                "name": d.get("name"),
+                "original": f"{base}/docs/original/{d['id']}.{d.get('format', 'pdf')}",
+                "markdown": f"{base}/docs/text/{d['id']}.md" if d.get("extract_markdown") else None,
+            }
+            for d in (cat.get("documents") or [])
+        ],
+        "usage": {
+            "duckdb": (
+                f"INSTALL httpfs; LOAD httpfs; "
+                f"SELECT * FROM read_parquet('{base}/gold/<table>.parquet');"
+            ),
+            "python": f"import pandas as pd; pd.read_parquet('{base}/gold/<table>.parquet')",
+            "note": "No credentials. No account. Anonymous HTTPS.",
+        },
+    }
+
+
+def release_notes(cat: dict, version: str, manifest: dict) -> str:
+    lines = [
+        f"# {cat['title']} — {version}",
+        "",
+        f"Immutable snapshot. Judging is reproducible against this tag; it will never be rewritten.",
+        "",
+        "## Access",
+        "",
+        "```sql",
+        "INSTALL httpfs; LOAD httpfs;",
+        f"SELECT * FROM read_parquet('{manifest['base_url']}/gold/<table>.parquet');",
+        "```",
+        "",
+        "No credentials, no account. Browse the catalogue at "
+        f"`{manifest['base_url']}/manifest.json`.",
+        "",
+        "## Tables",
+        "",
+    ]
+    for t in manifest["tables"]:
+        rows = f"~{t['approx_rows']:,} rows" if t.get("approx_rows") else ""
+        lines.append(f"- **{t['name']}** — {t.get('description', '')} {rows}".rstrip())
+
+    if manifest["pointer_only"]:
+        lines += [
+            "",
+            "## Not mirrored here",
+            "",
+            "These sources are not redistributed by us — licence terms unconfirmed or not "
+            "permitted. Loader code in the repo fetches them from the original publisher:",
+            "",
+        ]
+        lines += [f"- `{sid}`" for sid in manifest["pointer_only"]]
+
+    if cat.get("handle_with_care"):
+        lines += ["", "## Handle with care", "", cat["handle_with_care"]]
+    if cat.get("attribution"):
+        lines += ["", "## Attribution", "", cat["attribution"]]
+
+    return "\n".join(lines) + "\n"
+
+
+def cmd_validate(args) -> int:
+    cat = load_catalogue(args.challenge)
+    r = validate(cat)
+
+    for w in r.warnings:
+        print(f"  warning: {w}")
+    for e in r.errors:
+        print(f"  ERROR:   {e}", file=sys.stderr)
+
+    if r.ok:
+        print(f"\n{args.challenge}: catalogue valid ({len(r.warnings)} warning(s))")
+        return 0
+    print(f"\n{args.challenge}: {len(r.errors)} error(s)", file=sys.stderr)
+    return 1
+
+
+def cmd_build(args) -> int:
+    cat = load_catalogue(args.challenge)
+    r = validate(cat)
+    if not r.ok:
+        for e in r.errors:
+            print(f"  ERROR: {e}", file=sys.stderr)
+        print("\nRefusing to build an invalid catalogue.", file=sys.stderr)
+        return 1
+
+    out = Path(args.out)
+    (out / "gold").mkdir(parents=True, exist_ok=True)
+    (out / "samples").mkdir(parents=True, exist_ok=True)
+    (out / "docs" / "text").mkdir(parents=True, exist_ok=True)
+    (out / "docs" / "original").mkdir(parents=True, exist_ok=True)
+
+    manifest = build_manifest(cat, args.version)
+    (out / "manifest.json").write_text(json.dumps(manifest, indent=2) + "\n")
+    (out / "RELEASE_NOTES.md").write_text(release_notes(cat, args.version, manifest))
+
+    if cat.get("attribution"):
+        (out / "ATTRIBUTION.md").write_text(
+            f"# Attribution\n\n{cat['attribution']}\n\n"
+            + "\n".join(
+                f"- {s['name']} — {s['publisher']} ({s['licence']}) — {s['url']}"
+                for s in cat["sources"]
+            )
+            + "\n"
+        )
+
+    print(f"Built {args.challenge} {args.version} → {out}")
+    print(f"  {len(manifest['tables'])} table(s) manifested")
+    print(f"  mirrored:     {', '.join(manifest['mirrored']) or '(none yet — D4 pending)'}")
+    print(f"  pointer only: {', '.join(manifest['pointer_only']) or '(none)'}")
+
+    if not manifest["mirrored"]:
+        print(
+            "\n  NOTE: no source has cleared licence review, so this release carries the\n"
+            "  catalogue, manifest and documents but no mirrored data. That is correct\n"
+            "  behaviour, not a failure — resolve decision D4 to unblock.\n"
+        )
+
+    # NOTE: the fetch/transform stages land here once D4 clears and the first source
+    # is cleared for mirroring. They are deliberately not stubbed with fake data —
+    # an empty parquet that looks real is worse than an honest absence.
+    return 0
+
+
+def main() -> int:
+    p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    sub = p.add_subparsers(dest="cmd", required=True)
+
+    v = sub.add_parser("validate", help="check a catalogue without building")
+    v.add_argument("--challenge", required=True)
+    v.set_defaults(func=cmd_validate)
+
+    b = sub.add_parser("build", help="build a release payload")
+    b.add_argument("--challenge", required=True)
+    b.add_argument("--version", required=True)
+    b.add_argument("--out", default="dist/")
+    b.set_defaults(func=cmd_build)
+
+    args = p.parse_args()
+    return args.func(args)
+
+
+if __name__ == "__main__":
+    sys.exit(main())

@@ -1,0 +1,131 @@
+# Challenge 02 — Mapping the Gaps (civic data)
+#
+# The catalogue is the governance backbone: every upstream source carries an explicit
+# `redistributable` flag, and the build REFUSES to mirror bytes for any source where it
+# is false or unreviewed. Where we cannot redistribute, we ship loader code and a
+# pointer instead. This is how the licence position stays true without relying on
+# anyone remembering it.
+#
+# C02 is the cleanest of the five — everything is Open Government Licence — which is
+# why it is scheduled first after the sponsor challenge.
+
+challenge: c02-mapping-the-gaps
+title: Mapping the Gaps
+domain: Civic data
+event_date: null # not yet scheduled
+publisher: Innovation Forum
+contact: info@inno-forum.co.uk
+
+# Reproduced on every derived table and in ATTRIBUTION.md. OGL requires attribution;
+# omitting it is a licence breach, so the build fails without it.
+attribution: >-
+  Contains public sector information licensed under the Open Government Licence v3.0.
+
+handle_with_care: >-
+  Deprivation is a measure of access, not a label on people; recorded crime shows what is
+  reported, not what happened. Strong entries name these limits. Derived tables must not
+  imply otherwise in their column names or descriptions.
+
+sensitivity:
+  personal_data: false
+  special_category: false
+  # Structural rule across the whole programme: no personal or special-category data
+  # enters this layer. Everything here is published area-level statistics.
+  minimum_geography: LSOA # never below this; no individual-level records
+
+sources:
+  - id: iod2025
+    name: Indices of Deprivation 2025
+    publisher: Ministry of Housing, Communities and Local Government
+    url: https://www.gov.uk/government/collections/english-indices-of-deprivation
+    licence: OGL-3.0
+    redistributable: true
+    licence_reviewed: false # D4 — blocks the build until true
+    format: xlsx
+    approx_size_mb: 40
+    notes: LSOA-level. Domain sub-indices as well as the headline IMD rank.
+
+  - id: police-recorded-crime
+    name: Police recorded crime (street-level)
+    publisher: Home Office / data.police.uk
+    url: https://data.police.uk/docs/
+    licence: OGL-3.0
+    redistributable: true
+    licence_reviewed: false
+    format: csv
+    approx_size_mb: 900
+    notes: >-
+      Large. Mirror a curated slice (Cambridgeshire + comparator forces, 24 months)
+      rather than the national archive. Full extract stays upstream behind loader code.
+
+  - id: deri
+    name: Digital Exclusion Risk Index
+    publisher: Greater Manchester Combined Authority
+    url: https://www.gmtableau.nhs.uk/t/GMCA/views/DigitalExclusionRiskIndex/DERI
+    licence: review-required
+    redistributable: false # ← until D4 confirms; ship loader + pointer only
+    licence_reviewed: false
+    format: csv
+    approx_size_mb: 15
+    notes: >-
+      Licensing unconfirmed — this is one of the three sources named in decision D4.
+      Until reviewed, the build emits a pointer and loader code, never bytes.
+
+  - id: devolved-indices
+    name: Devolved deprivation indices (SIMD, WIMD, NIMDM)
+    publisher: Scottish Government / Welsh Government / NISRA
+    url: https://www.gov.scot/collections/scottish-index-of-multiple-deprivation-2020/
+    licence: OGL-3.0
+    redistributable: true
+    licence_reviewed: false
+    format: csv
+    approx_size_mb: 25
+    notes: >-
+      Four nations, four rulebooks — the indices are NOT directly comparable across
+      borders. Any cross-nation gold table must carry a caveat column, not a silent join.
+
+  - id: ons-geography
+    name: ONS Open Geography Portal
+    publisher: Office for National Statistics
+    url: https://geoportal.statistics.gov.uk/
+    licence: OGL-3.0
+    redistributable: true
+    licence_reviewed: false
+    format: geojson
+    approx_size_mb: 300
+    notes: Boundaries and lookups. Simplify geometries for the gold layer.
+
+# Analysis-ready tables. These are what nearly every team actually uses, and what the
+# CSV twins are generated from — which matters because free Tableau Public and every
+# non-Microsoft team can only use files.
+gold_tables:
+  - name: lsoa_deprivation
+    description: LSOA-level IMD 2025 rank and domain scores, joined to ONS names/codes.
+    grain: One row per LSOA
+    approx_rows: 33755
+    csv_twin: true
+
+  - name: lsoa_crime_monthly
+    description: Recorded crime counts by LSOA, month and category.
+    grain: One row per LSOA × month × crime category
+    approx_rows: 2400000
+    csv_twin: false # over the ~1M row threshold — parquet plus a CSV sample
+    csv_sample_rows: 1000
+
+  - name: lsoa_digital_exclusion
+    description: DERI score joined to deprivation and crime.
+    grain: One row per LSOA
+    approx_rows: 33755
+    csv_twin: true
+    blocked_by: deri # not built until the DERI licence position is resolved
+
+documents:
+  - id: iod2025-technical
+    name: IoD 2025 technical report
+    format: pdf
+    url: https://www.gov.uk/government/collections/english-indices-of-deprivation
+    # Every PDF and Word doc gets a page-anchored markdown mirror plus chunks.jsonl.
+    # A model cannot read a PDF over HTTPS; it can read markdown instantly. This saves
+    # every AI team the four hours they would otherwise lose to PDF parsing.
+    extract_markdown: true
+    chunk: true

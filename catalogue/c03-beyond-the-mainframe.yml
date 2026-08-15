@@ -1,0 +1,94 @@
+# Challenge 03 — Beyond the Mainframe (Enterprise FinOps)
+#
+# See catalogue/c02-mapping-the-gaps.yml for the fully worked example and the reasoning
+# behind the `redistributable` / `licence_reviewed` gates. The build refuses to mirror
+# bytes for any source that has not cleared both.
+
+challenge: c03-beyond-the-mainframe
+title: Beyond the Mainframe
+domain: Enterprise FinOps
+event_date: 2026-10-26
+publisher: Innovation Forum
+contact: info@inno-forum.co.uk
+
+
+handle_with_care: >-
+  Teams work on a SYNTHETIC environment: workloads, cost data, logs and expert scenarios. No
+  client systems, no client data. Practitioner mentors contribute knowledge throughout the
+  event.
+
+
+sensitivity:
+  personal_data: false
+  special_category: false
+  note: >-
+    Synthetic by construction. No client data may enter this challenge under any
+    circumstances.
+
+
+sources:
+  - id: synthetic-finops
+    name: Synthetic FinOps estate
+    publisher: Innovation Forum x R1X
+    url: https://github.com/Innovation-forum-Cambridgeshire/hackathon-data
+    licence: CC0-1.0
+    redistributable: true
+    licence_reviewed: true    # authored by us under CC0 — no third-party review needed
+    format: parquet
+    approx_size_mb: 300
+    notes: >-
+      Generated, not collected. Seeded and reproducible so judging is fair — the
+      generator lives in this repo.
+  - id: sponsor-lake
+    name: Sponsor data lake and viewer
+    publisher: Sponsor
+    url: https://example.invalid/sponsor
+    licence: review-required
+    redistributable: false
+    licence_reviewed: false   # D4 — blocks mirroring until true
+    notes: >-
+      Sponsor-owned and sponsor-hosted with their own accounts. We CATALOGUE it, we do
+      not host it. Access is arranged by the sponsor directly with teams.
+  - id: finops-open
+    name: Hybrid and cloud usage benchmarks
+    publisher: FinOps Foundation
+    url: https://www.finops.org/
+    licence: CC-BY-4.0
+    redistributable: true
+    licence_reviewed: false   # D4 — blocks mirroring until true
+    format: csv
+    approx_size_mb: 8
+  - id: sustainability
+    name: Grid carbon intensity signals
+    publisher: National Energy System Operator
+    url: https://carbonintensity.org.uk/
+    licence: CC-BY-4.0
+    redistributable: true
+    licence_reviewed: false   # D4 — blocks mirroring until true
+    format: json
+    approx_size_mb: 40
+
+gold_tables:
+  - name: workload_cost_daily
+    description: Synthetic workload cost and utilisation by day.
+    grain: One row per workload × day
+    approx_rows: 420000
+    csv_twin: true
+  - name: chargeback_allocation
+    description: Cost allocation and chargeback by business unit.
+    grain: One row per BU × month × service
+    approx_rows: 18000
+    csv_twin: true
+  - name: carbon_by_workload
+    description: Estimated carbon per workload using grid intensity.
+    grain: One row per workload × day
+    approx_rows: 420000
+    csv_twin: true
+
+documents:
+  - id: finops-framework
+    name: FinOps Framework overview
+    format: pdf
+    url: https://www.finops.org/framework/
+    extract_markdown: true
+    chunk: true

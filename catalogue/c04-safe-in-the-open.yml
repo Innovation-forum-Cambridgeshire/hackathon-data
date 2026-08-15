@@ -1,0 +1,115 @@
+# Challenge 04 — Safe in the Open (Civic online safety)
+#
+# See catalogue/c02-mapping-the-gaps.yml for the fully worked example and the reasoning
+# behind the `redistributable` / `licence_reviewed` gates. The build refuses to mirror
+# bytes for any source that has not cleared both.
+
+challenge: c04-safe-in-the-open
+title: Safe in the Open
+domain: Civic online safety
+event_date: 2027-03-01
+publisher: Innovation Forum
+contact: info@inno-forum.co.uk
+
+
+attribution: >-
+  Contains public sector information licensed under the Open Government Licence v3.0.
+
+
+handle_with_care: >-
+  Public information and the participant's explicit consent only. Data protection by design,
+  a DPIA before any live data, and a written data-sharing agreement following the ICO Data
+  Sharing Code. No private citizens, no bulk collection, no council data or systems.
+  Signpost support, never amplify harm.
+
+
+sensitivity:
+  personal_data: false
+  special_category: false
+  note: >-
+    HIGHEST CARE of the five. Councillors acting in public office are public figures in that
+    capacity, but abuse directed at them may itself contain special-category data about the
+    sender. Never mirror raw social content; mirror only derived, aggregated signals. DPIA
+    MUST be complete before any live data work.
+
+
+sources:
+  - id: nolan-principles
+    name: Seven Principles of Public Life
+    publisher: Committee on Standards in Public Life
+    url: https://www.gov.uk/government/publications/the-7-principles-of-public-life
+    licence: OGL-3.0
+    redistributable: true
+    licence_reviewed: false   # D4 — blocks mirroring until true
+    format: pdf
+    approx_size_mb: 1
+  - id: council-minutes
+    name: Minutes, votes and registers of interests
+    publisher: Local authorities
+    url: https://www.cambridgeshire.gov.uk/
+    licence: OGL-3.0
+    redistributable: true
+    licence_reviewed: false   # D4 — blocks mirroring until true
+    format: pdf
+    approx_size_mb: 250
+    notes: >-
+      Public record. Mirror as documents plus extracted markdown; no inference about
+      individuals beyond their public role.
+  - id: public-posts
+    name: Local news and public posts
+    publisher: Various
+    url: https://example.invalid/
+    licence: review-required
+    redistributable: false
+    licence_reviewed: false   # D4 — blocks mirroring until true
+    notes: >-
+      Consent plus platform terms. NOT mirrored under any circumstances — teams work
+      with their own consented collection under the DPIA.
+  - id: toxicity-models
+    name: Open abuse / toxicity models
+    publisher: Various open source
+    url: https://huggingface.co/
+    licence: CC-BY-4.0
+    redistributable: true
+    licence_reviewed: false   # D4 — blocks mirroring until true
+    format: json
+    approx_size_mb: 5
+    notes: >-
+      Model cards and evaluation sets only, not training corpora.
+  - id: support-routes
+    name: Support and reporting routes
+    publisher: LGA / policing
+    url: https://www.local.gov.uk/
+    licence: OGL-3.0
+    redistributable: true
+    licence_reviewed: false   # D4 — blocks mirroring until true
+    format: csv
+    approx_size_mb: 1
+    notes: >-
+      Signposting directory. Every prototype must be able to point someone at help.
+
+gold_tables:
+  - name: councillor_register_public
+    description: Public register of interests, structured.
+    grain: One row per member × declaration
+    approx_rows: 4200
+    csv_twin: true
+  - name: support_directory
+    description: Reporting and support routes by area.
+    grain: One row per route
+    approx_rows: 180
+    csv_twin: true
+
+documents:
+  - id: nolan-principles
+    name: The Seven Principles of Public Life
+    format: pdf
+    url: https://www.gov.uk/government/publications/the-7-principles-of-public-life
+    extract_markdown: true
+    chunk: true
+  - id: ico-data-sharing-code
+    name: ICO Data Sharing Code of Practice
+    format: pdf
+    url: https://ico.org.uk/
+    extract_markdown: true
+    chunk: true

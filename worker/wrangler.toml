@@ -1,0 +1,21 @@
+name = "if-hackathon-data"
+main = "src/worker.js"
+compatibility_date = "2026-08-01"
+workers_dev = false
+
+# The branded, stable participant-facing hostname. Everything published to teams
+# points here — never at github.com directly — so the hosting account underneath
+# can change without breaking a single URL anyone has bookmarked.
+routes = [
+  { pattern = "data.inno-forum.co.uk/*", zone_name = "inno-forum.co.uk" }
+]
+
+# Free plan is sufficient: the Worker only proxies and caches. Requests are well
+# inside the free allowance at hackathon scale, and GitHub charges nothing for
+# release-asset egress, so there is no metered cost anywhere in this path.
+
+[observability]
+enabled = true
+
+[placement]
+mode = "smart"

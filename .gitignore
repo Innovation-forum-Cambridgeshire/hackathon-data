@@ -1,0 +1,7 @@
+dist/
+upload/
+__pycache__/
+*.pyc
+.venv/
+node_modules/
+.wrangler/

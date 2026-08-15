@@ -1,0 +1,112 @@
+# Challenge 05 — Ahead of the Heat (Charity · patient safety)
+#
+# See catalogue/c02-mapping-the-gaps.yml for the fully worked example and the reasoning
+# behind the `redistributable` / `licence_reviewed` gates. The build refuses to mirror
+# bytes for any source that has not cleared both.
+
+challenge: c05-ahead-of-the-heat
+title: Ahead of the Heat
+domain: Charity · patient safety
+event_date: 2027-05-01
+publisher: Innovation Forum
+contact: info@inno-forum.co.uk
+
+
+attribution: >-
+  Contains public sector information licensed under the Open Government Licence v3.0.
+
+
+handle_with_care: >-
+  Health data about vulnerable adults — consent and data protection by design (UK GDPR),
+  data minimisation and safeguarding throughout. The tool supports staff and carers; it
+  never replaces professional judgement, and must fail safe.
+
+
+sensitivity:
+  personal_data: false
+  special_category: false
+  note: >-
+    The REAL service data is consent-held special-category health data and must NEVER enter
+    this layer. Only a synthetic cohort generated in this repo is published. Any team
+    wanting real data does so inside the charity's own governance, not here.
+
+
+sources:
+  - id: ukhsa-alerts
+    name: UKHSA Heat-Health Alerts
+    publisher: UK Health Security Agency
+    url: https://www.gov.uk/government/collections/weather-health-alerting-system
+    licence: OGL-3.0
+    redistributable: true
+    licence_reviewed: false   # D4 — blocks mirroring until true
+    format: json
+    approx_size_mb: 2
+    notes: >-
+      Live during the alert season, 1 Jun - 30 Sep (England). This is the one source
+      refreshed daily during event week.
+  - id: metoffice
+    name: Met Office weather data
+    publisher: Met Office
+    url: https://www.metoffice.gov.uk/services/data
+    licence: OGL-3.0
+    redistributable: true
+    licence_reviewed: false   # D4 — blocks mirroring until true
+    format: csv
+    approx_size_mb: 300
+  - id: awhp
+    name: Adverse Weather and Health Plan
+    publisher: UKHSA
+    url: https://www.gov.uk/government/publications/adverse-weather-and-health-plan
+    licence: OGL-3.0
+    redistributable: true
+    licence_reviewed: false   # D4 — blocks mirroring until true
+    format: pdf
+    approx_size_mb: 6
+  - id: charity-service
+    name: Charity service knowledge
+    publisher: Partner charity
+    url: https://example.invalid/
+    licence: not-redistributable
+    redistributable: false
+    licence_reviewed: false   # D4 — blocks mirroring until true
+    notes: >-
+      Consent-held special-category health data. NEVER mirrored. A synthetic cohort
+      stands in for it — see synthetic-cohort below.
+  - id: synthetic-cohort
+    name: Synthetic vulnerable-adult cohort
+    publisher: Innovation Forum x R1X
+    url: https://github.com/Innovation-forum-Cambridgeshire/hackathon-data
+    licence: CC0-1.0
+    redistributable: true
+    licence_reviewed: true    # authored by us under CC0 — no third-party review needed
+    format: parquet
+    approx_size_mb: 12
+    notes: >-
+      Generated to match the SHAPE of the real service data without deriving from any
+      individual. Generator and seed live in this repo so it is reproducible and
+      auditable.
+
+gold_tables:
+  - name: alert_history
+    description: Heat-health alert level by region and day.
+    grain: One row per region × day
+    approx_rows: 26000
+    csv_twin: true
+  - name: synthetic_cohort
+    description: Synthetic cohort with risk factors and care setting.
+    grain: One row per synthetic person
+    approx_rows: 5000
+    csv_twin: true
+  - name: region_weather_daily
+    description: Daily temperature and humidity by region.
+    grain: One row per region × day
+    approx_rows: 120000
+    csv_twin: true
+
+documents:
+  - id: awhp
+    name: Adverse Weather and Health Plan
+    format: pdf
+    url: https://www.gov.uk/government/publications/adverse-weather-and-health-plan
+    extract_markdown: true
+    chunk: true

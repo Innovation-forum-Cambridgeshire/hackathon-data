@@ -1,0 +1,144 @@
+name: Build and publish challenge data
+
+# Publishes a challenge's data as an immutable GitHub Release.
+#
+# Why Releases and not the repo tree or LFS:
+#   repo tree  — 100 MB hard file cap, ~1 GB soft repo cap
+#   Git LFS    — bandwidth is metered and small on free plans
+#   Releases   — 2 GiB per file, NO cap on total release size, NO bandwidth quota
+#                (GitHub docs, verified 2026-08-15) and a tag IS the immutable
+#                snapshot that reproducible judging requires.
+#
+# Why GitHub Actions and not Azure Pipelines: public repos get unlimited free
+# minutes with no form to fill in and no Azure subscription to link. See
+# azure-pipelines.yml for the ADO equivalent and why it is the fallback.
+
+on:
+  workflow_dispatch:
+    inputs:
+      challenge:
+        description: "Challenge slug (e.g. c02-mapping-the-gaps)"
+        required: true
+        type: choice
+        options:
+          - c01-one-farm-one-picture
+          - c02-mapping-the-gaps
+          - c03-beyond-the-mainframe
+          - c04-safe-in-the-open
+          - c05-ahead-of-the-heat
+      version:
+        description: "Version tag, vYYYY-MM-DD (immutable — never reuse)"
+        required: true
+        type: string
+      dry_run:
+        description: "Build and validate only; publish nothing"
+        type: boolean
+        default: true
+
+  schedule:
+    # Event week only, for challenge 05's live heat-health alerts. Yearly otherwise.
+    - cron: "0 5 * * *"
+
+permissions:
+  contents: write # required to create releases
+
+concurrency:
+  group: build-${{ github.event.inputs.challenge || 'scheduled' }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r build/requirements.txt
+
+      - name: Validate catalogue
+        # Fails on schema drift or a missing licence rather than shipping a broken
+        # column into a live event. This is the gate, not a formality.
+        run: python build/build.py validate --challenge "${{ github.event.inputs.challenge }}"
+
+      - name: Refuse to overwrite an existing version
+        if: ${{ github.event.inputs.dry_run == 'false' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG="${{ github.event.inputs.challenge }}-${{ github.event.inputs.version }}"
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            echo "::error::Release $TAG already exists. Versions are immutable — judging"
+            echo "::error::must be reproducible against a frozen corpus. Use a new date."
+            exit 1
+          fi
+          echo "Tag $TAG is free."
+
+      - name: Build
+        run: |
+          python build/build.py build \
+            --challenge "${{ github.event.inputs.challenge }}" \
+            --version   "${{ github.event.inputs.version }}" \
+            --out       dist/
+
+      - name: Flatten for release upload
+        # Release assets are a flat namespace; the Worker un-flattens "__" back into
+        # paths. Keep the two in step — worker/src/worker.js resolve().
+        run: |
+          mkdir -p upload
+          cd dist
+          find . -type f | while read -r f; do
+            rel="${f#./}"
+            cp "$f" "../upload/${rel//\//__}"
+          done
+          cd ..
+          echo "Assets to upload:"
+          ls -lh upload/
+          echo "Largest file check (2 GiB per-asset limit):"
+          find upload -type f -size +2000M -exec echo "::error::{} exceeds the 2 GiB release asset limit" \; -exec false {} +
+
+      - name: Publish release
+        if: ${{ github.event.inputs.dry_run == 'false' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG="${{ github.event.inputs.challenge }}-${{ github.event.inputs.version }}"
+          gh release create "$TAG" upload/* \
+            --title "${{ github.event.inputs.challenge }} ${{ github.event.inputs.version }}" \
+            --notes-file dist/RELEASE_NOTES.md \
+            --verify-tag=false
+
+      - name: Update latest pointer
+        if: ${{ github.event.inputs.dry_run == 'false' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # The only mutable object in the whole design. Flipped last, so a half-built
+          # release is never pointed at.
+          CH="${{ github.event.inputs.challenge }}"
+          echo '{"version":"${{ github.event.inputs.version }}"}' > latest.json
+          gh release delete "$CH-latest" --yes --cleanup-tag 2>/dev/null || true
+          gh release create "$CH-latest" latest.json \
+            --title "$CH — latest pointer" \
+            --notes "Points at ${{ github.event.inputs.version }}. Mutable by design."
+
+      - name: Summary
+        run: |
+          {
+            echo "### ${{ github.event.inputs.challenge }} ${{ github.event.inputs.version }}"
+            echo ""
+            if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
+              echo "**Dry run** — validated and built, published nothing."
+            else
+              echo "Published. Participants reach it at:"
+              echo '```'
+              echo "https://data.inno-forum.co.uk/${{ github.event.inputs.challenge }}/${{ github.event.inputs.version }}/gold/<table>.parquet"
+              echo '```'
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
