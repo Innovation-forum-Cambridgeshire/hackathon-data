@@ -71,6 +71,7 @@ jobs:
         # reconciles to the cost table it is rolled up from.
         run: |
           python build/test_csv_contract.py
+          python build/test_c02_corpus.py
           python build/test_synthetic_finops.py
           python build/test_c04_corpora.py
           python build/test_c05_corpus.py
