@@ -83,19 +83,44 @@ sources:
       Licensing unconfirmed — this is one of the three sources named in decision D4.
       Until reviewed, the build emits a pointer and loader code, never bytes.
 
+  # REVIEWED 2026-08-15 AND HELD — three publishers behind one flag, and they do not
+  # agree. This is the same shape as `defra` in c01 and `metoffice` in c05: a category
+  # is not a source, and one licence flag cannot describe three governments.
+  #
+  #   SIMD  (Scottish Government) — OGL v3.0 CONFIRMED. gov.scot footer, checked
+  #         2026-08-15: "All content is available under the Open Government Licence
+  #         v3.0, except for graphic assets and where otherwise stated." Note that
+  #         carve-out is WIDER than the standard gov.uk one — it excludes graphic
+  #         assets outright, so charts and map images from the publication are not
+  #         covered even though the data is.
+  #
+  #   NIMDM (NISRA) — NOT CONFIRMED, and this is what holds the whole entry. The NISRA
+  #         page states only "© Crown Copyright" with NO licence named. Crown copyright
+  #         is an assertion of ownership, not a grant of reuse rights, and it is not
+  #         interchangeable with OGL. Northern Ireland material has repeatedly turned
+  #         out to carry separate terms — see the NI postcode exclusion recorded on
+  #         `ons-geography` above. Contact deprivation@nisra.gov.uk to establish it.
+  #
+  #   WIMD  (Welsh Government) — not checked.
+  #
+  # To clear: split into three sources, one per nation. SIMD can go first and unblock
+  # the Scottish half; NIMDM should be assumed restricted until NISRA says otherwise.
   - id: devolved-indices
     provenance: real
     name: Devolved deprivation indices (SIMD, WIMD, NIMDM)
     publisher: Scottish Government / Welsh Government / NISRA
     url: https://www.gov.scot/collections/scottish-index-of-multiple-deprivation-2020/
-    licence: OGL-3.0
-    redistributable: true
+    licence: review-required   # downgraded from OGL-3.0 — see above; only SIMD is confirmed
+    redistributable: false
     licence_reviewed: false
     format: csv
     approx_size_mb: 25
     notes: >-
       Four nations, four rulebooks — the indices are NOT directly comparable across
       borders. Any cross-nation gold table must carry a caveat column, not a silent join.
+
+      BUNDLES THREE PUBLISHERS. Reviewed 2026-08-15: SIMD is confirmed OGL, NIMDM
+      names no licence at all, WIMD unchecked. Split per nation before clearing.
 
   - id: ons-geography
     provenance: real

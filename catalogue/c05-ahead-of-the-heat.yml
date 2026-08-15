@@ -36,15 +36,32 @@ sources:
     provenance: real
     name: UKHSA Heat-Health Alerts
     publisher: UK Health Security Agency
-    url: https://www.gov.uk/government/collections/weather-health-alerting-system
+    # URL CORRECTED 2026-08-15 — the catalogued gov.uk collection URL was dead (404).
+    # The alerts and their API live on the UKHSA data dashboard.
+    url: https://ukhsa-dashboard.data.gov.uk/weather-health-alerts
     licence: OGL-3.0
     redistributable: true
-    licence_reviewed: false   # D4 — blocks mirroring until true
+    licence_reviewed: true    # D4 cleared 2026-08-15, WITH the boundary below
+    licence_evidence: >-
+      UKHSA data dashboard, checked 2026-08-15: "All content is available under the
+      Open Government Licence v3.0", Crown copyright. An API is published at
+      ukhsa-dashboard.data.gov.uk/access-our-data/. This clears the ALERTS — the
+      alert level published by UKHSA for a region and day, which is what the
+      alert_history gold table needs.
+    attribution_required:
+      - "Contains public sector information licensed under the Open Government Licence v3.0"
     format: json
     approx_size_mb: 2
     notes: >-
       Live during the alert season, 1 Jun - 30 Sep (England). This is the one source
       refreshed daily during event week.
+
+      BOUNDARY, and it matters given the metoffice finding below: the Weather-Health
+      Alerting system is run by UKHSA "in partnership with the Met Office". What is
+      cleared here is UKHSA's published ALERT — a level, a region and a date, which is
+      UKHSA's own product under OGL. The underlying MET OFFICE FORECAST DATA is NOT
+      cleared by this and is not covered by the dashboard's OGL statement. Do not
+      treat an OGL alert feed as licence cover for the meteorology behind it.
   # CORRECTED 2026-08-15 by the D4 review. This was declared OGL-3.0 and
   # redistributable: true. That is NOT supported by the Met Office's own reuse page,
   # which states that data usable commercially is available under the EUMETNET licence
@@ -84,7 +101,11 @@ sources:
     url: https://www.gov.uk/government/publications/adverse-weather-and-health-plan
     licence: OGL-3.0
     redistributable: true
-    licence_reviewed: false   # D4 — blocks mirroring until true
+    licence_reviewed: true    # D4 cleared 2026-08-15
+    licence_evidence: >-
+      gov.uk publication footer, checked 2026-08-15: "All content is available under
+      the Open Government Licence v3.0, except where otherwise stated."
+      https://www.gov.uk/government/publications/adverse-weather-and-health-plan
     format: pdf
     approx_size_mb: 6
   - id: charity-service
