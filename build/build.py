@@ -193,6 +193,23 @@ def validate(cat: dict) -> Result:
                 f"a recognised open licence. Recognised: {', '.join(sorted(OPEN_LICENCES))}"
             )
 
+        # A review has to be auditable. `licence_reviewed: true` on its own is one
+        # person's recollection: it records that somebody once believed the licence
+        # was fine, not what they checked or when. That is a thin basis for publicly
+        # redistributing someone else's data, and it is unfalsifiable later — nobody
+        # can re-check a claim with no source.
+        #
+        # `licence_evidence` must therefore carry where the licence was read. The
+        # review that introduced this found `metoffice` declared OGL-3.0 and
+        # redistributable when the Met Office's own reuse page prices commercial data
+        # under the EUMETNET licence. The flag had simply been set.
+        if reviewed and not src.get("licence_evidence"):
+            r.error(
+                f"{challenge}/{sid}: licence_reviewed: true with no 'licence_evidence'. "
+                f"Cite where the licence was read (URL, and the statement relied on) — "
+                f"an unevidenced review cannot be re-checked by anyone."
+            )
+
         if redistributable and not reviewed:
             r.warn(
                 f"{challenge}/{sid}: awaiting licence review (decision D4). Will ship as "
