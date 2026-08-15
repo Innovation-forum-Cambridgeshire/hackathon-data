@@ -308,6 +308,36 @@ def validate(cat: dict) -> Result:
                     f"column with no way to know what it means."
                 )
 
+    # --- Rule 6: documents go through the licence gate too. ---
+    #
+    # They did not before. Six documents across the five catalogues carried
+    # `extract_markdown: true` — an instruction to mirror them — and NONE declared a
+    # licence. The manifest published `original` and `markdown` URLs for all of
+    # them, asserting we host copies of somebody else's PDFs.
+    #
+    # Extracting a publisher's PDF into markdown is not a lesser act than mirroring
+    # a parquet file. It is a derivative work and it is redistribution. The sources
+    # had a rigorous gate and documents walked straight past it, which is the same
+    # shape of bug as `metoffice`: a rule that exists but does not cover everything
+    # it should.
+    for doc in (cat.get("documents") or []):
+        did = doc.get("id", "<no id>")
+        wants_mirror = doc.get("extract_markdown") or doc.get("chunk")
+        if not wants_mirror:
+            continue
+        if doc.get("licence") not in OPEN_LICENCES:
+            r.warn(
+                f"{challenge}/doc:{did}: marked for extraction but licence is "
+                f"{doc.get('licence', 'undeclared')!r}. Shipping as a pointer to the "
+                f"publisher instead — extracting a PDF into markdown is redistribution."
+            )
+        elif not doc.get("licence_reviewed"):
+            r.warn(f"{challenge}/doc:{did}: licence {doc['licence']} declared but not reviewed.")
+        elif not doc.get("licence_evidence"):
+            r.error(
+                f"{challenge}/doc:{did}: licence_reviewed: true with no licence_evidence."
+            )
+
     # --- Rule 3: CSV twins. ---
     for tbl in cat["gold_tables"]:
         name = tbl.get("name", "<no name>")
@@ -448,15 +478,18 @@ def build_manifest(cat: dict, version: str) -> dict:
         "mirrored": sorted(mirrorable),
         "pointer_only": sorted({s["id"] for s in cat["sources"]} - mirrorable),
         "tables": tables,
-        "documents": [
-            {
-                "id": d["id"],
-                "name": d.get("name"),
-                "original": f"{base}/docs/original/{d['id']}.{d.get('format', 'pdf')}",
-                "markdown": f"{base}/docs/text/{d['id']}.md" if d.get("extract_markdown") else None,
-            }
-            for d in (cat.get("documents") or [])
-        ],
+        # Documents go through the SAME licence gate as sources. They did not before:
+        # every document published `original` and `markdown` URLs unconditionally,
+        # asserting that we host a mirror of somebody else's PDF with nothing having
+        # checked whether we may. Mirroring a PDF — or an extracted markdown version
+        # of it, which is a derivative — is redistribution exactly as mirroring a
+        # parquet file is.
+        #
+        # An uncleared document now ships as a POINTER to the publisher's own URL.
+        # That is not a lesser outcome: reading at source is what the licence
+        # permits, and it is what teams should do anyway for anything that gets
+        # revised.
+        "documents": [document_entry(d, base) for d in (cat.get("documents") or [])],
         "usage": {
             "duckdb": (
                 f"INSTALL httpfs; LOAD httpfs; "
@@ -466,6 +499,215 @@ def build_manifest(cat: dict, version: str) -> dict:
             "note": "No credentials. No account. Anonymous HTTPS.",
         },
     }
+
+
+def document_mirrorable(doc: dict) -> bool:
+    """May we host a copy of this document? Same test as a source."""
+    return (
+        doc.get("licence") in OPEN_LICENCES
+        and doc.get("licence_reviewed") is True
+        and bool(doc.get("licence_evidence"))
+    )
+
+
+def document_entry(doc: dict, base: str) -> dict:
+    """One document's manifest entry, mirrored or pointer-only."""
+    entry = {
+        "id": doc["id"],
+        "name": doc.get("name"),
+        "publisher_url": doc.get("url"),
+        "licence": doc.get("licence", "review-required"),
+        "mirrored": document_mirrorable(doc),
+    }
+    if entry["mirrored"]:
+        entry["original"] = f"{base}/docs/original/{doc['id']}.{doc.get('format', 'pdf')}"
+        if doc.get("extract_markdown"):
+            entry["markdown"] = f"{base}/docs/text/{doc['id']}.md"
+    else:
+        entry["note"] = (
+            "Not mirrored — read it at publisher_url. We have not established the "
+            "right to redistribute this document."
+        )
+    return entry
+
+
+def build_llms_txt(cat: dict, manifest: dict, version: str) -> str:
+    """An index written for an agent rather than a person.
+
+    Follows the llms.txt convention: a single plain-markdown file at a predictable
+    path that tells a model what exists, where it is, and what it must not assume.
+
+    The point is not politeness to robots. Every hackathon team will point something
+    at this data, and the failure mode is not that the model cannot find the files —
+    it is that it finds them and confidently misreads them. So the caveats are
+    ABOVE the file listing, not below it: which tables are synthetic, which numbers
+    are not measurements, and which sources we are not permitted to mirror.
+    """
+    base = manifest["base_url"]
+    lines = [
+        f"# {cat['title']} ({cat['challenge']}) — {version}",
+        "",
+        f"> {cat.get('domain', '')} · published by {cat.get('publisher')} · {cat.get('contact')}",
+        "",
+        "Hackathon challenge data. Anonymous HTTPS, no credentials, no account.",
+        "",
+        "## Read this before using any number",
+        "",
+    ]
+
+    synthetic = [t for t in manifest["tables"] if "SYNTHETIC" in (t.get("description") or "").upper()]
+    if synthetic:
+        lines.append("**Some tables are generated, not observed.** Do not report findings from")
+        lines.append("them as measurements:")
+        lines.append("")
+        for t in synthetic:
+            lines.append(f"- `{t['name']}` — {(t.get('description') or '').strip()}")
+        lines.append("")
+
+    if cat.get("handle_with_care"):
+        lines += ["**Handling:** " + " ".join(cat["handle_with_care"].split()), ""]
+
+    sens = cat.get("sensitivity") or {}
+    if sens.get("note"):
+        lines += ["**Sensitivity:** " + " ".join(sens["note"].split()), ""]
+
+    if manifest["pointer_only"]:
+        lines += [
+            "**Not everything here is redistributed.** These sources are catalogued but",
+            "NOT mirrored — read them at the publisher, and do not assume our licence",
+            "covers them: " + ", ".join(f"`{s}`" for s in manifest["pointer_only"]),
+            "",
+        ]
+
+    if cat.get("attribution"):
+        lines += ["**Attribution required:** " + " ".join(cat["attribution"].split()), ""]
+
+    lines += ["## Tables", ""]
+    for t in manifest["tables"]:
+        lines.append(f"### {t['name']}")
+        lines.append("")
+        lines.append(f"{(t.get('description') or '').strip()}")
+        lines.append("")
+        lines.append(f"- Grain: {t.get('grain')}")
+        lines.append(f"- Rows: ~{t.get('approx_rows'):,}" if t.get("approx_rows") else "")
+        lines.append(f"- Parquet: {t['parquet']}")
+        if t.get("csv"):
+            lines.append(f"- CSV: {t['csv']}")
+        if t.get("csv_sample"):
+            lines.append(f"- CSV sample: {t['csv_sample']}")
+        lines.append("")
+        if t.get("columns"):
+            lines.append("| column | type | meaning |")
+            lines.append("|---|---|---|")
+            for c in t["columns"]:
+                desc = " ".join((c.get("description") or "").split())
+                lines.append(f"| `{c['name']}` | {c.get('type')} | {desc} |")
+            lines.append("")
+
+    if manifest.get("documents"):
+        lines += ["## Documents", ""]
+        for d in manifest["documents"]:
+            if d.get("mirrored"):
+                lines.append(f"- **{d.get('name')}** — {d.get('markdown') or d.get('original')}")
+            else:
+                lines.append(
+                    f"- **{d.get('name')}** — not mirrored, read at {d.get('publisher_url')}"
+                )
+        lines += [""]
+
+    lines += [
+        "## How to load",
+        "",
+        "```sql",
+        manifest["usage"]["duckdb"],
+        "```",
+        "",
+        "```python",
+        manifest["usage"]["python"],
+        "```",
+        "",
+        f"Machine-readable index: {base}/manifest.json",
+        f"Chunked descriptions:   {base}/chunks.jsonl",
+        "",
+    ]
+    return "\n".join(l for l in lines if l is not None) + "\n"
+
+
+def build_chunks(cat: dict, manifest: dict, version: str) -> str:
+    """chunks.jsonl — the schema as retrievable text, with stable IDs.
+
+    This is the piece that saves an AI team their first afternoon. Without it, a
+    model answering "what does utilisation_pct mean" either parses YAML it was
+    never given, or guesses — and a plausible guess about whether a column is a
+    percentage or a fraction is exactly the error that survives to a final demo.
+
+    IDs are STABLE and derived from challenge + table + column, not from position,
+    so a chunk can be cited in an answer and still resolve after the next release.
+    Anything positional would silently repoint when a column is added.
+
+    Only OUR OWN text is chunked: catalogue descriptions we wrote. Third-party
+    document text is not here — see document_mirrorable() on why extracting a
+    publisher's PDF into markdown is redistribution.
+    """
+    out: list[str] = []
+
+    def emit(chunk_id: str, kind: str, text: str, **extra):
+        out.append(json.dumps({
+            "id": chunk_id,
+            "challenge": cat["challenge"],
+            "version": version,
+            "kind": kind,
+            "text": " ".join(text.split()),
+            **extra,
+        }))
+
+    emit(
+        f"{cat['challenge']}#overview",
+        "overview",
+        f"{cat['title']} ({cat['domain']}). Published by {cat.get('publisher')}. "
+        f"{cat.get('handle_with_care', '')}",
+    )
+
+    sens = cat.get("sensitivity") or {}
+    if sens.get("note"):
+        emit(f"{cat['challenge']}#sensitivity", "sensitivity", sens["note"])
+
+    for t in manifest["tables"]:
+        emit(
+            f"{cat['challenge']}#{t['name']}",
+            "table",
+            f"{t['name']}: {t.get('description')} Grain: {t.get('grain')}. "
+            f"Approximately {t.get('approx_rows')} rows.",
+            table=t["name"],
+            parquet=t.get("parquet"),
+        )
+        for c in t.get("columns") or []:
+            emit(
+                f"{cat['challenge']}#{t['name']}.{c['name']}",
+                "column",
+                f"{t['name']}.{c['name']} ({c.get('type')}): {c.get('description')}",
+                table=t["name"],
+                column=c["name"],
+                type=c.get("type"),
+            )
+
+    for s in cat["sources"]:
+        emit(
+            f"{cat['challenge']}#source.{s['id']}",
+            "source",
+            f"Source {s['id']} ({s.get('name')}) published by {s.get('publisher')}, "
+            f"licence {s.get('licence')}. "
+            + (
+                "Mirrored in this release."
+                if s["id"] in manifest["mirrored"]
+                else f"NOT mirrored — read at {s.get('url')}. "
+                     f"{s.get('notes', '')}"
+            ),
+            source=s["id"],
+            mirrored=s["id"] in manifest["mirrored"],
+        )
+
+    return "\n".join(out) + "\n"
 
 
 def release_notes(cat: dict, version: str, manifest: dict) -> str:
@@ -544,6 +786,13 @@ def cmd_build(args) -> int:
     manifest = build_manifest(cat, args.version)
     (out / "manifest.json").write_text(json.dumps(manifest, indent=2) + "\n")
     (out / "RELEASE_NOTES.md").write_text(release_notes(cat, args.version, manifest))
+
+    # The LLM plane. Every team will point a model at this data; the failure mode is
+    # not that it cannot find the files, it is that it finds them and confidently
+    # misreads them. These two put the caveats and the column meanings where a model
+    # will actually encounter them.
+    (out / "llms.txt").write_text(build_llms_txt(cat, manifest, args.version))
+    (out / "chunks.jsonl").write_text(build_chunks(cat, manifest, args.version))
 
     if cat.get("attribution"):
         (out / "ATTRIBUTION.md").write_text(
