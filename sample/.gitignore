@@ -1,0 +1,16 @@
+# The environment.
+.venv/
+.ipykernel/
+
+# BUILT DATA IS NEVER COMMITTED.
+#
+# It is release payload, published as GitHub Release assets: 2 GiB per file, no
+# total cap, no bandwidth quota. Putting it in the tree instead would blow the
+# ~100 MB per-file hard limit, bloat every clone forever, and defeat the reason
+# the whole delivery design uses Releases. c03 alone is 71 MB of CSV twins.
+#
+# Rebuild it instead — that is a 7-second command and it is in the README.
+data/
+
+# Notebook output noise.
+.ipynb_checkpoints/
