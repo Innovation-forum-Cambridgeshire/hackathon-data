@@ -58,6 +58,7 @@ jobs:
         run: |
           python build/test_csv_contract.py
           python build/test_synthetic_finops.py
+          python build/test_c05_corpus.py
 
       - name: Validate all catalogues
         run: |
