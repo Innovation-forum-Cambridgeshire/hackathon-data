@@ -150,10 +150,12 @@ def build(cats: list[dict], evidence: dict, preserved: dict[str, list[list]]) ->
     # ---------------- 2. Asset Register ----------------
     rows = []
     for c in cats:
+        provs = {s.get("provenance") for s in c.get("sources", [])}
+        corpus = "Synthetic-backed" if "synthetic" in provs else "Real"
         for t in c.get("gold_tables", []):
             individuals = bool(t.get("contains_individuals"))
             rows.append([
-                c["challenge"], c.get("title"), t["name"], "gold",
+                c["challenge"], c.get("title"), t["name"], "gold", corpus,
                 t.get("description"), t.get("grain"), t.get("approx_rows"),
                 "Personal data" if individuals else "Non-personal",
                 "Yes" if individuals else "No",
@@ -165,7 +167,7 @@ def build(cats: list[dict], evidence: dict, preserved: dict[str, list[list]]) ->
     sheet(
         wb, "Asset Register", "Data Asset Register (DMBOK / ISO 11179)",
         "One row per published table across all challenges. Derived from catalogue/*.yml — regenerated each run.",
-        ["Challenge", "Challenge title", "Table", "Layer", "Description", "Grain", "Approx rows",
+        ["Challenge", "Challenge title", "Table", "Layer", "Corpus provenance", "Description", "Grain", "Approx rows",
          "Data classification", "Contains individuals", "Publication status", "Controller",
          "Data steward", "Build status", "Source catalogue", "Catalogue SHA"],
         rows,
@@ -274,7 +276,8 @@ def build(cats: list[dict], evidence: dict, preserved: dict[str, list[list]]) ->
             redis = s.get("redistributable") is True
             rev = s.get("licence_reviewed") is True
             rows.append([
-                c["challenge"], s["id"], s.get("name"), s.get("publisher"), s.get("licence"),
+                c["challenge"], s["id"], s.get("name"), s.get("publisher"),
+                s.get("provenance", "undeclared"), s.get("licence"),
                 "Yes" if redis else "No", "Yes" if rev else "No",
                 "Mirrored" if (redis and rev) else "Pointer + loader only",
                 c.get("attribution") or "—", s.get("url"),
@@ -283,7 +286,7 @@ def build(cats: list[dict], evidence: dict, preserved: dict[str, list[list]]) ->
         wb, "Licence & Attribution", "Licence & Attribution (OGL v3.0 and others)",
         "OGL attribution is a LICENCE CONDITION — omitting it makes republication an infringement, "
         "not a discourtesy. 'Pointer + loader only' rows are never mirrored by us.",
-        ["Challenge", "Source ID", "Source", "Publisher", "Licence", "Redistributable",
+        ["Challenge", "Source ID", "Source", "Publisher", "Provenance", "Licence", "Redistributable",
          "Licence reviewed", "Treatment", "Attribution text", "URL"], rows,
     )
 

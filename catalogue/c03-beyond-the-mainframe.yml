@@ -28,6 +28,7 @@ sensitivity:
 
 sources:
   - id: synthetic-finops
+    provenance: synthetic
     name: Synthetic FinOps estate
     publisher: Innovation Forum x R1X
     url: https://github.com/Innovation-forum-Cambridgeshire/hackathon-data
@@ -40,6 +41,7 @@ sources:
       Generated, not collected. Seeded and reproducible so judging is fair — the
       generator lives in this repo.
   - id: sponsor-lake
+    provenance: real
     name: Sponsor data lake and viewer
     publisher: Sponsor
     url: https://example.invalid/sponsor
@@ -50,6 +52,7 @@ sources:
       Sponsor-owned and sponsor-hosted with their own accounts. We CATALOGUE it, we do
       not host it. Access is arranged by the sponsor directly with teams.
   - id: finops-open
+    provenance: real
     name: Hybrid and cloud usage benchmarks
     publisher: FinOps Foundation
     url: https://www.finops.org/
@@ -59,6 +62,7 @@ sources:
     format: csv
     approx_size_mb: 8
   - id: sustainability
+    provenance: real
     name: Grid carbon intensity signals
     publisher: National Energy System Operator
     url: https://carbonintensity.org.uk/

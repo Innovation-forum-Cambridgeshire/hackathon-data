@@ -35,6 +35,7 @@ sensitivity:
 
 sources:
   - id: iod2025
+    provenance: real
     name: Indices of Deprivation 2025
     publisher: Ministry of Housing, Communities and Local Government
     url: https://www.gov.uk/government/collections/english-indices-of-deprivation
@@ -46,6 +47,7 @@ sources:
     notes: LSOA-level. Domain sub-indices as well as the headline IMD rank.
 
   - id: police-recorded-crime
+    provenance: real
     name: Police recorded crime (street-level)
     publisher: Home Office / data.police.uk
     url: https://data.police.uk/docs/
@@ -59,6 +61,7 @@ sources:
       rather than the national archive. Full extract stays upstream behind loader code.
 
   - id: deri
+    provenance: real
     name: Digital Exclusion Risk Index
     publisher: Greater Manchester Combined Authority
     url: https://www.gmtableau.nhs.uk/t/GMCA/views/DigitalExclusionRiskIndex/DERI
@@ -72,6 +75,7 @@ sources:
       Until reviewed, the build emits a pointer and loader code, never bytes.
 
   - id: devolved-indices
+    provenance: real
     name: Devolved deprivation indices (SIMD, WIMD, NIMDM)
     publisher: Scottish Government / Welsh Government / NISRA
     url: https://www.gov.scot/collections/scottish-index-of-multiple-deprivation-2020/
@@ -85,6 +89,7 @@ sources:
       borders. Any cross-nation gold table must carry a caveat column, not a silent join.
 
   - id: ons-geography
+    provenance: real
     name: ONS Open Geography Portal
     publisher: Office for National Statistics
     url: https://geoportal.statistics.gov.uk/

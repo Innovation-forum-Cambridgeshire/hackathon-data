@@ -39,6 +39,7 @@ sensitivity:
 
 sources:
   - id: nolan-principles
+    provenance: real
     name: Seven Principles of Public Life
     publisher: Committee on Standards in Public Life
     url: https://www.gov.uk/government/publications/the-7-principles-of-public-life
@@ -48,6 +49,7 @@ sources:
     format: pdf
     approx_size_mb: 1
   - id: council-minutes
+    provenance: real
     name: Minutes, votes and registers of interests
     publisher: Local authorities
     url: https://www.cambridgeshire.gov.uk/
@@ -60,6 +62,7 @@ sources:
       Public record. Mirror as documents plus extracted markdown; no inference about
       individuals beyond their public role.
   - id: public-posts
+    provenance: real
     name: Local news and public posts
     publisher: Various
     url: https://example.invalid/
@@ -70,6 +73,7 @@ sources:
       Consent plus platform terms. NOT mirrored under any circumstances — teams work
       with their own consented collection under the DPIA.
   - id: toxicity-models
+    provenance: real
     name: Open abuse / toxicity models
     publisher: Various open source
     url: https://huggingface.co/
@@ -81,6 +85,7 @@ sources:
     notes: >-
       Model cards and evaluation sets only, not training corpora.
   - id: support-routes
+    provenance: real
     name: Support and reporting routes
     publisher: LGA / policing
     url: https://www.local.gov.uk/
@@ -118,6 +123,7 @@ gold_tables:
 
 documents:
   - id: nolan-principles
+    provenance: real
     name: The Seven Principles of Public Life
     format: pdf
     url: https://www.gov.uk/government/publications/the-7-principles-of-public-life

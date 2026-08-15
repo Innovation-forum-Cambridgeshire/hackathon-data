@@ -33,6 +33,7 @@ sensitivity:
 
 sources:
   - id: ukhsa-alerts
+    provenance: real
     name: UKHSA Heat-Health Alerts
     publisher: UK Health Security Agency
     url: https://www.gov.uk/government/collections/weather-health-alerting-system
@@ -45,6 +46,7 @@ sources:
       Live during the alert season, 1 Jun - 30 Sep (England). This is the one source
       refreshed daily during event week.
   - id: metoffice
+    provenance: real
     name: Met Office weather data
     publisher: Met Office
     url: https://www.metoffice.gov.uk/services/data
@@ -54,6 +56,7 @@ sources:
     format: csv
     approx_size_mb: 300
   - id: awhp
+    provenance: real
     name: Adverse Weather and Health Plan
     publisher: UKHSA
     url: https://www.gov.uk/government/publications/adverse-weather-and-health-plan
@@ -63,6 +66,7 @@ sources:
     format: pdf
     approx_size_mb: 6
   - id: charity-service
+    provenance: real
     name: Charity service knowledge
     publisher: Partner charity
     url: https://example.invalid/
@@ -73,6 +77,7 @@ sources:
       Consent-held special-category health data. NEVER mirrored. A synthetic cohort
       stands in for it — see synthetic-cohort below.
   - id: synthetic-cohort
+    provenance: synthetic
     name: Synthetic vulnerable-adult cohort
     publisher: Innovation Forum x R1X
     url: https://github.com/Innovation-forum-Cambridgeshire/hackathon-data
@@ -105,6 +110,7 @@ gold_tables:
 
 documents:
   - id: awhp
+    provenance: real
     name: Adverse Weather and Health Plan
     format: pdf
     url: https://www.gov.uk/government/publications/adverse-weather-and-health-plan

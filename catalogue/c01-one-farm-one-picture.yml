@@ -31,6 +31,7 @@ sensitivity:
 
 sources:
   - id: copernicus-sentinel
+    provenance: real
     name: Copernicus / Sentinel
     publisher: European Space Agency
     url: https://dataspace.copernicus.eu/
@@ -43,6 +44,7 @@ sources:
       loader code and a pointer, plus a small pre-computed NDVI extract for the study
       area once licensing is confirmed.
   - id: midas-open
+    provenance: real
     name: Met Office MIDAS Open
     publisher: Met Office / CEDA
     url: https://catalogue.ceda.ac.uk/
@@ -55,6 +57,7 @@ sources:
       Requires a free CEDA account to fetch, but the data is OGL. Mirror a curated
       station subset, not the national archive.
   - id: defra
+    provenance: real
     name: Defra data (soils, water, field boundaries)
     publisher: Defra
     url: https://environment.data.gov.uk/
@@ -64,6 +67,7 @@ sources:
     format: geojson
     approx_size_mb: 450
   - id: ahdb
+    provenance: real
     name: AHDB market intelligence
     publisher: AHDB
     url: https://ahdb.org.uk/
