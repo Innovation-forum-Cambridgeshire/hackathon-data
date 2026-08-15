@@ -56,6 +56,7 @@ sources:
       this repository, not collected, so there is no upstream licensor to clear.
       Recorded 2026-08-15. This is the ONLY category where we are the licensor —
       everything else needs a citation to someone else's published terms.
+    generator: synthetic_register   # build/generators/synthetic_register.py
     format: parquet
     approx_size_mb: 3
     notes: >-
@@ -77,6 +78,7 @@ sources:
       this repository, not collected, so there is no upstream licensor to clear.
       Recorded 2026-08-15. This is the ONLY category where we are the licensor —
       everything else needs a citation to someone else's published terms.
+    generator: synthetic_abuse      # build/generators/synthetic_abuse.py
     format: parquet
     approx_size_mb: 8
     notes: >-
@@ -207,11 +209,80 @@ gold_tables:
     # disclosure risks violence or intimidation. Inferring those gaps would defeat a
     # statutory safeguard — prohibited in the challenge rules, not just discouraged.
     withheld_interests: must_not_be_inferred
+    source: synthetic-register
+    columns:
+      - { name: declaration_id,      type: string,  description: "Unique declaration identifier." }
+      - { name: member_id,           type: string,  description: "Synthetic member identifier. Not a real person." }
+      - { name: authority,           type: string,  description: "The council the member sits on." }
+      - { name: register_held_by,    type: string,  description: "The authority whose Monitoring Officer HOLDS the register. For town and parish councils this is the principal authority, NOT the council itself — writing to the town council would miss the register holder." }
+      - { name: ward,                type: string,  description: "Ward. A quasi-identifier — see quasi_identifiers above." }
+      - { name: role,                type: string,  description: "Role held, e.g. Councillor, Chair, Cabinet Member." }
+      - { name: committee,           type: string,  description: "Committee membership, or (none)." }
+      - { name: declaration_category, type: string, description: "Statutory category, or 'Sensitive interest (withheld under s.32)'." }
+      - { name: declaration_detail,  type: string,  description: "Free-text detail. NULL where the interest is withheld — genuinely absent, never imputable. Treating this as missing data to fill in defeats a statutory safeguard." }
+      - { name: withheld,            type: boolean, description: "True where the interest is lawfully withheld under Localism Act 2011 s.32. The row records THAT an interest exists, never what it is." }
+      - { name: registered_date,     type: date,    description: "Date first entered on the register." }
+      - { name: last_updated_date,   type: date,    description: "Date last amended." }
+
+  # REASSIGNED 2026-08-15. This was fed by `support-routes`, which the D4 review
+  # downgraded to pointer-only ("LGA / policing" is two publishers behind a homepage
+  # URL, so it could not be licence-reviewed as written). Rather than lose the table —
+  # every c04 prototype must be able to point someone at help — it is generated
+  # alongside the register, with SYNTHETIC contact values.
+  #
+  # The synthetic contacts are not a shortcut. Publishing real helpline numbers in a
+  # hackathon corpus invites a prototype to dial one during a demo, and a support line
+  # answering a test call is a real cost to a real service. Teams wire the mechanism
+  # against these; the mechanism is the assessable part.
   - name: support_directory
-    description: Reporting and support routes by area.
+    description: >-
+      Reporting and support routes by area. Contact values are SYNTHETIC and must never
+      be dialled or emailed — see the note above.
     grain: One row per route
     approx_rows: 180
     csv_twin: true
+    source: synthetic-register
+    columns:
+      - { name: route_id,      type: string,  description: "Unique route identifier." }
+      - { name: organisation,  type: string,  description: "Organisation offering the route." }
+      - { name: category,      type: string,  description: "What the route is for, e.g. Reporting abuse, Mental health support." }
+      - { name: contact_type,  type: string,  description: "Telephone, Online form, Email, In person, or 24/7 helpline." }
+      - { name: contact_value, type: string,  description: "SYNTHETIC contact detail. Phone numbers use the Ofcom 0808 drama range; addresses use .invalid. Never live." }
+      - { name: hours,         type: string,  description: "Opening hours." }
+      - { name: coverage,      type: string,  description: "National, Regional, Local authority or Force area." }
+      - { name: is_emergency,  type: boolean, description: "True for emergency routes, which must be surfaced differently from advice lines." }
+      - { name: notes,         type: string,  description: "Handling note." }
+
+  # ADDED 2026-08-15. The `synthetic-abuse` source was declared, licence-cleared and
+  # mirrorable, but NO gold table consumed it — so the corpus the whole challenge turns
+  # on had nowhere to land. Found when the generator was written.
+  - name: message_signals
+    description: >-
+      Synthetic message corpus with the derived signals a triage system would act on.
+      Contains no real messages and no realistic abuse — severity is carried by
+      structure and metadata, not by hostile text. See build/generators/synthetic_abuse.py.
+    grain: One row per message
+    approx_rows: 24000
+    csv_twin: true
+    source: synthetic-abuse
+    contains_individuals: false
+    # The class balance IS the exercise: ~8% flagged, so a classifier predicting
+    # "never abusive" scores 92% accuracy and is worthless.
+    quasi_identifiers: [target_role, channel]
+    k_threshold: 5
+    columns:
+      - { name: message_id,                   type: string,   description: "Unique message identifier." }
+      - { name: received_at,                  type: datetime, description: "When the message arrived, ISO-8601." }
+      - { name: channel,                      type: string,   description: "Public comment, Direct message, Email, Forum post or Contact form." }
+      - { name: target_role,                  type: string,   description: "The ROLE addressed, never a person." }
+      - { name: category,                     type: string,   description: "Triage category. Note 'Robust criticism' is NOT flagged — it is the hard negative, and a classifier that suppresses it has suppressed legitimate scrutiny." }
+      - { name: is_flagged,                   type: boolean,  description: "Ground-truth label. ~8% true — the class imbalance is deliberate." }
+      - { name: urgency,                      type: string,   description: "low, medium, high or critical." }
+      - { name: word_count,                   type: integer,  description: "Words in the message text." }
+      - { name: repeat_sender_count,          type: integer,  description: "Prior messages from the same sender. Persistence is a signal that single-message classification cannot see." }
+      - { name: references_named_individual,  type: boolean,  description: "Whether a named individual is referenced." }
+      - { name: sentiment_score,              type: double,   description: "-1 to 1. Deliberately OVERLAPS between flagged and robust-criticism classes: sentiment alone must not separate them, or the exercise is trivial." }
+      - { name: text,                         type: string,   description: "Short synthetic message text, assembled from obviously-templated neutral fragments. Present so a tokeniser can run end to end; NOT a sample of real language." }
 
 documents:
   - id: nolan-principles
