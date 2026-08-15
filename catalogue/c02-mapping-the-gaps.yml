@@ -41,7 +41,12 @@ sources:
     url: https://www.gov.uk/government/collections/english-indices-of-deprivation
     licence: OGL-3.0
     redistributable: true
-    licence_reviewed: false # D4 — blocks the build until true
+    licence_reviewed: true # D4 cleared 2026-08-15
+    licence_evidence: >-
+      gov.uk publication footer, checked 2026-08-15: "All content is available under
+      the Open Government Licence v3.0, except where otherwise stated."
+      https://www.gov.uk/government/statistics/english-indices-of-deprivation-2019
+      OGL v3.0 permits redistribution including commercially, subject to attribution.
     format: xlsx
     approx_size_mb: 40
     notes: LSOA-level. Domain sub-indices as well as the headline IMD rank.
@@ -53,7 +58,11 @@ sources:
     url: https://data.police.uk/docs/
     licence: OGL-3.0
     redistributable: true
-    licence_reviewed: false
+    licence_reviewed: true # D4 cleared 2026-08-15
+    licence_evidence: >-
+      data.police.uk/about/, checked 2026-08-15: published under the Open Government
+      Licence v3.0, stated explicitly with a link to the National Archives licence
+      text. Acknowledgement is to the Single Online Home National Digital Team.
     format: csv
     approx_size_mb: 900
     notes: >-
@@ -74,19 +83,44 @@ sources:
       Licensing unconfirmed — this is one of the three sources named in decision D4.
       Until reviewed, the build emits a pointer and loader code, never bytes.
 
+  # REVIEWED 2026-08-15 AND HELD — three publishers behind one flag, and they do not
+  # agree. This is the same shape as `defra` in c01 and `metoffice` in c05: a category
+  # is not a source, and one licence flag cannot describe three governments.
+  #
+  #   SIMD  (Scottish Government) — OGL v3.0 CONFIRMED. gov.scot footer, checked
+  #         2026-08-15: "All content is available under the Open Government Licence
+  #         v3.0, except for graphic assets and where otherwise stated." Note that
+  #         carve-out is WIDER than the standard gov.uk one — it excludes graphic
+  #         assets outright, so charts and map images from the publication are not
+  #         covered even though the data is.
+  #
+  #   NIMDM (NISRA) — NOT CONFIRMED, and this is what holds the whole entry. The NISRA
+  #         page states only "© Crown Copyright" with NO licence named. Crown copyright
+  #         is an assertion of ownership, not a grant of reuse rights, and it is not
+  #         interchangeable with OGL. Northern Ireland material has repeatedly turned
+  #         out to carry separate terms — see the NI postcode exclusion recorded on
+  #         `ons-geography` above. Contact deprivation@nisra.gov.uk to establish it.
+  #
+  #   WIMD  (Welsh Government) — not checked.
+  #
+  # To clear: split into three sources, one per nation. SIMD can go first and unblock
+  # the Scottish half; NIMDM should be assumed restricted until NISRA says otherwise.
   - id: devolved-indices
     provenance: real
     name: Devolved deprivation indices (SIMD, WIMD, NIMDM)
     publisher: Scottish Government / Welsh Government / NISRA
     url: https://www.gov.scot/collections/scottish-index-of-multiple-deprivation-2020/
-    licence: OGL-3.0
-    redistributable: true
+    licence: review-required   # downgraded from OGL-3.0 — see above; only SIMD is confirmed
+    redistributable: false
     licence_reviewed: false
     format: csv
     approx_size_mb: 25
     notes: >-
       Four nations, four rulebooks — the indices are NOT directly comparable across
       borders. Any cross-nation gold table must carry a caveat column, not a silent join.
+
+      BUNDLES THREE PUBLISHERS. Reviewed 2026-08-15: SIMD is confirmed OGL, NIMDM
+      names no licence at all, WIMD unchecked. Split per nation before clearing.
 
   - id: ons-geography
     provenance: real
@@ -95,10 +129,25 @@ sources:
     url: https://geoportal.statistics.gov.uk/
     licence: OGL-3.0
     redistributable: true
-    licence_reviewed: false
+    licence_reviewed: true # D4 cleared 2026-08-15, WITH the conditions below
+    licence_evidence: >-
+      ons.gov.uk/methodology/geography/licences, checked 2026-08-15. Digital boundaries
+      and lookups are OGL, and the statements in `attribution_required` are quoted from
+      that page — OGL attribution alone is NOT sufficient for these products, because
+      they contain Ordnance Survey material.
+    attribution_required:
+      - "Source: Office for National Statistics licensed under the Open Government Licence v.3.0"
+      - "Contains OS data (c) Crown copyright and database right 2026"
     format: geojson
     approx_size_mb: 300
-    notes: Boundaries and lookups. Simplify geometries for the gold layer.
+    notes: >-
+      Boundaries and lookups. Simplify geometries for the gold layer.
+
+      DO NOT MIRROR POSTCODE OR UPRN PRODUCTS. They carry conditions the boundaries do
+      not — Royal Mail and GeoPlace acknowledgements, and Northern Ireland postcodes
+      (BT prefix) need a separate commercial licence from Land and Property Services.
+      Nothing in this challenge needs them, and treating the whole portal as uniformly
+      OGL is the specific mistake this note exists to prevent.
 
 # Analysis-ready tables. These are what nearly every team actually uses, and what the
 # CSV twins are generated from — which matters because free Tableau Public and every

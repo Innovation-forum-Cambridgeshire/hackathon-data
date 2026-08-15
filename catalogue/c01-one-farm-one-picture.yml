@@ -50,12 +50,37 @@ sources:
     url: https://catalogue.ceda.ac.uk/
     licence: OGL-3.0
     redistributable: true
-    licence_reviewed: false   # D4 — blocks mirroring until true
+    licence_reviewed: true # D4 cleared 2026-08-15
+    licence_evidence: >-
+      CEDA catalogue record for MIDAS Open, checked 2026-08-15: "All of these data are
+      provided under an Open Government Licence." Note this clears the LICENCE, not
+      access — CEDA may still require an account for bulk download. Access friction and
+      redistribution rights are separate questions and only the second one gates
+      mirroring.   # D4 — blocks mirroring until true
     format: csv
     approx_size_mb: 1200
     notes: >-
       Requires a free CEDA account to fetch, but the data is OGL. Mirror a curated
       station subset, not the national archive.
+  # REVIEWED 2026-08-15 AND DELIBERATELY NOT CLEARED — this one is a trap.
+  #
+  # The platform-level licence checks out: environment.data.gov.uk states OGL v3.0.
+  # It also says "except where otherwise stated", and this entry bundles three
+  # different datasets behind one flag, one of which is the problem:
+  #
+  #   FIELD BOUNDARIES are derived from Ordnance Survey MasterMap. RPA/Defra parcel
+  #   data carries OS derived-data conditions, and OS-derived material is exactly the
+  #   category the platform's "except where otherwise stated" is there to carve out.
+  #   Mirroring it as plain OGL could breach OS licensing at scale and publicly.
+  #
+  # Soils and water are very likely fine. Clearing all three together because two of
+  # them are fine is how the Met Office error happened, so: SPLIT THIS into one source
+  # per dataset and review each. Soils and water should clear quickly; field
+  # boundaries need the OS position confirmed, and may need to stay pointer-only.
+  #
+  # Compare `ons-geography` in c02, which IS cleared but carries an explicit
+  # "Contains OS data (c) Crown copyright and database right 2026" attribution and a
+  # do-not-mirror note on postcode and UPRN products. That is the shape this needs.
   - id: defra
     provenance: real
     name: Defra data (soils, water, field boundaries)
@@ -63,9 +88,13 @@ sources:
     url: https://environment.data.gov.uk/
     licence: OGL-3.0
     redistributable: true
-    licence_reviewed: false   # D4 — blocks mirroring until true
+    licence_reviewed: false   # D4 — see the comment above; do NOT flip without splitting
     format: geojson
     approx_size_mb: 450
+    notes: >-
+      BUNDLES THREE DATASETS behind one licence flag. Reviewed 2026-08-15 and held:
+      field boundaries are OS-derived and need the Ordnance Survey position confirmed
+      before any mirroring. Split per dataset before clearing.
   - id: ahdb
     provenance: real
     name: AHDB market intelligence
