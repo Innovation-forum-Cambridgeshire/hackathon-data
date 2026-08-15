@@ -1,0 +1,238 @@
+{
+  "challenge": "c04-safe-in-the-open",
+  "title": "Safe in the Open",
+  "version": "v1",
+  "publisher": "Innovation Forum",
+  "contact": "info@inno-forum.co.uk",
+  "attribution": "Contains public sector information licensed under the Open Government Licence v3.0.",
+  "handle_with_care": "Public information and the participant's explicit consent only. Data protection by design, a DPIA before any live data, and a written data-sharing agreement following the ICO Data Sharing Code. No private citizens, no bulk collection, no council data or systems. Signpost support, never amplify harm.",
+  "base_url": "https://data.inno-forum.co.uk/c04-safe-in-the-open/v1",
+  "licence_note": "Sources not listed under 'mirrored' are NOT redistributed by us. Use the loader code in the repo to fetch them from the original publisher.",
+  "mirrored": [
+    "nolan-principles",
+    "synthetic-abuse",
+    "synthetic-register"
+  ],
+  "pointer_only": [
+    "council-minutes",
+    "public-posts",
+    "support-routes",
+    "toxicity-models"
+  ],
+  "tables": [
+    {
+      "name": "synthetic_councillor_register",
+      "description": "Synthetic register of interests matching the shape of a real one. No real member's data is present.",
+      "grain": "One row per member \u00d7 declaration",
+      "approx_rows": 4200,
+      "columns": [
+        {
+          "name": "declaration_id",
+          "type": "string",
+          "description": "Unique declaration identifier."
+        },
+        {
+          "name": "member_id",
+          "type": "string",
+          "description": "Synthetic member identifier. Not a real person."
+        },
+        {
+          "name": "authority",
+          "type": "string",
+          "description": "The council the member sits on."
+        },
+        {
+          "name": "register_held_by",
+          "type": "string",
+          "description": "The authority whose Monitoring Officer HOLDS the register. For town and parish councils this is the principal authority, NOT the council itself \u2014 writing to the town council would miss the register holder."
+        },
+        {
+          "name": "ward",
+          "type": "string",
+          "description": "Ward. A quasi-identifier \u2014 see quasi_identifiers above."
+        },
+        {
+          "name": "role",
+          "type": "string",
+          "description": "Role held, e.g. Councillor, Chair, Cabinet Member."
+        },
+        {
+          "name": "committee",
+          "type": "string",
+          "description": "Committee membership, or (none)."
+        },
+        {
+          "name": "declaration_category",
+          "type": "string",
+          "description": "Statutory category, or 'Sensitive interest (withheld under s.32)'."
+        },
+        {
+          "name": "declaration_detail",
+          "type": "string",
+          "description": "Free-text detail. NULL where the interest is withheld \u2014 genuinely absent, never imputable. Treating this as missing data to fill in defeats a statutory safeguard."
+        },
+        {
+          "name": "withheld",
+          "type": "boolean",
+          "description": "True where the interest is lawfully withheld under Localism Act 2011 s.32. The row records THAT an interest exists, never what it is."
+        },
+        {
+          "name": "registered_date",
+          "type": "date",
+          "description": "Date first entered on the register."
+        },
+        {
+          "name": "last_updated_date",
+          "type": "date",
+          "description": "Date last amended."
+        }
+      ],
+      "parquet": "https://data.inno-forum.co.uk/c04-safe-in-the-open/v1/gold/synthetic_councillor_register.parquet",
+      "csv": "https://data.inno-forum.co.uk/c04-safe-in-the-open/v1/gold/synthetic_councillor_register.csv"
+    },
+    {
+      "name": "support_directory",
+      "description": "Reporting and support routes by area. Contact values are SYNTHETIC and must never be dialled or emailed \u2014 see the note above.",
+      "grain": "One row per route",
+      "approx_rows": 180,
+      "columns": [
+        {
+          "name": "route_id",
+          "type": "string",
+          "description": "Unique route identifier."
+        },
+        {
+          "name": "organisation",
+          "type": "string",
+          "description": "Organisation offering the route."
+        },
+        {
+          "name": "category",
+          "type": "string",
+          "description": "What the route is for, e.g. Reporting abuse, Mental health support."
+        },
+        {
+          "name": "contact_type",
+          "type": "string",
+          "description": "Telephone, Online form, Email, In person, or 24/7 helpline."
+        },
+        {
+          "name": "contact_value",
+          "type": "string",
+          "description": "SYNTHETIC contact detail. Phone numbers use the Ofcom 0808 drama range; addresses use .invalid. Never live."
+        },
+        {
+          "name": "hours",
+          "type": "string",
+          "description": "Opening hours."
+        },
+        {
+          "name": "coverage",
+          "type": "string",
+          "description": "National, Regional, Local authority or Force area."
+        },
+        {
+          "name": "is_emergency",
+          "type": "boolean",
+          "description": "True for emergency routes, which must be surfaced differently from advice lines."
+        },
+        {
+          "name": "notes",
+          "type": "string",
+          "description": "Handling note."
+        }
+      ],
+      "parquet": "https://data.inno-forum.co.uk/c04-safe-in-the-open/v1/gold/support_directory.parquet",
+      "csv": "https://data.inno-forum.co.uk/c04-safe-in-the-open/v1/gold/support_directory.csv"
+    },
+    {
+      "name": "message_signals",
+      "description": "Synthetic message corpus with the derived signals a triage system would act on. Contains no real messages and no realistic abuse \u2014 severity is carried by structure and metadata, not by hostile text. See build/generators/synthetic_abuse.py.",
+      "grain": "One row per message",
+      "approx_rows": 24000,
+      "columns": [
+        {
+          "name": "message_id",
+          "type": "string",
+          "description": "Unique message identifier."
+        },
+        {
+          "name": "received_at",
+          "type": "datetime",
+          "description": "When the message arrived, ISO-8601."
+        },
+        {
+          "name": "channel",
+          "type": "string",
+          "description": "Public comment, Direct message, Email, Forum post or Contact form."
+        },
+        {
+          "name": "target_role",
+          "type": "string",
+          "description": "The ROLE addressed, never a person."
+        },
+        {
+          "name": "category",
+          "type": "string",
+          "description": "Triage category. Note 'Robust criticism' is NOT flagged \u2014 it is the hard negative, and a classifier that suppresses it has suppressed legitimate scrutiny."
+        },
+        {
+          "name": "is_flagged",
+          "type": "boolean",
+          "description": "Ground-truth label. ~8% true \u2014 the class imbalance is deliberate."
+        },
+        {
+          "name": "urgency",
+          "type": "string",
+          "description": "low, medium, high or critical."
+        },
+        {
+          "name": "word_count",
+          "type": "integer",
+          "description": "Words in the message text."
+        },
+        {
+          "name": "repeat_sender_count",
+          "type": "integer",
+          "description": "Prior messages from the same sender. Persistence is a signal that single-message classification cannot see."
+        },
+        {
+          "name": "references_named_individual",
+          "type": "boolean",
+          "description": "Whether a named individual is referenced."
+        },
+        {
+          "name": "sentiment_score",
+          "type": "double",
+          "description": "-1 to 1. Deliberately OVERLAPS between flagged and robust-criticism classes: sentiment alone must not separate them, or the exercise is trivial."
+        },
+        {
+          "name": "text",
+          "type": "string",
+          "description": "Short synthetic message text, assembled from obviously-templated neutral fragments. Present so a tokeniser can run end to end; NOT a sample of real language."
+        }
+      ],
+      "parquet": "https://data.inno-forum.co.uk/c04-safe-in-the-open/v1/gold/message_signals.parquet",
+      "csv": "https://data.inno-forum.co.uk/c04-safe-in-the-open/v1/gold/message_signals.csv"
+    }
+  ],
+  "documents": [
+    {
+      "id": "nolan-principles",
+      "name": "The Seven Principles of Public Life",
+      "original": "https://data.inno-forum.co.uk/c04-safe-in-the-open/v1/docs/original/nolan-principles.pdf",
+      "markdown": "https://data.inno-forum.co.uk/c04-safe-in-the-open/v1/docs/text/nolan-principles.md"
+    },
+    {
+      "id": "ico-data-sharing-code",
+      "name": "ICO Data Sharing Code of Practice",
+      "original": "https://data.inno-forum.co.uk/c04-safe-in-the-open/v1/docs/original/ico-data-sharing-code.pdf",
+      "markdown": "https://data.inno-forum.co.uk/c04-safe-in-the-open/v1/docs/text/ico-data-sharing-code.md"
+    }
+  ],
+  "usage": {
+    "duckdb": "INSTALL httpfs; LOAD httpfs; SELECT * FROM read_parquet('https://data.inno-forum.co.uk/c04-safe-in-the-open/v1/gold/<table>.parquet');",
+    "python": "import pandas as pd; pd.read_parquet('https://data.inno-forum.co.uk/c04-safe-in-the-open/v1/gold/<table>.parquet')",
+    "note": "No credentials. No account. Anonymous HTTPS."
+  }
+}

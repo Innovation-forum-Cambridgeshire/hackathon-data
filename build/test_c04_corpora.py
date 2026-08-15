@@ -138,6 +138,48 @@ def main() -> int:
             "classification cannot see, and the corpus should reward finding it"
         )
 
+    # THE CORPUS MUST NOT BE TRIVIALLY SEPARABLE.
+    #
+    # The first version of this generator was. Executing the challenge notebook
+    # against it produced 0.998 recall at 0.998 precision from a plain logistic
+    # regression, because repeat_sender_count was 2-39 for flagged and 1-3 for
+    # everything else — the feature WAS the label. urgency was disjoint the same way.
+    #
+    # That is not a cosmetic flaw. c04 exists to teach that accuracy misleads under
+    # class imbalance and that precision and recall trade against each other. On a
+    # separable corpus there is no trade-off to explore, a team "solves" it in ten
+    # minutes, and they leave having learned the opposite of the intended lesson.
+    #
+    # So the overlap is asserted, not assumed, on every feature a team would reach
+    # for first.
+    for feature in ("repeat_sender_count", "urgency", "sentiment_score"):
+        flagged_vals = {r[mi[feature]] for r in flagged}
+        other_vals = {r[mi[feature]] for r in msg_rows if not r[mi["is_flagged"]]}
+        if isinstance(next(iter(flagged_vals)), str):
+            if not (flagged_vals & other_vals):
+                failures.append(
+                    f"{feature}: flagged and non-flagged share no values "
+                    f"({sorted(flagged_vals)} vs {sorted(other_vals)}) — the feature "
+                    f"IS the label, making the classification exercise trivial"
+                )
+        else:
+            lo = max(min(flagged_vals), min(other_vals))
+            hi = min(max(flagged_vals), max(other_vals))
+            if hi <= lo:
+                failures.append(
+                    f"{feature}: flagged range does not overlap non-flagged — the "
+                    f"feature IS the label, making the exercise trivial"
+                )
+            else:
+                # An overlap that exists but holds almost no rows is no better.
+                in_band = sum(1 for r in msg_rows if lo <= r[mi[feature]] <= hi)
+                if in_band / len(msg_rows) < 0.25:
+                    failures.append(
+                        f"{feature}: only {in_band/len(msg_rows):.0%} of rows fall in the "
+                        f"overlap band [{lo}, {hi}] — near-separable, so a threshold on "
+                        f"this one feature would score far too well"
+                    )
+
     if failures:
         print("c04 corpora FAILED:", file=sys.stderr)
         for f in failures:
