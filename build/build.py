@@ -41,6 +41,11 @@ OPEN_LICENCES = {"OGL-3.0", "CC0-1.0", "CC-BY-4.0", "ODbL-1.0", "public-domain"}
 # Above this, a full CSV twin is unhelpful — ship parquet plus a sample.
 CSV_TWIN_MAX_ROWS = 1_000_000
 
+# k-anonymity floors (compliance design §D; ISO/IEC 20889 terminology).
+MIN_K = 2          # k=1 means a row is unique — never publishable
+DEFAULT_K = 5      # published open data floor
+HEALTH_K = 10      # health-adjacent (challenge 05)
+
 # GitHub release asset hard limit.
 MAX_ASSET_BYTES = 2 * 1024**3
 
@@ -155,6 +160,39 @@ def validate(cat: dict) -> Result:
                 r.error(f"{challenge}/{name}: blocked_by {blocker!r} is not a known source id")
             elif blocker not in mirrorable:
                 r.warn(f"{challenge}/{name}: blocked — source {blocker!r} is not yet mirrorable.")
+
+        # --- k-anonymity declarations (compliance design §D) ---
+        # The gold layer is published as ANONYMISED, not pseudonymised — no surrogate
+        # map survives a build. That claim rests on k-anonymity, not on name removal,
+        # so any table describing individuals must declare the quasi-identifier set.
+        # It is a human judgement (what could this be linked against?) and is
+        # deliberately NOT inferred here.
+        if tbl.get("contains_individuals"):
+            qids = tbl.get("quasi_identifiers")
+            if not qids:
+                r.error(
+                    f"{challenge}/{name}: contains_individuals: true but no "
+                    f"'quasi_identifiers' declared. Anonymisation cannot be claimed without "
+                    f"a quasi-identifier set — see compliance design §D."
+                )
+            elif not isinstance(qids, list) or len(qids) == 0:
+                r.error(f"{challenge}/{name}: 'quasi_identifiers' must be a non-empty list")
+
+            k = tbl.get("k_threshold", DEFAULT_K)
+            if not isinstance(k, int) or k < MIN_K:
+                r.error(
+                    f"{challenge}/{name}: k_threshold must be an integer >= {MIN_K}; got {k!r}"
+                )
+            if sens.get("health_adjacent") and isinstance(k, int) and k < HEALTH_K:
+                r.error(
+                    f"{challenge}/{name}: health-adjacent data requires k_threshold >= {HEALTH_K}; "
+                    f"got {k}"
+                )
+            if not tbl.get("generalisation"):
+                r.warn(
+                    f"{challenge}/{name}: no 'generalisation' map declared. Without a coarser "
+                    f"column to fall back on, remediation can only suppress rows."
+                )
 
     return r
 

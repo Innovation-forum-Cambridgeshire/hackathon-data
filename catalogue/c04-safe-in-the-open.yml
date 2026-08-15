@@ -24,7 +24,11 @@ handle_with_care: >-
 
 
 sensitivity:
-  personal_data: false
+  # CORRECTED 2026-08-15. A register of interests is one row per identifiable living
+  # individual; "already public" does not remove it from UK GDPR (cf. Catt v UK, ECtHR
+  # 2019 — aggregating public-source data engages Art 8). The build now FAILS on this,
+  # which is the intended control: c04 must not ship before the DPIA and LIA exist.
+  personal_data: true
   special_category: false
   note: >-
     HIGHEST CARE of the five. Councillors acting in public office are public figures in that
@@ -94,6 +98,18 @@ gold_tables:
     grain: One row per member × declaration
     approx_rows: 4200
     csv_twin: true
+    contains_individuals: true
+    # Human judgement, not inferred: these are the columns that could re-identify a
+    # member by linkage against council websites, press coverage or election results.
+    quasi_identifiers: [ward, role, committee, party]
+    k_threshold: 5
+    generalisation:
+      ward: district        # coarser geography preserves rows; suppression is last resort
+      committee: committee_type
+    # Localism Act 2011 s.32 lets a member withhold a sensitive interest where
+    # disclosure risks violence or intimidation. Inferring those gaps would defeat a
+    # statutory safeguard — prohibited in the challenge rules, not just discouraged.
+    withheld_interests: must_not_be_inferred
   - name: support_directory
     description: Reporting and support routes by area.
     grain: One row per route
