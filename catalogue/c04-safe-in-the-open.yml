@@ -24,11 +24,15 @@ handle_with_care: >-
 
 
 sensitivity:
-  # CORRECTED 2026-08-15. A register of interests is one row per identifiable living
-  # individual; "already public" does not remove it from UK GDPR (cf. Catt v UK, ECtHR
-  # 2019 — aggregating public-source data engages Art 8). The build now FAILS on this,
-  # which is the intended control: c04 must not ship before the DPIA and LIA exist.
-  personal_data: true
+  # RESOLVED 2026-08-15 by switching to a synthetic corpus (see synthetic-register and
+  # synthetic-abuse below). No real individual's data is published, so personal_data is
+  # false as a FACT about what ships — not as an assumption.
+  #
+  # The real sources remain catalogued as reference-only pointers: teams may read the
+  # published registers at source, but we do not mirror, restructure or republish them.
+  # Aggregating public records into a queryable dataset is a new processing operation
+  # (Catt v UK, ECtHR 2019) and that is precisely what we are declining to do.
+  personal_data: false
   special_category: false
   note: >-
     HIGHEST CARE of the five. Councillors acting in public office are public figures in that
@@ -38,6 +42,37 @@ sensitivity:
 
 
 sources:
+  - id: synthetic-register
+    provenance: synthetic
+    name: Synthetic councillor register
+    publisher: Innovation Forum x R1X
+    url: https://github.com/Innovation-forum-Cambridgeshire/hackathon-data
+    licence: CC0-1.0
+    redistributable: true
+    licence_reviewed: true
+    format: parquet
+    approx_size_mb: 3
+    notes: >-
+      Generated to match the SHAPE of a published register of interests — ward, role,
+      committee, declaration category — without deriving from any real member. Seeded
+      and reproducible so judging is fair. Replaces the real register entirely.
+
+  - id: synthetic-abuse
+    provenance: synthetic
+    name: Synthetic abuse / toxicity corpus
+    publisher: Innovation Forum x R1X
+    url: https://github.com/Innovation-forum-Cambridgeshire/hackathon-data
+    licence: CC0-1.0
+    redistributable: true
+    licence_reviewed: true
+    format: parquet
+    approx_size_mb: 8
+    notes: >-
+      Generated messages spanning the abuse categories the challenge targets. Replaces
+      any real social content: republishing real posts would breach platform terms and
+      risks Protection from Harassment Act 1997, Defamation Act 2013 and misuse of
+      private information, none of which a lawful basis under UK GDPR would cure.
+
   - id: nolan-principles
     provenance: real
     name: Seven Principles of Public Life
@@ -49,6 +84,7 @@ sources:
     format: pdf
     approx_size_mb: 1
   - id: council-minutes
+    reference_only: true          # read at source; never mirrored or restructured
     provenance: real
     name: Minutes, votes and registers of interests
     publisher: Local authorities
@@ -62,6 +98,7 @@ sources:
       Public record. Mirror as documents plus extracted markdown; no inference about
       individuals beyond their public role.
   - id: public-posts
+    reference_only: true          # NEVER collected, mirrored or republished
     provenance: real
     name: Local news and public posts
     publisher: Various
@@ -98,12 +135,14 @@ sources:
       Signposting directory. Every prototype must be able to point someone at help.
 
 gold_tables:
-  - name: councillor_register_public
-    description: Public register of interests, structured.
+  - name: synthetic_councillor_register
+    description: >-
+      Synthetic register of interests matching the shape of a real one. No real member's
+      data is present.
     grain: One row per member × declaration
     approx_rows: 4200
     csv_twin: true
-    contains_individuals: true
+    contains_individuals: false   # synthetic — no real person is described
     # Human judgement, not inferred: these are the columns that could re-identify a
     # member by linkage against council websites, press coverage or election results.
     quasi_identifiers: [ward, role, committee, party]

@@ -14,8 +14,16 @@ routes = [
 # inside the free allowance at hackathon scale, and GitHub charges nothing for
 # release-asset egress, so there is no metered cost anywhere in this path.
 
+# Observability is DISABLED deliberately. Worker logs capture client IP addresses, which
+# are personal data under UK GDPR — so enabling it would require a lawful basis, a
+# retention period, a privacy-notice entry and an international-transfer assessment, for
+# a service whose entire published dataset is anonymised. The cheapest compliance posture
+# is to not collect it. Turn this on only alongside those four things.
 [observability]
-enabled = true
+enabled = false
 
-[placement]
-mode = "smart"
+# Smart placement is DISABLED deliberately. It lets Cloudflare relocate where the Worker
+# executes, which makes data-residency and transfer assessment harder to state truthfully.
+# This Worker only proxies and caches public files, so there is nothing to gain from it.
+# [placement]
+# mode = "smart"

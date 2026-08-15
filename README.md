@@ -121,6 +121,47 @@ validation rather than warning.
 
 ---
 
+## How we handle data about people
+
+Short version: **we don't publish any.**
+
+**Is any of this real people's data?**
+No. Where a challenge needs data that would otherwise describe individuals — challenge 04's
+register of interests, and challenge 05's care cohort — we generate a **synthetic** version
+instead. It matches the shape of the real thing so your prototype is realistic, but it
+describes nobody. The generators and their seeds are in this repo, so anyone can check.
+
+**Why not use the real published registers? They're already public.**
+Because "already public" does more work in conversation than it does in law. Registers of
+members' interests are published under the Open Government Licence, so copying them is
+permitted — but turning scattered public records into a structured, searchable dataset is a
+new thing to do with them, with its own risks. The European Court of Human Rights took that
+view in *Catt v United Kingdom* (2019). We'd rather not do it when synthetic data works.
+
+**Could I be identified from anything here?**
+No, and we test it rather than assume it. Published tables are checked for **k-anonymity**:
+no combination of columns may pick out fewer than five rows (ten for health-related data).
+Where a combination is too revealing, the build widens it — a ward becomes a district — or
+drops the row. A table that can't reach the threshold doesn't ship. Nothing we publish can be
+reversed back to a person: no key exists, because we never keep one.
+
+**What about the abusive messages in challenge 04?**
+Also synthetic. Republishing real abuse would breach the platforms' own terms, and could
+engage harassment and defamation law regardless of who wrote it first. Generated messages
+serve the challenge just as well without putting anyone at risk.
+
+**Can I bring my own data?**
+For most challenges, yes, and it's often what makes an entry stand out. Challenge 04 is the
+exception: **do not collect posts, comments or messages about real people**, and don't name
+or identify a real councillor, officer or member of the public in your prototype or demo.
+Full rules come with the challenge brief. If you're unsure, ask a mentor before you build it.
+
+**Who's responsible for this data?**
+Innovation Forum is the data controller and publisher. R1X is our technology partner and
+operates the platform on our behalf. Questions: **info@inno-forum.co.uk**.
+
+---
+
 ## Something wrong with the data?
 
 Open an issue. During an event, label it `during-event` and it gets triaged first.
