@@ -163,7 +163,7 @@ gold_tables:
       - { name: area_ha,                 type: double,  description: "Field area in hectares. Log-normal — a few large fields dominate any unweighted mean." }
       - { name: nearest_station_id,      type: string,  description: "Joins to station_weather.station_id." }
       - { name: distance_to_station_km,  type: double,  description: "Distance to that station, km. Up to 28km — a weather reading 28km away is a much weaker proxy than one at 1km, and nothing else in the data says so." }
-      - { name: ndvi,                    type: double,  description: "Vegetation index, 0–1. NULL on ~21% of field-days because cloud blocks optical satellite readings. The gaps run in blocks of 2–14 days, NOT at random: dropping nulls therefore biases the sample toward clear weather, which is hotter and drier than average." }
+      - { name: ndvi,                    type: double,  description: "Vegetation index, 0–1. NULL on ~21% of field-days because cloud blocks optical satellite readings. The gaps run in blocks of 2–18 days AND fall on the colder days at that field's own station, because cloud depresses daytime temperature. Dropping nulls therefore shifts the mean temperature of what survives by about +5C — dropna() hands you a sample of sunshine." }
       - { name: soil_moisture_pct,       type: double,  description: "Soil moisture, percent." }
 
   - name: station_weather

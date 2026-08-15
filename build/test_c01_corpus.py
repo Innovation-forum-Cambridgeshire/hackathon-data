@@ -149,6 +149,34 @@ def main() -> int:
             "so dropping them is harmless and the sampling-bias lesson disappears."
         )
 
+    # Clustering alone is NOT enough, and this assertion exists because the first
+    # version got that wrong. The gaps have to be clustered ON SOMETHING THAT
+    # MATTERS, or dropna() is unbiased in practice and the claim in the catalogue
+    # and the notebook is one the data does not support. Scattering runs at random
+    # dates left the surviving days only 0.15C warmer; cloud now falls on the
+    # colder days at each field's own station, which is realistic and makes the
+    # loss informative.
+    temps: dict = {}
+    for r in wr:
+        temps.setdefault((r[wi["station_id"]], r[wi["observation_date"]]), r[wi["temp_max_c"]])
+
+    kept_t, lost_t = [], []
+    for r in fr:
+        t = temps.get((r[fi["nearest_station_id"]], r[fi["observation_date"]]))
+        if t is None:
+            continue
+        (lost_t if r[fi["ndvi"]] is None else kept_t).append(t)
+
+    if kept_t and lost_t:
+        bias = sum(kept_t) / len(kept_t) - sum(lost_t) / len(lost_t)
+        if bias < 1.0:
+            failures.append(
+                f"dropping NDVI nulls shifts mean temperature by only {bias:+.2f}C. "
+                f"The gaps are clustered but not on anything that matters, so dropna() "
+                f"is effectively unbiased and the sampling-bias lesson is a claim the "
+                f"data does not support."
+            )
+
     if failures:
         print("c01 corpus FAILED:", file=sys.stderr)
         for f in failures:
