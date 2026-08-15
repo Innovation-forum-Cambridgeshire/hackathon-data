@@ -193,6 +193,42 @@ def validate(cat: dict) -> Result:
                 f"a recognised open licence. Recognised: {', '.join(sorted(OPEN_LICENCES))}"
             )
 
+        # A review has to be auditable. `licence_reviewed: true` on its own is one
+        # person's recollection: it records that somebody once believed the licence
+        # was fine, not what they checked or when. That is a thin basis for publicly
+        # redistributing someone else's data, and it is unfalsifiable later — nobody
+        # can re-check a claim with no source.
+        #
+        # `licence_evidence` must therefore carry where the licence was read. The
+        # review that introduced this found `metoffice` declared OGL-3.0 and
+        # redistributable when the Met Office's own reuse page prices commercial data
+        # under the EUMETNET licence. The flag had simply been set.
+        if reviewed and not src.get("licence_evidence"):
+            r.error(
+                f"{challenge}/{sid}: licence_reviewed: true with no 'licence_evidence'. "
+                f"Cite where the licence was read (URL, and the statement relied on) — "
+                f"an unevidenced review cannot be re-checked by anyone."
+            )
+
+        # A cleared synthetic source is a promise that this data ships. Nothing checked
+        # whether the generator behind it had ever been written, and for c04 and c05 it
+        # had not — both catalogues have declared synthetic corpora as mirrorable since
+        # c04 was converted to synthetic, with no generator in the repo. The manifest
+        # published URLs for files that could never be produced.
+        if redistributable and reviewed and src.get("provenance") == "synthetic":
+            gen = src.get("generator")
+            if not gen:
+                r.warn(
+                    f"{challenge}/{sid}: cleared synthetic source with no 'generator' — "
+                    f"the corpus does not exist and cannot be built. The catalogue is "
+                    f"promising data the repo cannot produce; it ships pointer-only."
+                )
+            elif not (Path(__file__).resolve().parent / "generators" / f"{gen}.py").exists():
+                r.error(
+                    f"{challenge}/{sid}: declares generator {gen!r} but "
+                    f"build/generators/{gen}.py does not exist."
+                )
+
         if redistributable and not reviewed:
             r.warn(
                 f"{challenge}/{sid}: awaiting licence review (decision D4). Will ship as "
@@ -594,13 +630,26 @@ def generate_tables(cat: dict, manifest: dict, gold_dir: Path, seed: int) -> dic
             )
             continue
 
-        module_name = source_id.replace("-", "_")
+        # A synthetic source names its generator explicitly. Deriving the module name
+        # from the source id was implicit coupling — renaming either one silently
+        # broke the other — and it gave no way to say "declared but not built yet",
+        # which is the true state of the c04 and c05 corpora.
+        module_name = src.get("generator")
+        if not module_name:
+            print(
+                f"  NOTE: {source_id} is a cleared synthetic source with no 'generator' "
+                f"declared, so the corpus does not exist yet. Shipping pointer-only. "
+                f"This is a promise the catalogue is making and the repo has not kept — "
+                f"see the validate warning."
+            )
+            continue
+
         try:
             generator = __import__(module_name)
         except ImportError:
             print(
-                f"  ERROR: {source_id} is synthetic and cleared for mirroring, but no "
-                f"generator module build/generators/{module_name}.py exists.",
+                f"  ERROR: {source_id} declares generator {module_name!r} but "
+                f"build/generators/{module_name}.py does not exist or failed to import.",
                 file=sys.stderr,
             )
             return None
