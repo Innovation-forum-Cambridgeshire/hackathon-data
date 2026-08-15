@@ -1,0 +1,205 @@
+{
+  "challenge": "c05-ahead-of-the-heat",
+  "title": "Ahead of the Heat",
+  "version": "v1",
+  "publisher": "Innovation Forum",
+  "contact": "info@inno-forum.co.uk",
+  "attribution": "Contains public sector information licensed under the Open Government Licence v3.0.",
+  "handle_with_care": "Health data about vulnerable adults \u2014 consent and data protection by design (UK GDPR), data minimisation and safeguarding throughout. The tool supports staff and carers; it never replaces professional judgement, and must fail safe.",
+  "base_url": "https://data.inno-forum.co.uk/c05-ahead-of-the-heat/v1",
+  "licence_note": "Sources not listed under 'mirrored' are NOT redistributed by us. Use the loader code in the repo to fetch them from the original publisher.",
+  "mirrored": [
+    "awhp",
+    "synthetic-cohort",
+    "ukhsa-alerts"
+  ],
+  "pointer_only": [
+    "charity-service",
+    "metoffice"
+  ],
+  "tables": [
+    {
+      "name": "alert_history",
+      "description": "Heat-health alert level by region and day. SYNTHETIC \u2014 generated with a realistic seasonal pattern, not the UKHSA feed. Switch to `ukhsa-alerts` once a fetcher exists.",
+      "grain": "One row per region \u00d7 day",
+      "approx_rows": 26298,
+      "columns": [
+        {
+          "name": "region",
+          "type": "string",
+          "description": "One of the nine English regions UKHSA issues alerts for."
+        },
+        {
+          "name": "alert_date",
+          "type": "date",
+          "description": "Alert day, ISO-8601."
+        },
+        {
+          "name": "alert_level",
+          "type": "string",
+          "description": "Green, Yellow, Amber or Red."
+        },
+        {
+          "name": "in_alert_season",
+          "type": "boolean",
+          "description": "True 1 Jun \u2013 30 Sep, the core heat alerting season in England. Outside it the level is always Green \u2014 absence of an alert is not evidence of low risk."
+        },
+        {
+          "name": "consecutive_days_at_level",
+          "type": "integer",
+          "description": "Run length at the current level. Sustained heat matters more than a single hot day, and a single-row read misses that entirely."
+        },
+        {
+          "name": "issued_at",
+          "type": "string",
+          "description": "Issue timestamp, ISO-8601."
+        }
+      ],
+      "parquet": "https://data.inno-forum.co.uk/c05-ahead-of-the-heat/v1/gold/alert_history.parquet",
+      "csv": "https://data.inno-forum.co.uk/c05-ahead-of-the-heat/v1/gold/alert_history.csv"
+    },
+    {
+      "name": "synthetic_cohort",
+      "description": "Synthetic cohort with risk factors and care setting. No real person is described. Health-adjacent, so k >= 10 rather than the default 5.",
+      "grain": "One row per synthetic person",
+      "approx_rows": 5000,
+      "columns": [
+        {
+          "name": "person_id",
+          "type": "string",
+          "description": "Synthetic identifier. Not a real person."
+        },
+        {
+          "name": "age_band",
+          "type": "string",
+          "description": "65-69 through 85+. Quasi-identifier."
+        },
+        {
+          "name": "region",
+          "type": "string",
+          "description": "English region. Quasi-identifier."
+        },
+        {
+          "name": "care_setting",
+          "type": "string",
+          "description": "Own home, Sheltered housing, Residential care or Nursing care. Quasi-identifier."
+        },
+        {
+          "name": "mobility",
+          "type": "string",
+          "description": "Independent through Immobile."
+        },
+        {
+          "name": "lives_alone",
+          "type": "boolean",
+          "description": "Living alone \u2014 a major heat-risk factor because nobody notices deterioration."
+        },
+        {
+          "name": "has_cardiovascular",
+          "type": "boolean",
+          "description": "Cardiovascular condition recorded."
+        },
+        {
+          "name": "has_respiratory",
+          "type": "boolean",
+          "description": "Respiratory condition recorded."
+        },
+        {
+          "name": "on_diuretics",
+          "type": "boolean",
+          "description": "On diuretics \u2014 raises dehydration risk in heat."
+        },
+        {
+          "name": "cognitive_impairment",
+          "type": "boolean",
+          "description": "Cognitive impairment recorded \u2014 affects ability to self-manage in heat."
+        },
+        {
+          "name": "prior_heat_admission",
+          "type": "boolean",
+          "description": "Previous heat-related admission."
+        },
+        {
+          "name": "care_visits_per_week",
+          "type": "integer",
+          "description": "Scheduled care visits per week."
+        },
+        {
+          "name": "predicted_risk",
+          "type": "double",
+          "description": "Model score, 0\u20131. DELIBERATELY MISCALIBRATED \u2014 it ranks correctly but is roughly 2.7x too high in absolute terms. In a heat-health setting the absolute number is what triggers a visit, so ranking well is not enough. This is the point of the challenge notebook, not a defect."
+        },
+        {
+          "name": "risk_band",
+          "type": "string",
+          "description": "Low, Medium or High, derived from predicted_risk."
+        },
+        {
+          "name": "heat_event_last_summer",
+          "type": "boolean",
+          "description": "Ground truth: whether a heat-related event occurred. Compare against predicted_risk to see the calibration gap."
+        }
+      ],
+      "parquet": "https://data.inno-forum.co.uk/c05-ahead-of-the-heat/v1/gold/synthetic_cohort.parquet",
+      "csv": "https://data.inno-forum.co.uk/c05-ahead-of-the-heat/v1/gold/synthetic_cohort.csv"
+    },
+    {
+      "name": "region_weather_daily",
+      "description": "Daily temperature and humidity by area. SYNTHETIC \u2014 `metoffice` is pointer-only after the D4 licence review, so nothing here is an observation. Do not report a temperature finding from this as if it were measured.",
+      "grain": "One row per area \u00d7 day",
+      "approx_rows": 119802,
+      "columns": [
+        {
+          "name": "area",
+          "type": "string",
+          "description": "County-level area. FINER than the regional grain of alert_history \u2014 joining the two is a real join, not a rename."
+        },
+        {
+          "name": "observation_date",
+          "type": "date",
+          "description": "Observation day, ISO-8601."
+        },
+        {
+          "name": "temp_max_c",
+          "type": "double",
+          "description": "Daily maximum temperature, Celsius."
+        },
+        {
+          "name": "temp_min_c",
+          "type": "double",
+          "description": "Daily minimum temperature, Celsius. Overnight minima matter \u2014 heat risk is driven by nights that do not cool."
+        },
+        {
+          "name": "relative_humidity_pct",
+          "type": "double",
+          "description": "Relative humidity, percent."
+        },
+        {
+          "name": "heat_index_c",
+          "type": "double",
+          "description": "Apparent temperature combining heat and humidity. Diverges from temp_max_c only when both are high."
+        },
+        {
+          "name": "is_synthetic",
+          "type": "boolean",
+          "description": "Always true. Present so the caveat survives a join, a filter and an export into someone's slide."
+        }
+      ],
+      "parquet": "https://data.inno-forum.co.uk/c05-ahead-of-the-heat/v1/gold/region_weather_daily.parquet",
+      "csv": "https://data.inno-forum.co.uk/c05-ahead-of-the-heat/v1/gold/region_weather_daily.csv"
+    }
+  ],
+  "documents": [
+    {
+      "id": "awhp",
+      "name": "Adverse Weather and Health Plan",
+      "original": "https://data.inno-forum.co.uk/c05-ahead-of-the-heat/v1/docs/original/awhp.pdf",
+      "markdown": "https://data.inno-forum.co.uk/c05-ahead-of-the-heat/v1/docs/text/awhp.md"
+    }
+  ],
+  "usage": {
+    "duckdb": "INSTALL httpfs; LOAD httpfs; SELECT * FROM read_parquet('https://data.inno-forum.co.uk/c05-ahead-of-the-heat/v1/gold/<table>.parquet');",
+    "python": "import pandas as pd; pd.read_parquet('https://data.inno-forum.co.uk/c05-ahead-of-the-heat/v1/gold/<table>.parquet')",
+    "note": "No credentials. No account. Anonymous HTTPS."
+  }
+}

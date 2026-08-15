@@ -1,0 +1,194 @@
+{
+  "challenge": "c03-beyond-the-mainframe",
+  "title": "Beyond the Mainframe",
+  "version": "v1",
+  "publisher": "Innovation Forum",
+  "contact": "info@inno-forum.co.uk",
+  "attribution": null,
+  "handle_with_care": "Teams work on a SYNTHETIC environment: workloads, cost data, logs and expert scenarios. No client systems, no client data. Practitioner mentors contribute knowledge throughout the event.",
+  "base_url": "https://data.inno-forum.co.uk/c03-beyond-the-mainframe/v1",
+  "licence_note": "Sources not listed under 'mirrored' are NOT redistributed by us. Use the loader code in the repo to fetch them from the original publisher.",
+  "mirrored": [
+    "sustainability",
+    "synthetic-finops"
+  ],
+  "pointer_only": [
+    "finops-open",
+    "sponsor-lake"
+  ],
+  "tables": [
+    {
+      "name": "workload_cost_daily",
+      "description": "Synthetic workload cost and utilisation by day, across a hybrid mainframe, on-premises and cloud estate.",
+      "grain": "One row per workload \u00d7 day",
+      "approx_rows": 419750,
+      "columns": [
+        {
+          "name": "workload_id",
+          "type": "string",
+          "description": "Stable workload identifier, WL-nnnnn."
+        },
+        {
+          "name": "usage_date",
+          "type": "date",
+          "description": "Usage day, ISO-8601."
+        },
+        {
+          "name": "business_unit",
+          "type": "string",
+          "description": "Owning business unit. UNALLOCATED where ownership is untagged \u2014 this is deliberate and is a finding, not a defect."
+        },
+        {
+          "name": "service",
+          "type": "string",
+          "description": "Billable service, e.g. CICS Transaction Server, Kubernetes Service."
+        },
+        {
+          "name": "platform",
+          "type": "string",
+          "description": "One of mainframe, distributed, cloud."
+        },
+        {
+          "name": "environment",
+          "type": "string",
+          "description": "One of production, staging, development, test."
+        },
+        {
+          "name": "region",
+          "type": "string",
+          "description": "Deployment region or on-premises site."
+        },
+        {
+          "name": "vcpu_hours",
+          "type": "double",
+          "description": "Compute consumed that day, vCPU-hours (MIPS-equivalent on mainframe)."
+        },
+        {
+          "name": "memory_gb_hours",
+          "type": "double",
+          "description": "Memory consumed that day, GB-hours."
+        },
+        {
+          "name": "storage_gb",
+          "type": "double",
+          "description": "Provisioned storage, GB. Flat per workload."
+        },
+        {
+          "name": "utilisation_pct",
+          "type": "double",
+          "description": "Mean utilisation that day, 0\u2013100."
+        },
+        {
+          "name": "cost_gbp",
+          "type": "double",
+          "description": "Billed cost that day, GBP. Sums exactly to chargeback_allocation."
+        }
+      ],
+      "parquet": "https://data.inno-forum.co.uk/c03-beyond-the-mainframe/v1/gold/workload_cost_daily.parquet",
+      "csv": "https://data.inno-forum.co.uk/c03-beyond-the-mainframe/v1/gold/workload_cost_daily.csv"
+    },
+    {
+      "name": "chargeback_allocation",
+      "description": "Monthly cost allocation and chargeback by business unit and service. A pure roll-up of workload_cost_daily.",
+      "grain": "One row per business unit \u00d7 month \u00d7 service",
+      "approx_rows": 8136,
+      "columns": [
+        {
+          "name": "business_unit",
+          "type": "string",
+          "description": "Owning business unit, or UNALLOCATED."
+        },
+        {
+          "name": "month",
+          "type": "date",
+          "description": "First day of the month, ISO-8601."
+        },
+        {
+          "name": "service",
+          "type": "string",
+          "description": "Billable service."
+        },
+        {
+          "name": "workload_count",
+          "type": "integer",
+          "description": "Distinct workloads contributing that month."
+        },
+        {
+          "name": "allocated_cost_gbp",
+          "type": "double",
+          "description": "Allocated cost, GBP. Reconciles exactly to workload_cost_daily."
+        },
+        {
+          "name": "share_of_bu_pct",
+          "type": "double",
+          "description": "This service as a percentage of that business unit's spend that month."
+        },
+        {
+          "name": "variance_vs_prior_month_pct",
+          "type": "double",
+          "description": "Change on the previous month, percent. NULL in the first month a combination appears \u2014 absent, not zero."
+        }
+      ],
+      "parquet": "https://data.inno-forum.co.uk/c03-beyond-the-mainframe/v1/gold/chargeback_allocation.parquet",
+      "csv": "https://data.inno-forum.co.uk/c03-beyond-the-mainframe/v1/gold/chargeback_allocation.csv"
+    },
+    {
+      "name": "carbon_by_workload",
+      "description": "Estimated carbon per workload per day. Grid intensity is SYNTHETIC \u2014 realistic in shape, not a measurement.",
+      "grain": "One row per workload \u00d7 day",
+      "approx_rows": 419750,
+      "columns": [
+        {
+          "name": "workload_id",
+          "type": "string",
+          "description": "Stable workload identifier, joins to workload_cost_daily."
+        },
+        {
+          "name": "usage_date",
+          "type": "date",
+          "description": "Usage day, ISO-8601."
+        },
+        {
+          "name": "business_unit",
+          "type": "string",
+          "description": "Owning business unit, or UNALLOCATED."
+        },
+        {
+          "name": "platform",
+          "type": "string",
+          "description": "One of mainframe, distributed, cloud."
+        },
+        {
+          "name": "energy_kwh",
+          "type": "double",
+          "description": "Estimated energy for that workload-day, kWh."
+        },
+        {
+          "name": "grid_intensity_gco2_per_kwh",
+          "type": "double",
+          "description": "SYNTHETIC grid carbon intensity, gCO2e/kWh. Do not report findings against the real grid."
+        },
+        {
+          "name": "carbon_kg",
+          "type": "double",
+          "description": "Estimated emissions, kgCO2e = energy_kwh \u00d7 intensity \u00f7 1000."
+        }
+      ],
+      "parquet": "https://data.inno-forum.co.uk/c03-beyond-the-mainframe/v1/gold/carbon_by_workload.parquet",
+      "csv": "https://data.inno-forum.co.uk/c03-beyond-the-mainframe/v1/gold/carbon_by_workload.csv"
+    }
+  ],
+  "documents": [
+    {
+      "id": "finops-framework",
+      "name": "FinOps Framework overview",
+      "original": "https://data.inno-forum.co.uk/c03-beyond-the-mainframe/v1/docs/original/finops-framework.pdf",
+      "markdown": "https://data.inno-forum.co.uk/c03-beyond-the-mainframe/v1/docs/text/finops-framework.md"
+    }
+  ],
+  "usage": {
+    "duckdb": "INSTALL httpfs; LOAD httpfs; SELECT * FROM read_parquet('https://data.inno-forum.co.uk/c03-beyond-the-mainframe/v1/gold/<table>.parquet');",
+    "python": "import pandas as pd; pd.read_parquet('https://data.inno-forum.co.uk/c03-beyond-the-mainframe/v1/gold/<table>.parquet')",
+    "note": "No credentials. No account. Anonymous HTTPS."
+  }
+}

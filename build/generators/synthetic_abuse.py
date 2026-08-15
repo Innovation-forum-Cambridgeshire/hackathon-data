@@ -141,26 +141,53 @@ def generate(seed: int = DEFAULT_SEED) -> dict[str, tuple[list[str], list[list]]
             seconds=int(rng.integers(0, WINDOW_DAYS * 24 * 3600))
         )
 
+        # EVERY feature below overlaps between the classes, on purpose.
+        #
+        # The first version of this generator did not, and executing the challenge
+        # notebook against it exposed the problem immediately: a plain logistic
+        # regression scored 0.998 recall at 0.998 precision. `repeat_sender_count`
+        # was 2-39 for flagged and 1-3 for everything else, so any value >= 4 WAS
+        # the label; `urgency` was disjoint in the same way.
+        #
+        # That is worse than a cosmetic flaw. The whole point of c04 is that
+        # accuracy misleads under class imbalance and that precision and recall
+        # trade against each other — and there is no trade-off to explore on a
+        # perfectly separable corpus. A team would "solve" it in ten minutes and
+        # learn the opposite of the intended lesson.
+        #
+        # So each distribution now has a deliberate tail into the other class:
+        #   * legitimate residents DO contact repeatedly about a live planning row
+        #   * abuse is often a FIRST contact, not a persistent campaign
+        #   * plenty of flagged messages are logged low-urgency on arrival
+        # All three are true of real casework, which is why the overlap makes the
+        # corpus more realistic rather than merely harder.
         if flagged:
             body = str(rng.choice(BODIES_FLAGGED))
-            urgency = str(rng.choice(["medium", "high", "high", "critical"]))
-            repeats = int(rng.integers(2, 40))
-            named = bool(rng.random() < 0.72)
-            sentiment = float(round(rng.uniform(-1.0, -0.35), 3))
+            # Most flagged messages are persistent, but a substantial minority are
+            # a first and only contact — the "one message, serious" case a
+            # persistence-based rule misses entirely.
+            if rng.random() < 0.32:
+                repeats = int(rng.integers(1, 4))
+            else:
+                repeats = int(rng.integers(3, 40))
+            urgency = str(rng.choice(["low", "medium", "high", "high", "critical"],
+                                     p=[0.14, 0.26, 0.30, 0.18, 0.12]))
+            named = bool(rng.random() < 0.62)
+            sentiment = float(round(rng.uniform(-1.0, -0.20), 3))
         elif cat == "Robust criticism":
             body = str(rng.choice(BODIES_CRITICAL))
-            urgency = str(rng.choice(["low", "medium"]))
-            repeats = int(rng.integers(1, 4))
-            named = bool(rng.random() < 0.22)
-            # Overlaps the flagged range on purpose: sentiment ALONE must not
-            # separate the classes, or the exercise is trivial and teaches nothing.
-            sentiment = float(round(rng.uniform(-0.6, 0.05), 3))
+            urgency = str(rng.choice(["low", "medium", "high"], p=[0.55, 0.36, 0.09]))
+            # A resident fighting a planning application emails a lot, and is not
+            # abusive. This tail is what stops "persistent = abusive".
+            repeats = int(rng.integers(1, 4) if rng.random() < 0.74 else rng.integers(4, 26))
+            named = bool(rng.random() < 0.34)
+            sentiment = float(round(rng.uniform(-0.75, 0.05), 3))
         else:
             body = str(rng.choice(BODIES_NEUTRAL))
-            urgency = "low"
-            repeats = int(rng.integers(1, 3))
-            named = bool(rng.random() < 0.06)
-            sentiment = float(round(rng.uniform(-0.15, 0.75), 3))
+            urgency = str(rng.choice(["low", "medium", "high"], p=[0.82, 0.15, 0.03]))
+            repeats = int(rng.integers(1, 3) if rng.random() < 0.88 else rng.integers(3, 15))
+            named = bool(rng.random() < 0.10)
+            sentiment = float(round(rng.uniform(-0.45, 0.75), 3))
 
         text = f"{rng.choice(OPENERS)}. {body}"
         rows.append([
