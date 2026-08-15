@@ -74,6 +74,23 @@ PROVENANCE = {"real", "synthetic", "derived"}
 # GitHub release asset hard limit.
 MAX_ASSET_BYTES = 2 * 1024**3
 
+# Column types a gold table may declare. Deliberately small — this is a publication
+# contract for participants using DuckDB, pandas, Excel and Tableau, not a database
+# DDL. Anything finer (int32 vs int64, decimal precision) would be a promise the
+# parquet writer and the CSV twin cannot both keep.
+COLUMN_TYPES = {"string", "date", "datetime", "integer", "double", "boolean"}
+
+# How far the generated row count may drift from the catalogue's `approx_rows` before
+# the build complains. Generous, because `approx` means approximate — but bounded,
+# because chargeback_allocation sat at a declared 18,000 against a real 8,136 for as
+# long as nothing checked, and anyone sizing a download off the catalogue was wrong.
+ROW_COUNT_TOLERANCE = 0.20
+
+# Default seed for synthetic generators. The event date, arbitrary but fixed: judging
+# is reproducible against an immutable release tag, so the same version must always
+# regenerate the same bytes.
+DEFAULT_GENERATOR_SEED = 20261026
+
 
 @dataclass
 class Result:
@@ -202,6 +219,59 @@ def validate(cat: dict) -> Result:
             f"OGL requires attribution — omitting it is a licence breach."
         )
 
+    # --- Rule 5: every gold table declares its columns. ---
+    #
+    # Without this a table carries a name and a grain, which reads like a schema but
+    # cannot be built or consumed against: "one row per workload x day" does not say
+    # whether cost is pounds or pence, or what the date column is called. The transform
+    # stage checks the frame it produces against these names in order, so a column
+    # added to the generator and not to the catalogue fails the build rather than
+    # silently shipping an undocumented column.
+    # The obligation is proportionate to buildability: a table whose source has cleared
+    # licence review is about to be built and published, so an undeclared schema is a
+    # hard failure. A table still waiting on D4 cannot be built by anyone yet, so it
+    # only warns — requiring a full column contract for data we may never be permitted
+    # to mirror would be make-work, and would have blocked c03's October delivery
+    # behind schema authoring for four other challenges.
+    for tbl in cat["gold_tables"]:
+        name = tbl.get("name", "<no name>")
+        cols = tbl.get("columns")
+        src = tbl.get("source")
+        buildable = src in mirrorable if src else False
+
+        if not cols:
+            msg = (
+                f"{challenge}/{name}: no 'columns' declared. A gold table without a "
+                f"column contract cannot be built against or consumed reliably."
+            )
+            if buildable:
+                r.error(msg + f" Its source {src!r} has cleared review, so this blocks the build.")
+            else:
+                r.warn(msg + " Not blocking — the source has not cleared licence review (D4).")
+            continue
+
+        seen: set[str] = set()
+        for col in cols:
+            cname = col.get("name")
+            if not cname:
+                r.error(f"{challenge}/{name}: a column has no 'name'")
+                continue
+            if cname in seen:
+                r.error(f"{challenge}/{name}: duplicate column {cname!r}")
+            seen.add(cname)
+
+            ctype = col.get("type")
+            if ctype not in COLUMN_TYPES:
+                r.error(
+                    f"{challenge}/{name}.{cname}: type {ctype!r} invalid; "
+                    f"expected one of {', '.join(sorted(COLUMN_TYPES))}"
+                )
+            if not col.get("description"):
+                r.warn(
+                    f"{challenge}/{name}.{cname}: no description. Participants get this "
+                    f"column with no way to know what it means."
+                )
+
     # --- Rule 3: CSV twins. ---
     for tbl in cat["gold_tables"]:
         name = tbl.get("name", "<no name>")
@@ -306,6 +376,18 @@ def build_manifest(cat: dict, version: str) -> dict:
             "description": tbl.get("description"),
             "grain": tbl.get("grain"),
             "approx_rows": tbl.get("approx_rows"),
+            # The column contract travels WITH the data. A participant pointing an LLM
+            # or a notebook at manifest.json gets names, types and meanings without
+            # opening the repo or inferring types from a CSV — which is where
+            # "utilisation_pct" quietly becomes a fraction rather than a percentage.
+            "columns": [
+                {
+                    "name": c["name"],
+                    "type": c.get("type"),
+                    "description": c.get("description"),
+                }
+                for c in (tbl.get("columns") or [])
+            ],
             "parquet": f"{base}/gold/{tbl['name']}.parquet",
         }
         if tbl.get("csv_twin"):
@@ -448,11 +530,136 @@ def cmd_build(args) -> int:
             "  catalogue, manifest and documents but no mirrored data. That is correct\n"
             "  behaviour, not a failure — resolve decision D4 to unblock.\n"
         )
+        return 0
 
-    # NOTE: the fetch/transform stages land here once D4 clears and the first source
-    # is cleared for mirroring. They are deliberately not stubbed with fake data —
-    # an empty parquet that looks real is worse than an honest absence.
+    # --- Transform stage. ---
+    #
+    # Only synthetic sources are generated here. A `real` source that has cleared
+    # licence review still needs a fetcher, and there is deliberately no generic one:
+    # inventing data for a source that is supposed to be collected from the world would
+    # produce a file that looks authoritative and is not. Unknown generators are
+    # reported and skipped, never faked.
+    generated = generate_tables(cat, manifest, out / "gold", args.seed)
+    if generated is None:
+        return 1
+
+    for name, count in generated.items():
+        declared = next(
+            (t.get("approx_rows") for t in cat["gold_tables"] if t["name"] == name), None
+        )
+        drift = ""
+        if isinstance(declared, int) and declared > 0:
+            delta = abs(count - declared) / declared
+            if delta > ROW_COUNT_TOLERANCE:
+                print(
+                    f"  ERROR: {name}: generated {count:,} rows but the catalogue "
+                    f"declares ~{declared:,} ({delta:.0%} drift, tolerance "
+                    f"{ROW_COUNT_TOLERANCE:.0%}). Fix approx_rows or the generator.",
+                    file=sys.stderr,
+                )
+                return 1
+            drift = f"  (catalogue ~{declared:,})"
+        print(f"  {name}: {count:,} rows{drift}")
+
     return 0
+
+
+def generate_tables(cat: dict, manifest: dict, gold_dir: Path, seed: int) -> dict[str, int] | None:
+    """Run the generator for each mirrorable synthetic source and write gold tables.
+
+    Returns {table_name: row_count}, or None if the build should fail.
+
+    Every table is written twice on purpose: parquet for anyone with a real toolchain,
+    and a CSV twin through write_csv() for the Excel and Tableau Public users who
+    cannot read parquet at all. The CSV path is the one that carries the BOM and
+    ISO-8601 contract — see write_csv().
+    """
+    try:
+        import pandas as pd
+    except ImportError:
+        print("pandas is required for the transform stage: pip install -r build/requirements.txt", file=sys.stderr)
+        return None
+
+    sys.path.insert(0, str(Path(__file__).resolve().parent / "generators"))
+    by_table = {t["name"]: t for t in cat["gold_tables"]}
+    counts: dict[str, int] = {}
+
+    for source_id in manifest["mirrored"]:
+        src = next(s for s in cat["sources"] if s["id"] == source_id)
+        if src.get("provenance") != "synthetic":
+            print(
+                f"  NOTE: {source_id} has cleared review but is provenance "
+                f"{src.get('provenance')!r} — it needs a fetcher, which does not exist "
+                f"yet. Shipping it as pointer-only rather than inventing its contents."
+            )
+            continue
+
+        module_name = source_id.replace("-", "_")
+        try:
+            generator = __import__(module_name)
+        except ImportError:
+            print(
+                f"  ERROR: {source_id} is synthetic and cleared for mirroring, but no "
+                f"generator module build/generators/{module_name}.py exists.",
+                file=sys.stderr,
+            )
+            return None
+
+        for name, (header, rows) in generator.generate(seed).items():
+            tbl = by_table.get(name)
+            if tbl is None:
+                print(
+                    f"  ERROR: generator {module_name} produced table {name!r}, which is "
+                    f"not declared in the catalogue. Declare it or stop emitting it.",
+                    file=sys.stderr,
+                )
+                return None
+
+            declared_cols = [c["name"] for c in tbl["columns"]]
+            if header != declared_cols:
+                print(
+                    f"  ERROR: {name}: generated columns do not match the catalogue.\n"
+                    f"    catalogue: {declared_cols}\n"
+                    f"    generated: {header}",
+                    file=sys.stderr,
+                )
+                return None
+
+            # Apply the declared types before writing parquet. Without this every
+            # column arrives as `object`, because the frame is built from Python lists
+            # — dates included. A date column typed as object still *looks* right in a
+            # preview and still compares correctly when ISO-formatted, so nothing
+            # obviously breaks; what breaks is date arithmetic, and only for the
+            # participant who tries it. This is the whole reason the column contract
+            # carries types rather than just names.
+            frame = pd.DataFrame(rows, columns=header)
+            for col in tbl["columns"]:
+                cname, ctype = col["name"], col.get("type")
+                if ctype == "date":
+                    frame[cname] = pd.to_datetime(frame[cname]).dt.date
+                elif ctype == "datetime":
+                    frame[cname] = pd.to_datetime(frame[cname])
+                elif ctype == "integer":
+                    # Nullable Int64, not int64: a NULL in an int column would silently
+                    # coerce the whole column to float and turn counts into 3.0.
+                    frame[cname] = frame[cname].astype("Int64")
+                elif ctype == "double":
+                    frame[cname] = frame[cname].astype("float64")
+                elif ctype == "boolean":
+                    frame[cname] = frame[cname].astype("boolean")
+                elif ctype == "string":
+                    frame[cname] = frame[cname].astype("string")
+
+            frame.to_parquet(gold_dir / f"{name}.parquet", index=False)
+            if tbl.get("csv_twin"):
+                write_csv(gold_dir / f"{name}.csv", header, rows)
+            elif tbl.get("csv_sample_rows"):
+                n = tbl["csv_sample_rows"]
+                write_csv(gold_dir.parent / "samples" / f"{name}_{n}.csv", header, rows[:n])
+
+            counts[name] = len(rows)
+
+    return counts
 
 
 def main() -> int:
@@ -467,6 +674,16 @@ def main() -> int:
     b.add_argument("--challenge", required=True)
     b.add_argument("--version", required=True)
     b.add_argument("--out", default="dist/")
+    # Seeds the synthetic generators. Leave it alone for a published version: judging
+    # is reproducible against a release tag, and rebuilding that tag with a different
+    # seed produces different data under the same version, silently invalidating every
+    # result already judged against it.
+    b.add_argument(
+        "--seed",
+        type=int,
+        default=DEFAULT_GENERATOR_SEED,
+        help="synthetic generator seed (do not change for a published version)",
+    )
     b.set_defaults(func=cmd_build)
 
     args = p.parse_args()
