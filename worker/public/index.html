@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Query the data — Innovation Forum hackathon</title>
+
+<!--
+  DuckDB-WASM playground.
+
+  DEPLOYED ON data.inno-forum.co.uk, NEVER ON THE MARKETING SITE.
+
+  This loads DuckDB from a CDN, which is a third-party request on page load. The
+  marketing site publishes a claim that it makes none, and `verify-no-tracking.py`
+  enforces that as a deploy gate — putting this page on r1x.co.uk/public_hackathon
+  would fail the build, and if someone removed the gate to make it pass, the
+  published cookie and privacy copy would become untrue.
+
+  That is not a styling preference. It is the reason this file lives in worker/public
+  rather than in the website repo. See organisers#11.
+
+  WHY DuckDB-WASM AT ALL: release assets 302-redirect to an S3 blob that sends no
+  Access-Control-Allow-Origin, so browser JS cannot read them. The Worker in
+  ../src/worker.js proxies them with CORS headers. This page is the proof that the
+  proxy actually works from a browser — which is acceptance test #38.
+-->
+
+<style>
+  :root {
+    --ink: #0d1b16; --paper: #fbfaf7; --line: #d8d4cc;
+    --accent: #00863a; --accent-dark: #0d3b2c; --warn: #8a5a00;
+    --mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --ink: #eceae5; --paper: #101714; --line: #2c3a33; --accent: #4ac07a; --warn: #d9a441; }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 32px 24px 80px; background: var(--paper); color: var(--ink);
+    font: 16px/1.55 system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+  main { max-width: 1000px; margin: 0 auto; }
+  h1 { font-size: 28px; margin: 0 0 6px; letter-spacing: -0.01em; }
+  .sub { color: color-mix(in srgb, var(--ink) 62%, transparent); margin: 0 0 28px; }
+  .note {
+    border-left: 3px solid var(--warn); padding: 12px 16px; margin: 0 0 24px;
+    background: color-mix(in srgb, var(--warn) 8%, transparent); font-size: 14.5px;
+  }
+  label { display: block; font-size: 13px; text-transform: uppercase; letter-spacing: .08em;
+          color: color-mix(in srgb, var(--ink) 60%, transparent); margin: 0 0 6px; }
+  select, textarea, input {
+    width: 100%; padding: 10px 12px; border: 1px solid var(--line); border-radius: 4px;
+    background: var(--paper); color: var(--ink); font-family: var(--mono); font-size: 14px;
+  }
+  textarea { min-height: 150px; resize: vertical; }
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+  @media (max-width: 720px) { .row { grid-template-columns: 1fr; } }
+  button {
+    background: var(--accent); color: #fff; border: 0; border-radius: 4px;
+    padding: 11px 22px; font-size: 15px; font-weight: 600; cursor: pointer;
+  }
+  button:disabled { opacity: .5; cursor: progress; }
+  #status { margin: 16px 0; font-family: var(--mono); font-size: 13.5px;
+            color: color-mix(in srgb, var(--ink) 70%, transparent); }
+  .err { color: #b3261e; white-space: pre-wrap; }
+  table { border-collapse: collapse; width: 100%; font-size: 13.5px; margin-top: 18px; }
+  th, td { border: 1px solid var(--line); padding: 6px 9px; text-align: left; }
+  th { background: color-mix(in srgb, var(--accent) 12%, transparent); position: sticky; top: 0; }
+  .scroll { overflow-x: auto; max-height: 460px; overflow-y: auto; }
+  .examples button { background: transparent; color: var(--accent); border: 1px solid var(--line);
+                     font-weight: 400; font-size: 13px; padding: 5px 10px; margin: 0 6px 6px 0; }
+  footer { margin-top: 48px; padding-top: 18px; border-top: 1px solid var(--line);
+           font-size: 13px; color: color-mix(in srgb, var(--ink) 60%, transparent); }
+  code { font-family: var(--mono); font-size: .92em; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Query the challenge data</h1>
+  <p class="sub">SQL in your browser. Nothing is uploaded, nothing is installed, and there is
+     no account — DuckDB runs locally and reads the parquet files over HTTPS.</p>
+
+  <div class="note">
+    <strong>Some tables are generated, not observed.</strong> Read <code>llms.txt</code> or the
+    table description in <code>manifest.json</code> before quoting a number. c05's weather and
+    c03's grid intensity are synthetic; reporting them as measurements would be wrong.
+  </div>
+
+  <div class="row">
+    <div>
+      <label for="challenge">Challenge</label>
+      <select id="challenge"></select>
+    </div>
+    <div>
+      <label for="version">Version</label>
+      <input id="version" value="latest" spellcheck="false">
+    </div>
+  </div>
+
+  <label for="sql">SQL</label>
+  <textarea id="sql" spellcheck="false"></textarea>
+
+  <p class="examples" id="examples"></p>
+  <p><button id="run">Run</button></p>
+
+  <div id="status">Loading DuckDB…</div>
+  <div class="scroll"><div id="out"></div></div>
+
+  <footer>
+    Data published by Innovation Forum. Contains public sector information licensed under the
+    Open Government Licence v3.0 where indicated per challenge.
+    <br>
+    Use the <strong>pinned</strong> version in anything you submit — <code>latest</code> moves,
+    and a result cited against it cannot be reproduced afterwards.
+  </footer>
+</main>
+
+<script type="module">
+// Pinned to an exact version. A floating "@latest" here would mean the playground
+// could change behaviour mid-event without anyone touching this file.
+import * as duckdb from 'https://cdn.jsdelivr.net/npm/@duckdb/duckdb-wasm@1.29.0/+esm';
+
+const CHALLENGES = [
+  ['c01-one-farm-one-picture',  'One Farm, One Picture'],
+  ['c02-mapping-the-gaps',      'Mapping the Gaps'],
+  ['c03-beyond-the-mainframe',  'Beyond the Mainframe'],
+  ['c04-safe-in-the-open',      'Safe in the Open'],
+  ['c05-ahead-of-the-heat',     'Ahead of the Heat'],
+];
+
+// Same origin as this page, so the playground follows the Worker wherever it is
+// deployed rather than hard-coding a hostname that would rot.
+const BASE = location.origin;
+
+const $ = id => document.getElementById(id);
+const status = (msg, isErr) => { $('status').innerHTML = ''; const s = document.createElement('span');
+  if (isErr) s.className = 'err'; s.textContent = msg; $('status').appendChild(s); };
+
+for (const [slug, name] of CHALLENGES) {
+  const o = document.createElement('option'); o.value = slug; o.textContent = `${name} (${slug})`;
+  $('challenge').appendChild(o);
+}
+$('challenge').value = 'c03-beyond-the-mainframe';
+
+const EXAMPLES = {
+  'c03-beyond-the-mainframe': [
+    ['Cost by platform',
+     "SELECT platform, round(sum(cost_gbp)) AS cost_gbp,\n       round(sum(cost_gbp)/sum(vcpu_hours), 4) AS per_vcpu_hr,\n       round(avg(utilisation_pct), 1) AS util_pct\nFROM t GROUP BY 1 ORDER BY per_vcpu_hr DESC;"],
+    ['Untagged spend',
+     "SELECT business_unit, round(sum(cost_gbp)) AS cost_gbp\nFROM t GROUP BY 1 ORDER BY cost_gbp DESC LIMIT 10;"],
+  ],
+  'c02-mapping-the-gaps': [
+    ['Check the grain',
+     "SELECT count(*) AS rows, count(DISTINCT lsoa_code) AS lsoas FROM t;"],
+  ],
+  'c01-one-farm-one-picture': [
+    ['Find duplicate station-days',
+     "SELECT count(*) - count(DISTINCT (station_id, observation_date)) AS duplicates FROM t;"],
+  ],
+};
+
+function defaultTable(slug) {
+  return ({
+    'c01-one-farm-one-picture': 'station_weather',
+    'c02-mapping-the-gaps':     'lsoa_deprivation',
+    'c03-beyond-the-mainframe': 'workload_cost_daily',
+    'c04-safe-in-the-open':     'message_signals',
+    'c05-ahead-of-the-heat':    'synthetic_cohort',
+  })[slug];
+}
+
+function refreshExamples() {
+  const slug = $('challenge').value;
+  $('sql').value = `-- 't' is bound to ${defaultTable(slug)} for the selected version.\nSELECT * FROM t LIMIT 20;`;
+  $('examples').innerHTML = '';
+  for (const [label, sql] of (EXAMPLES[slug] || [])) {
+    const b = document.createElement('button');
+    b.textContent = label;
+    b.onclick = () => { $('sql').value = sql; };
+    $('examples').appendChild(b);
+  }
+}
+$('challenge').onchange = refreshExamples;
+refreshExamples();
+
+let db, conn;
+try {
+  const bundles = duckdb.getJsDelivrBundles();
+  const bundle = await duckdb.selectBundle(bundles);
+  const worker = new Worker(URL.createObjectURL(
+    new Blob([`importScripts("${bundle.mainWorker}");`], { type: 'text/javascript' })));
+  db = new duckdb.AsyncDuckDB(new duckdb.ConsoleLogger(), worker);
+  await db.instantiate(bundle.mainModule, bundle.pthreadWorker);
+  conn = await db.connect();
+  status('DuckDB ready. Pick a challenge and run a query.');
+} catch (e) {
+  status('DuckDB failed to load: ' + e.message +
+         '\nThis page needs the CDN. If you are offline, use the notebooks in sample/ instead.', true);
+}
+
+$('run').onclick = async () => {
+  if (!conn) return;
+  const slug = $('challenge').value;
+  const version = $('version').value.trim() || 'latest';
+  const url = `${BASE}/${slug}/${version}/gold/${defaultTable(slug)}.parquet`;
+
+  $('run').disabled = true;
+  $('out').innerHTML = '';
+  status(`Reading ${url} …`);
+
+  try {
+    // The whole point of the Worker: this fetch is cross-origin to a GitHub release
+    // asset and only works because the proxy adds CORS headers. If this line
+    // succeeds in a browser, acceptance test #38 has passed.
+    await conn.query(`CREATE OR REPLACE VIEW t AS SELECT * FROM read_parquet('${url}')`);
+    const res = await conn.query($('sql').value);
+    render(res);
+    status(`${res.numRows.toLocaleString()} row(s).`);
+  } catch (e) {
+    status('Query failed: ' + e.message +
+      '\n\nIf this says CORS or "Failed to fetch", the Worker is not serving this path — ' +
+      'check the version exists and that a release has been published.', true);
+  } finally {
+    $('run').disabled = false;
+  }
+};
+
+function render(res) {
+  const rows = res.toArray().map(r => r.toJSON());
+  if (!rows.length) { $('out').textContent = 'No rows.'; return; }
+  const cols = Object.keys(rows[0]);
+  const table = document.createElement('table');
+  const thead = table.createTHead().insertRow();
+  cols.forEach(c => { const th = document.createElement('th'); th.textContent = c; thead.appendChild(th); });
+  const tbody = table.createTBody();
+  rows.slice(0, 500).forEach(r => {
+    const tr = tbody.insertRow();
+    cols.forEach(c => {
+      const td = tr.insertCell();
+      const v = r[c];
+      td.textContent = v === null || v === undefined ? '' : String(v);
+    });
+  });
+  $('out').appendChild(table);
+}
+</script>
+</body>
+</html>
