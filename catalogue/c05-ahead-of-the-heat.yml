@@ -223,5 +223,10 @@ documents:
     name: Adverse Weather and Health Plan
     format: pdf
     url: https://www.gov.uk/government/publications/adverse-weather-and-health-plan
+    licence: OGL-3.0
+    licence_reviewed: true    # cleared 2026-08-15, same publication as the source of the same id
+    licence_evidence: >-
+      gov.uk publication footer, checked 2026-08-15: "All content is available under
+      the Open Government Licence v3.0, except where otherwise stated."
     extract_markdown: true
     chunk: true
