@@ -10,8 +10,9 @@ name: Build and publish challenge data
 #                snapshot that reproducible judging requires.
 #
 # Why GitHub Actions and not Azure Pipelines: public repos get unlimited free
-# minutes with no form to fill in and no Azure subscription to link. See
-# azure-pipelines.yml for the ADO equivalent and why it is the fallback.
+# minutes with no form and no Azure subscription to link. Azure DevOps was
+# evaluated and dropped — org creation itself requires a billing subscription
+# nobody here has rights on. See docs/SETUP.md "Why not Azure DevOps".
 
 on:
   workflow_dispatch:

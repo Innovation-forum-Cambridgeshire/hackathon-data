@@ -1,123 +1,119 @@
-# Setup — Azure DevOps + GitHub
+# Setup
 
-Everything that can be scripted is scripted. This document covers the parts that
-genuinely need a browser, and explains why the work is split across two platforms
-rather than one.
+Everything that can be scripted is scripted. This covers the parts that need a browser,
+and why the platform choices are what they are.
 
 ---
 
-## Why the split
+## The shape
 
-| Plane | Platform | Who touches it | Why |
+| Plane | Where | Who touches it | Cost |
 |---|---|---|---|
-| **Participants** | Public GitHub repo + Releases | ~100 external people, no accounts | Anonymous access is the only model that scales to a hundred strangers with zero onboarding |
-| **Organisers** | Azure DevOps (Boards + private Repos) | ≤5 people | Free for 5 Basic users, unlimited private repos, proper work tracking |
-| **Edge** | Cloudflare Worker | Nobody — it just runs | GitHub release assets are not browser-fetchable; see below |
+| **Participants** | Public GitHub repo + **Releases** | ~100 external people, no accounts | £0 — no bandwidth quota |
+| **Organisers** | **GitHub Projects** + private repo | The programme team | £0 — unlimited private repos |
+| **Build** | **GitHub Actions** | CI | £0 — unlimited minutes on public repos |
+| **Edge** | Cloudflare Worker | Nobody, it just runs | £0 — free tier |
 
-The temptation is to put everything in Azure DevOps. Four verified facts say don't:
+One platform for everything except the edge. Total: **£0**.
 
-1. **Public Azure DevOps projects are retired.** New ones cannot be created, and existing
-   ones convert to private in 2027. Microsoft's own documented migration path for them is
-   *to GitHub*. So Azure DevOps cannot host anything participant-facing.
-2. **Private projects need an Azure subscription link to get free pipeline minutes.**
-   Yavin holds no role on either R1X subscription — Keith Brown is sole Owner. Putting the
-   build there reintroduces exactly the dependency this design was shaped to avoid.
-3. **Azure Artifacts is capped at 2 GiB free and is authenticated.** It cannot serve the
-   data payload. GitHub Releases has *no* total-size cap and *no* bandwidth quota.
-4. **GitHub Actions is free and unlimited on public repos** — no form, no subscription,
-   no waiting.
-
-So Azure DevOps earns its place for Boards and confidential repos, which is genuinely what
-its free tier is good at. The build lives next to the Releases it publishes to.
+The governing principle: **anonymous access is the only model that scales to ~100 external
+participants with zero onboarding.** Every failure mode in the alternatives — guest
+invites, licences, credential distribution, a support queue on day one — is a symptom of
+requiring identity.
 
 ---
 
-## 1. Azure DevOps — organiser plane
+## Why not Azure DevOps
 
-### 1a. Create the organisation (browser, one-off)
+Azure DevOps was the first choice for the organiser plane and was dropped for a hard
+blocker, not a preference. Recording it so nobody spends the afternoon rediscovering it.
 
-**This cannot be scripted.** Azure DevOps auto-provisions your user profile on first
-sign-in; until then the API returns `VSS011031: There is no profile for the authenticated
-user in the system` — verified on this account 2026-08-15, meaning no org exists yet.
+**Creating an Azure DevOps organisation on a work account requires linking an Azure
+subscription for billing.** Verified in the browser 2026-08-15: the signup form offers no
+"none" option and refuses with
 
-1. Open <https://dev.azure.com> and sign in as `yavin.owens@r1x.co.uk`
-2. Create an organisation — suggested name `innovation-forum`
-3. Region: **UK South** (keeps programme data in-region)
+> You need to be an owner or contributor on the subscription to set up billing.
 
-You do **not** need an Azure subscription for this, and you do **not** need Keith. Org
-creation is free and available to any Entra user. The subscription only becomes relevant
-if you later want Microsoft-hosted pipeline minutes — which this design avoids needing.
+Yavin holds no role on either R1X subscription — Keith Brown is sole Owner of both
+(`2ed3ad81…` billed personally, `269b5f4f…` billed to R1X). The plain `/signup/` route
+enforces the same rule.
 
-### 1b. Run the setup script
+**To be fair to it: linking a subscription would not have cost anything.** The free tier
+persists — 5 Basic users, unlimited Stakeholders, unlimited private repos. This was a
+*permissions* blocker, not a cost one. But taking a dependency on another person at step
+one, for a programme with a hard October date, was the wrong trade.
 
-```bash
-az login
-az extension add --name azure-devops        # done already on this Mac
-./scripts/setup-azure-devops.sh --org innovation-forum --dry-run   # preview
-./scripts/setup-azure-devops.sh --org innovation-forum             # apply
-```
+Three further facts made the decision easy rather than reluctant:
 
-Creates a private project, two private repos (`hackathon-organisers`,
-`hackathon-sponsors`), seven iterations matching the delivery plan, and Boards items for
-every epic and open decision — including **D5**, the parallelism/subscription issue, so it
-is tracked rather than rediscovered.
+1. **Public Azure DevOps projects are retired.** New ones cannot be created and existing
+   ones convert to private in 2027. Microsoft's own documented migration path is *to
+   GitHub*. So Azure DevOps could never have hosted anything participant-facing.
+2. **Azure Artifacts is 2 GiB free and authenticated** — it cannot serve the data payload.
+   GitHub Releases has no total-size cap and no bandwidth quota.
+3. **Private ADO projects need that same subscription link to get free pipeline minutes**,
+   whereas GitHub Actions is free and unlimited on public repos.
 
-Idempotent: re-running skips anything that already exists.
-
-### 1c. Add people
-
-Free tier is **5 Basic users**, plus **unlimited Stakeholders**. Stakeholders can view and
-edit work items but not code — right for sponsors and non-technical programme staff, and
-they don't consume a Basic seat.
+GitHub Projects gives boards, iterations, custom fields and roadmap views for free, with
+no 5-user cap, sitting next to the data and the CI.
 
 ---
 
-## 2. GitHub — participant plane
-
-### 2a. Prerequisite
+## 1. GitHub — one-off
 
 ```bash
-brew install gh && gh auth login    # gh is NOT currently installed on this Mac
+brew install gh              # not installed on this Mac as of 2026-08-15
+gh auth login
+gh auth refresh -s project,read:project    # Projects v2 needs its own scope
 ```
 
-### 2b. Create and push
+That extra scope is easy to miss — without it the project steps fail with a permissions
+error while everything else succeeds.
+
+## 2. Public participant repo
 
 ```bash
 ./scripts/setup-github.sh --dry-run
 ./scripts/setup-github.sh
 ```
 
-Creates the public `Innovation-forum-Cambridgeshire/hackathon-data` repo, sets sensible
-options, adds triage labels for participant-reported data problems, and pushes this
-scaffold.
+Creates the public `Innovation-forum-Cambridgeshire/hackathon-data`, sets options, adds
+triage labels for participant-reported data problems, and pushes this scaffold.
 
-> The org already exists and currently has no public repos — verified 2026-08-15. This
-> resolves decision **D1**: it is outside the R1X tenant, r1x.co.uk already has access,
-> and it is owned by an organisation rather than an individual, which is what the
-> architecture doc recommended over a personal account.
+> The org already exists and had no public repos — verified 2026-08-15. It is outside the
+> R1X tenant, r1x.co.uk already has access, and it is owned by an organisation rather than
+> an individual, which avoids the continuity problem a personal account would carry.
 
----
+## 3. Organiser plane
 
-## 3. Cloudflare Worker — the bit that makes browsers work
+```bash
+./scripts/setup-github-project.sh --dry-run
+./scripts/setup-github-project.sh
+```
+
+Creates the private `hackathon-organisers` repo, a **Hackathon Programme** project board,
+and issues for the six delivery epics, the three open decisions (D2–D4) and the two
+standing governance rules — each added to the board.
+
+Split by audience, not by wrapping everything in auth: the participant repo is public so
+every tool works with no credentials; judging rubrics, scores, DPIA papers and
+sponsor-confidential material live in the private one.
+
+## 4. Cloudflare Worker — the bit that makes browsers work
 
 ### Why it is not optional
 
-GitHub release asset URLs are a 302 to an S3 blob. CORS pre-flight does not follow
-redirects, and the blob sends no `Access-Control-Allow-Origin`. So **every browser-based
-tool fails against a raw release URL** — DuckDB-WASM, Observable, any JS charting library.
-That is precisely the zero-install path the programme promises to non-coders.
+GitHub release asset URLs are a 302 to an S3 blob. **CORS pre-flight does not follow
+redirects, and the blob sends no `Access-Control-Allow-Origin`.** So every browser-based
+tool fails against a raw release URL — DuckDB-WASM, Observable, any JS charting library.
+That is exactly the zero-install path the programme promises to non-coders.
 
 The Worker terminates the pre-flight itself, follows the redirect server-side, and
 re-emits the bytes with CORS. It also forwards Range requests, so DuckDB reads one column
-of a remote parquet instead of downloading the whole file.
+of a remote parquet instead of downloading the file, and caches at the edge to absorb the
+event-morning spike.
 
-Two things it gives you for free:
-
-- **Branded, stable URLs.** Nothing participants bookmark ever names the hosting account,
-  so the GitHub org underneath can change without breaking a link.
-- **Edge caching**, which absorbs the event-morning spike.
-
-### Deploy
+It also gives branded, stable URLs — nothing participants bookmark names the hosting
+account, so the org underneath can change without breaking a link.
 
 ```bash
 cd worker
@@ -125,25 +121,22 @@ npx wrangler login
 npx wrangler deploy
 ```
 
-Needs the `inno-forum.co.uk` zone in the Cloudflare account. If DNS is elsewhere, either
-move the zone or point a `data` CNAME at the Worker route.
+Needs the `inno-forum.co.uk` zone in Cloudflare. If DNS is elsewhere, move the zone or
+point a `data` CNAME at the Worker route.
 
-### Acceptance test — do this from a real browser, not curl
+### Acceptance test — from a real browser, not curl
 
-`curl` does not enforce CORS, so it will pass whether or not the Worker is doing its job.
-Open the devtools console on any page on a **different** origin and run:
+`curl` does not enforce CORS, so it passes whether or not the Worker is working. Open
+devtools on a page on a **different** origin:
 
 ```js
 fetch('https://data.inno-forum.co.uk/manifest.json')
   .then(r => r.json()).then(console.log)
 ```
 
-If that returns JSON, the participant plane works. If it throws a CORS error, the Worker
-is not in the path.
+JSON back means the participant plane works.
 
----
-
-## 4. First release
+## 5. First release
 
 ```bash
 pip install -r build/requirements.txt
@@ -151,27 +144,23 @@ python build/build.py validate --challenge c03-beyond-the-mainframe
 python build/build.py build --challenge c03-beyond-the-mainframe --version v2026-10-01 --out dist/
 ```
 
-Then via GitHub Actions: **Actions → Build and publish challenge data → Run workflow**,
-leaving `dry_run` ticked the first time.
-
-Versions are immutable — the workflow refuses to overwrite an existing tag, because
-judging must be reproducible against a frozen corpus.
+Then **Actions → Build and publish challenge data → Run workflow**, `dry_run` ticked the
+first time. Versions are immutable — the workflow refuses to overwrite an existing tag,
+because judging must be reproducible against a frozen corpus.
 
 ---
 
-## 5. What blocks what
+## What blocks what
 
 | Blocker | Blocks | Owner |
 |---|---|---|
-| **D4 licence review** (AHDB, Copernicus, DERI) | Mirroring any third-party bytes | Not a technical task — needs deciding |
-| Azure DevOps org creation | Boards, organiser repos | Yavin, browser, ~5 minutes |
-| `gh` not installed | Creating the public repo | `brew install gh` |
-| Cloudflare zone access | Worker deploy, browser tooling | Whoever holds inno-forum.co.uk DNS |
-| Sponsor contact (C03) | Challenge 03 data | Programme |
+| **D4 licence review** (AHDB, Copernicus, DERI) | Mirroring any third-party bytes | Not a technical task |
+| `gh` not installed | Both setup scripts | `brew install gh` |
+| Cloudflare zone access | Worker deploy, all browser tooling | Whoever holds inno-forum.co.uk DNS |
+| Sponsor contact | Challenge 03 data | Programme |
 
-Note what is *not* on this list: **nothing is blocked on Keith or on an Azure
-subscription.** That was deliberate.
+**Nothing is blocked on Keith or on an Azure subscription.** That was the point.
 
-The build already runs today with D4 outstanding — it publishes the catalogue, manifest
-and documents, and mirrors only the synthetic datasets we author ourselves under CC0.
-That is correct behaviour, not a degraded mode.
+The build runs today with D4 outstanding: it publishes the catalogue, manifest and
+documents, and mirrors only the two CC0 synthetic datasets we author ourselves. Correct
+behaviour, not a degraded mode.
