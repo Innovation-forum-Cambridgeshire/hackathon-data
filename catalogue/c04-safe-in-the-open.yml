@@ -92,7 +92,13 @@ sources:
     url: https://www.gov.uk/government/publications/the-7-principles-of-public-life
     licence: OGL-3.0
     redistributable: true
-    licence_reviewed: false   # D4 — blocks mirroring until true
+    licence_reviewed: true    # D4 cleared 2026-08-15
+    licence_evidence: >-
+      gov.uk publication footer, checked 2026-08-15: "All content is available under
+      the Open Government Licence v3.0, except where otherwise stated."
+      https://www.gov.uk/government/publications/the-7-principles-of-public-life
+      Plain text guidance with no embedded third-party material, so the standard
+      "except where otherwise stated" carve-out does not bite here.
     format: pdf
     approx_size_mb: 1
   - id: council-minutes
