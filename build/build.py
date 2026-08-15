@@ -22,9 +22,11 @@ Exit codes: 0 ok, 1 validation failure, 2 usage error.
 from __future__ import annotations
 
 import argparse
+import csv
 import json
 import sys
 from dataclasses import dataclass, field
+from datetime import date, datetime
 from pathlib import Path
 
 try:
@@ -40,6 +42,22 @@ OPEN_LICENCES = {"OGL-3.0", "CC0-1.0", "CC-BY-4.0", "ODbL-1.0", "public-domain"}
 
 # Above this, a full CSV twin is unhelpful — ship parquet plus a sample.
 CSV_TWIN_MAX_ROWS = 1_000_000
+
+# CSV twin encoding contract. Both rules are participant-facing correctness issues,
+# not house style, and neither can be retrofitted once someone has already opened the
+# file in Excel and drawn a conclusion from it:
+#
+#   BOM       — without it Excel reads UTF-8 as Windows-1252 and mangles every
+#               accented place name in the Cambridgeshire data on first open.
+#   ISO-8601  — without it "03/04" is 3 April here and 4 March in a US locale, and
+#               nothing in the file says which. This corrupts silently: the dates
+#               still parse, they are just wrong, so no error is ever raised.
+#
+# These are declared here and applied in write_csv() so that the fetch/transform
+# stage (which lands once D4 clears) physically cannot emit a CSV that forgets them.
+CSV_ENCODING = "utf-8-sig"  # UTF-8 with BOM — what Excel needs to detect UTF-8
+ISO_DATE = "%Y-%m-%d"
+ISO_DATETIME = "%Y-%m-%dT%H:%M:%S"
 
 # k-anonymity floors (compliance design §D; ISO/IEC 20889 terminology).
 MIN_K = 2          # k=1 means a row is unique — never publishable
@@ -71,6 +89,34 @@ class Result:
     @property
     def ok(self) -> bool:
         return not self.errors
+
+
+def _iso(value):
+    """Coerce dates and datetimes to ISO-8601. Everything else passes through."""
+    # datetime is a subclass of date, so it has to be tested first.
+    if isinstance(value, datetime):
+        return value.strftime(ISO_DATETIME)
+    if isinstance(value, date):
+        return value.strftime(ISO_DATE)
+    return value
+
+
+def write_csv(path: Path, header: list[str], rows) -> Path:
+    """Write a CSV twin or sample. The ONLY sanctioned way to emit CSV in this repo.
+
+    Centralised deliberately. The alternative — remembering to pass encoding= and to
+    format dates at each of the call sites the transform stage will eventually have —
+    is exactly how one table ships mangled while the rest look fine, and it would not
+    be noticed here because our own tooling reads it back correctly. The participant
+    on a Windows laptop is the one who finds out.
+    """
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("w", encoding=CSV_ENCODING, newline="") as fh:
+        writer = csv.writer(fh)
+        writer.writerow(header)
+        for row in rows:
+            writer.writerow([_iso(v) for v in row])
+    return path
 
 
 def load_catalogue(challenge: str) -> dict:
