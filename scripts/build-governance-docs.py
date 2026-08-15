@@ -42,10 +42,19 @@ except ImportError:  # pragma: no cover
 
 TODAY = date.today().strftime("%d %B %Y")
 
+# Registered particulars verified against Companies House 2026-08-15:
+# GLOBAL INNOVATION FORUM LIMITED, company no. 10010132, incorporated 17 February 2016,
+# private company limited by guarantee, status Active.
+# These supersede the [PLACEHOLDER] entries used in earlier drafts.
 SENDER = [
-    "Innovation Forum",
-    "[REGISTERED ADDRESS]",
+    "Global Innovation Forum Limited",
+    "Future Business Centre",
+    "Kings Hedges Road",
+    "Cambridge",
+    "CB4 2HY",
+    "",
     "info@inno-forum.co.uk",
+    "Company number 10010132",
 ]
 
 # Verified 2026-08-15 from each council's published contact page.

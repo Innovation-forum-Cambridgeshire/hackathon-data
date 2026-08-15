@@ -123,8 +123,10 @@ def build(cats: list[dict], evidence: dict, preserved: dict[str, list[list]]) ->
         [
             ["Product", "Innovation Forum × R1X hackathon data platform"],
             ["Covers", f"{len(cats)} challenge(s): " + ", ".join(c["challenge"] for c in cats)],
-            ["Data controller", "Innovation Forum"],
-            ["Technology partner (processor)", "R1X — Art 28 agreement REQUIRED, see compliance design §C"],
+            ["Data controller", "Global Innovation Forum Limited (\"Innovation Forum\") — company no. 10010132"],
+            ["Registered office", "Future Business Centre, Kings Hedges Road, Cambridge CB4 2HY"],
+            ["Entity type", "Private company limited by guarantee; incorporated 17 Feb 2016; status Active (Companies House, verified 2026-08-15)"],
+            ["Technology partner (processor)", "R1X — named as a processor in the published privacy notice; a written Art 28(3) contract is still required, see compliance design §C"],
             ["Contact", "info@inno-forum.co.uk"],
             ["Generated", today],
             ["Review cycle", "Per release, and at each quarterly product review"],
