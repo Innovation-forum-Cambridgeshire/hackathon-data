@@ -1,0 +1,104 @@
+name: PR checks
+
+# Runs the contract tests and validates every catalogue on each pull request.
+#
+# WHY THIS IS SEPARATE FROM build-release.yml
+# --------------------------------------------
+# The release workflow is `workflow_dispatch` + `schedule` only, so until now
+# NOTHING ran on a pull request. Tests existed and were wired into the release
+# job, which sounds like coverage and is not: a PR could break the CSV encoding
+# contract, desynchronise a generator from its catalogue, or invalidate judging
+# reproducibility, and merge green — because no check ever ran.
+#
+# It is deliberately a separate file rather than a `pull_request` trigger added to
+# the release workflow. That workflow can publish a release, and its publish steps
+# are guarded only by `inputs.dry_run == 'false'` — which is an input that does not
+# exist on a pull_request event. That would probably skip them. "Probably" is the
+# wrong standard for a job that can cut an immutable public release, so this file
+# has no publish steps in it at all and cannot do that whatever the event.
+#
+# All five catalogues are validated on every PR, not just a changed one: the rules
+# are cross-cutting (licence gates, column contracts, evidence requirements), so a
+# change to build.py can break a catalogue nobody touched in the diff.
+
+on:
+  pull_request:
+    branches: [main, "c03-*", "d4-*"]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read # no write access — this job must never be able to publish
+
+concurrency:
+  group: pr-checks-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r build/requirements.txt
+
+      - name: Contract tests
+        # Every failure these catch is SILENT in production: a CSV that Excel
+        # mangles still opens, a generator that stopped honouring its seed still
+        # produces plausible data, and a chargeback table that no longer
+        # reconciles still looks like a chargeback table.
+        run: |
+          python build/test_csv_contract.py
+          python build/test_synthetic_finops.py
+
+      - name: Validate all catalogues
+        run: |
+          failed=0
+          for c in catalogue/*.yml; do
+            slug="$(basename "$c" .yml)"
+            echo "::group::$slug"
+            python build/build.py validate --challenge "$slug" || failed=1
+            echo "::endgroup::"
+          done
+          exit $failed
+
+      - name: Build every buildable challenge
+        # Validation checks the catalogue; this checks the catalogue against the
+        # generators. A column renamed in one and not the other passes validate
+        # and fails here, which is the whole point of the column contract.
+        run: |
+          failed=0
+          for c in catalogue/*.yml; do
+            slug="$(basename "$c" .yml)"
+            echo "::group::build $slug"
+            python build/build.py build --challenge "$slug" --version v0000-00-00 \
+              --out "/tmp/ci/$slug" || failed=1
+            echo "::endgroup::"
+          done
+          exit $failed
+
+      - name: Summary
+        if: always()
+        run: |
+          {
+            echo "### PR checks"
+            echo ""
+            echo "| Challenge | Sources | Licence-reviewed | Gold tables |"
+            echo "|---|---|---|---|"
+            python - <<'PY'
+          import glob, pathlib, yaml
+          for f in sorted(glob.glob("catalogue/*.yml")):
+              c = yaml.safe_load(pathlib.Path(f).read_text())
+              s = c["sources"]
+              r = sum(1 for x in s if x.get("licence_reviewed"))
+              print(f"| {c['challenge']} | {len(s)} | {r} | {len(c.get('gold_tables') or [])} |")
+          PY
+          } >> "$GITHUB_STEP_SUMMARY"
