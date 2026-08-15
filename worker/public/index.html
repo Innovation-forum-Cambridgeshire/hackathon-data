@@ -97,6 +97,9 @@
     </div>
   </div>
 
+  <label for="dataurl">Data URL <span style="text-transform:none;letter-spacing:0">— what will actually be fetched. Edit it to point anywhere.</span></label>
+  <input id="dataurl" spellcheck="false">
+
   <label for="sql">SQL</label>
   <textarea id="sql" spellcheck="false"></textarea>
 
@@ -130,7 +133,13 @@ const CHALLENGES = [
 
 // Same origin as this page, so the playground follows the Worker wherever it is
 // deployed rather than hard-coding a hostname that would rot.
-const BASE = location.origin;
+//
+// EXCEPT when opened as a file:// — location.origin is "null" there, so the URL
+// becomes nonsense and every query fails with something unhelpful about fetch.
+// That is exactly how this page first got reported as "not doing anything", so it
+// now says so instead of failing quietly.
+const IS_FILE = location.protocol === 'file:';
+const BASE = IS_FILE ? '' : location.origin;
 
 const $ = id => document.getElementById(id);
 const status = (msg, isErr) => { $('status').innerHTML = ''; const s = document.createElement('span');
@@ -180,8 +189,15 @@ function refreshExamples() {
     $('examples').appendChild(b);
   }
 }
-$('challenge').onchange = refreshExamples;
+function refreshUrl() {
+  const slug = $('challenge').value;
+  const version = $('version').value.trim() || 'latest';
+  $('dataurl').value = `${BASE}/${slug}/${version}/gold/${defaultTable(slug)}.parquet`;
+}
+$('challenge').onchange = () => { refreshExamples(); refreshUrl(); };
+$('version').oninput = refreshUrl;
 refreshExamples();
+refreshUrl();
 
 let db, conn;
 try {
@@ -192,7 +208,14 @@ try {
   db = new duckdb.AsyncDuckDB(new duckdb.ConsoleLogger(), worker);
   await db.instantiate(bundle.mainModule, bundle.pthreadWorker);
   conn = await db.connect();
-  status('DuckDB ready. Pick a challenge and run a query.');
+  if (IS_FILE) {
+    status('DuckDB is ready, but this page was opened as a FILE. Browsers give a file:// '
+         + 'page no origin, so the Data URL above is relative and will not resolve.\n'
+         + 'Serve it instead — from worker/public:  python3 -m http.server 8899\n'
+         + 'or paste a full https:// parquet URL into the Data URL box.', true);
+  } else {
+    status('DuckDB ready. Check the Data URL above, then Run.');
+  }
 } catch (e) {
   status('DuckDB failed to load: ' + e.message +
          '\nThis page needs the CDN. If you are offline, use the notebooks in sample/ instead.', true);
@@ -200,9 +223,8 @@ try {
 
 $('run').onclick = async () => {
   if (!conn) return;
-  const slug = $('challenge').value;
-  const version = $('version').value.trim() || 'latest';
-  const url = `${BASE}/${slug}/${version}/gold/${defaultTable(slug)}.parquet`;
+  const url = $('dataurl').value.trim();
+  if (!url) { status('No data URL. Fill in the Data URL box.', true); return; }
 
   $('run').disabled = true;
   $('out').innerHTML = '';
