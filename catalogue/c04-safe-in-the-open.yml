@@ -290,8 +290,20 @@ documents:
     name: The Seven Principles of Public Life
     format: pdf
     url: https://www.gov.uk/government/publications/the-7-principles-of-public-life
+    licence: OGL-3.0
+    licence_reviewed: true    # cleared 2026-08-15
+    licence_evidence: >-
+      gov.uk publication footer, checked 2026-08-15: "All content is available under
+      the Open Government Licence v3.0, except where otherwise stated." Plain guidance
+      with no embedded third-party material, so the carve-out does not bite. Recorded
+      here as well as on the source of the same id, because a document is gated
+      independently and a reader of this block should not have to know that.
     extract_markdown: true
     chunk: true
+  # NOT CLEARED. ICO content is generally reusable, but ico.org.uk carries its own
+  # terms rather than a plain gov.uk OGL footer, and the Data Sharing Code is a
+  # statutory code of practice — the kind of document where an out-of-date mirror is
+  # actively harmful, because a team would follow guidance we froze. Read at source.
   - id: ico-data-sharing-code
     name: ICO Data Sharing Code of Practice
     format: pdf
