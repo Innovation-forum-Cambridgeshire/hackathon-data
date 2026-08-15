@@ -1,0 +1,18 @@
+# Pinned, not floating. A notebook that only ran on the author's laptop is worse
+# than no notebook: it wastes a participant's first hour and teaches them the
+# material is unreliable. Upper bounds are deliberate — a major release of any of
+# these during the event window should not silently change what a team sees.
+pandas==2.3.3
+pyarrow==21.0.0
+numpy==1.26.4
+matplotlib==3.9.2
+scikit-learn==1.5.2
+jupyterlab==4.2.5
+ipykernel==6.29.5
+PyYAML==6.0.2
+
+# NOT included on purpose:
+#   seaborn / plotly  — one plotting library is enough to read a notebook
+#   xgboost / lightgbm — the point is the method, and a gradient booster invites
+#                        teams to skip straight to tuning a model they have not
+#                        understood the inputs to
