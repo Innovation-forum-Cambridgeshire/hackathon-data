@@ -7,6 +7,21 @@ node_modules/
 .wrangler/
 .DS_Store
 
-# Generated programme reports. Regenerate with scripts/programme-report.py —
-# committing them would put a stale snapshot in every clone.
-report/
+# THE ASSURANCE REPORT IS BUILT, NEVER COMMITTED.
+#
+# It is a few MB of generated HTML per run, it embeds the fonts and the logo on
+# every page, and it would produce an enormous diff on every build for content
+# that is fully reproducible from `python quality/run_assurance.py`. Committing it
+# would also freeze a verdict in the tree that stops matching the data the moment
+# the corpus is rebuilt.
+#
+# The profile BASELINE (quality/baseline/) is the opposite and IS committed — it
+# is the reference the next run diffs against, so it has to travel with the repo.
+quality/out/
+quality/gx/uncommitted/
+
+# Full finding write-ups belong in the PRIVATE hackathon-organisers repo.
+# This repository is public; open bug reports about data we are about to hand
+# to participants are not. The public half is quality/known-findings.yml.
+quality/FINDINGS.md
+quality/FINDINGS.for-organisers-repo.md

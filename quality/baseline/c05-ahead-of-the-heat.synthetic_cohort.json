@@ -1,0 +1,216 @@
+{
+  "columns": {
+    "age_band": {
+      "distinct": 5,
+      "domain": {
+        "65-69": 1008,
+        "70-74": 1008,
+        "75-79": 1008,
+        "80-84": 1004,
+        "85+": 972
+      },
+      "dtype": "string",
+      "kind": "O",
+      "length_max": 5,
+      "length_min": 3,
+      "null_count": 0,
+      "null_rate": 0.0,
+      "present": true
+    },
+    "care_setting": {
+      "distinct": 4,
+      "domain": {
+        "Nursing care": 1250,
+        "Own home": 1250,
+        "Residential care": 1250,
+        "Sheltered housing": 1250
+      },
+      "dtype": "string",
+      "kind": "O",
+      "length_max": 17,
+      "length_min": 8,
+      "null_count": 0,
+      "null_rate": 0.0,
+      "present": true
+    },
+    "care_visits_per_week": {
+      "distinct": 22,
+      "dtype": "Int64",
+      "kind": "i",
+      "mean": 9.4228,
+      "null_count": 0,
+      "null_rate": 0.0,
+      "present": true,
+      "quantiles": {
+        "0.0": 0.0,
+        "0.01": 0.0,
+        "0.05": 0.0,
+        "0.25": 3.0,
+        "0.5": 9.0,
+        "0.75": 15.0,
+        "0.95": 20.0,
+        "0.99": 21.0,
+        "1.0": 21.0
+      },
+      "skew": 0.196085,
+      "stdev": 6.615829,
+      "zero_rate": 0.0612
+    },
+    "cognitive_impairment": {
+      "distinct": 2,
+      "dtype": "boolean",
+      "kind": "b",
+      "null_count": 0,
+      "null_rate": 0.0,
+      "present": true,
+      "true_rate": 0.1994
+    },
+    "has_cardiovascular": {
+      "distinct": 2,
+      "dtype": "boolean",
+      "kind": "b",
+      "null_count": 0,
+      "null_rate": 0.0,
+      "present": true,
+      "true_rate": 0.4506
+    },
+    "has_respiratory": {
+      "distinct": 2,
+      "dtype": "boolean",
+      "kind": "b",
+      "null_count": 0,
+      "null_rate": 0.0,
+      "present": true,
+      "true_rate": 0.369
+    },
+    "heat_event_last_summer": {
+      "distinct": 2,
+      "dtype": "boolean",
+      "kind": "b",
+      "null_count": 0,
+      "null_rate": 0.0,
+      "present": true,
+      "true_rate": 0.1138
+    },
+    "lives_alone": {
+      "distinct": 2,
+      "dtype": "boolean",
+      "kind": "b",
+      "null_count": 0,
+      "null_rate": 0.0,
+      "present": true,
+      "true_rate": 0.2362
+    },
+    "mobility": {
+      "distinct": 4,
+      "domain": {
+        "Immobile": 458,
+        "Independent": 1719,
+        "Limited mobility": 1302,
+        "Walks with aid": 1521
+      },
+      "dtype": "string",
+      "kind": "O",
+      "length_max": 16,
+      "length_min": 8,
+      "null_count": 0,
+      "null_rate": 0.0,
+      "present": true
+    },
+    "on_diuretics": {
+      "distinct": 2,
+      "dtype": "boolean",
+      "kind": "b",
+      "null_count": 0,
+      "null_rate": 0.0,
+      "present": true,
+      "true_rate": 0.4
+    },
+    "person_id": {
+      "distinct": 5000,
+      "dtype": "string",
+      "kind": "O",
+      "length_max": 7,
+      "length_min": 7,
+      "null_count": 0,
+      "null_rate": 0.0,
+      "present": true,
+      "top_values": {
+        "P-00001": 1,
+        "P-03331": 1,
+        "P-03336": 1,
+        "P-03337": 1,
+        "P-03338": 1
+      }
+    },
+    "predicted_risk": {
+      "distinct": 3282,
+      "dtype": "float64",
+      "kind": "f",
+      "mean": 0.303057,
+      "null_count": 0,
+      "null_rate": 0.0,
+      "present": true,
+      "quantiles": {
+        "0.0": -0.0254,
+        "0.01": 0.024186,
+        "0.05": 0.078395,
+        "0.25": 0.196275,
+        "0.5": 0.29695,
+        "0.75": 0.400075,
+        "0.95": 0.54901,
+        "0.99": 0.671727,
+        "1.0": 0.795
+      },
+      "skew": 0.288578,
+      "stdev": 0.144141,
+      "zero_rate": 0.0
+    },
+    "prior_heat_admission": {
+      "distinct": 2,
+      "dtype": "boolean",
+      "kind": "b",
+      "null_count": 0,
+      "null_rate": 0.0,
+      "present": true,
+      "true_rate": 0.096
+    },
+    "region": {
+      "distinct": 9,
+      "domain": {
+        "East Midlands": 556,
+        "East of England": 556,
+        "London": 556,
+        "North East": 556,
+        "North West": 556,
+        "South East": 556,
+        "South West": 552,
+        "West Midlands": 556,
+        "Yorkshire and the Humber": 556
+      },
+      "dtype": "string",
+      "kind": "O",
+      "length_max": 24,
+      "length_min": 6,
+      "null_count": 0,
+      "null_rate": 0.0,
+      "present": true
+    },
+    "risk_band": {
+      "distinct": 3,
+      "domain": {
+        "High": 246,
+        "Low": 2279,
+        "Medium": 2475
+      },
+      "dtype": "string",
+      "kind": "O",
+      "length_max": 6,
+      "length_min": 3,
+      "null_count": 0,
+      "null_rate": 0.0,
+      "present": true
+    }
+  },
+  "row_count": 5000
+}

@@ -1,0 +1,108 @@
+{
+  "columns": {
+    "alert_date": {
+      "distinct": 2922,
+      "dtype": "object",
+      "kind": "O",
+      "length_max": 10,
+      "length_min": 10,
+      "null_count": 0,
+      "null_rate": 0.0,
+      "present": true,
+      "top_values": {
+        "2018-10-01": 9,
+        "2024-01-23": 9,
+        "2024-01-25": 9,
+        "2024-01-26": 9,
+        "2024-01-27": 9
+      }
+    },
+    "alert_level": {
+      "distinct": 4,
+      "domain": {
+        "Amber": 236,
+        "Green": 25070,
+        "Red": 37,
+        "Yellow": 955
+      },
+      "dtype": "string",
+      "kind": "O",
+      "length_max": 6,
+      "length_min": 3,
+      "null_count": 0,
+      "null_rate": 0.0,
+      "present": true
+    },
+    "consecutive_days_at_level": {
+      "distinct": 291,
+      "dtype": "Int64",
+      "kind": "i",
+      "mean": 91.363716,
+      "null_count": 0,
+      "null_rate": 0.0,
+      "present": true,
+      "quantiles": {
+        "0.0": 1.0,
+        "0.01": 1.0,
+        "0.05": 1.0,
+        "0.25": 9.0,
+        "0.5": 73.0,
+        "0.75": 164.0,
+        "0.95": 237.0,
+        "0.99": 257.0,
+        "1.0": 291.0
+      },
+      "skew": 0.469139,
+      "stdev": 83.495683,
+      "zero_rate": 0.0
+    },
+    "in_alert_season": {
+      "distinct": 2,
+      "dtype": "boolean",
+      "kind": "b",
+      "null_count": 0,
+      "null_rate": 0.0,
+      "present": true,
+      "true_rate": 0.334018
+    },
+    "issued_at": {
+      "distinct": 2922,
+      "dtype": "string",
+      "kind": "O",
+      "length_max": 19,
+      "length_min": 19,
+      "null_count": 0,
+      "null_rate": 0.0,
+      "present": true,
+      "top_values": {
+        "2018-10-01T09:00:00": 9,
+        "2024-01-23T09:00:00": 9,
+        "2024-01-25T09:00:00": 9,
+        "2024-01-26T09:00:00": 9,
+        "2024-01-27T09:00:00": 9
+      }
+    },
+    "region": {
+      "distinct": 9,
+      "domain": {
+        "East Midlands": 2922,
+        "East of England": 2922,
+        "London": 2922,
+        "North East": 2922,
+        "North West": 2922,
+        "South East": 2922,
+        "South West": 2922,
+        "West Midlands": 2922,
+        "Yorkshire and the Humber": 2922
+      },
+      "dtype": "string",
+      "kind": "O",
+      "length_max": 24,
+      "length_min": 6,
+      "null_count": 0,
+      "null_rate": 0.0,
+      "present": true
+    }
+  },
+  "row_count": 26298
+}

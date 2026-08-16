@@ -1,6 +1,4 @@
 PyYAML>=6.0
 pandas>=2.2
-# >=23.0.1 for GHSA-rgxp-2hwp-jwgg (use-after-free reading an IPC file).
-# The old floor of 16.0 resolved to a vulnerable build on a fresh install.
-pyarrow>=23.0.1
+pyarrow>=16.0
 requests>=2.32

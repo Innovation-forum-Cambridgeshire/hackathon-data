@@ -1,0 +1,127 @@
+name: Data assurance
+
+# Great Expectations suites over all five corpora, plus the branded report.
+#
+# WHY THIS IS A SEPARATE FILE FROM pr-checks.yml
+# ----------------------------------------------
+# pr-checks.yml is the fast gate: contract tests, catalogue validation, and a
+# build of every challenge. It finishes in a couple of minutes and every PR waits
+# on it. This job READS 4.5 million rows across 13 tables and takes minutes, so
+# folding it in would slow down every unrelated PR — including the ones that only
+# touch a workflow file or the README.
+#
+# It also has a different job to do. pr-checks answers "does the build still
+# work". This answers "is the data that came out of the build still the data we
+# said it was", which is only a meaningful question once something has been
+# built. Hence: build first, then validate what was built.
+#
+# WHAT MAKES IT FAIL
+#   * a contract expectation fails                  — a real defect
+#   * a deliberate defect has been tidied away      — the challenge lost its point
+#   * a deliberate defect drifted out of its bounds — ditto
+#   * a CSV twin no longer matches its parquet      — Excel users get other data
+#   * structural drift against the committed baseline
+#
+# On pull requests it runs with --allow-known-findings, so a triaged, recorded,
+# unfixed defect does not block unrelated work. On main and before a release it
+# runs WITHOUT that flag: nothing ships with an open finding unless someone has
+# explicitly accepted it in FINDINGS.md.
+
+on:
+  pull_request:
+    branches: [main, "c0*-*", "d4-*"]
+    paths:
+      # Only when something that could change the data or the checks changes.
+      # A README edit does not need 4.5 million rows read.
+      - "build/**"
+      - "catalogue/**"
+      - "quality/**"
+      - ".github/workflows/data-assurance.yml"
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      strict:
+        description: "Fail on known findings too"
+        type: boolean
+        default: false
+
+permissions:
+  contents: read # this job must never be able to publish
+
+concurrency:
+  group: data-assurance-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  assure:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          pip install -r build/requirements.txt
+          pip install -r quality/requirements.txt
+
+      - name: Build every buildable challenge
+        # The corpus is generated, never committed (sample/.gitignore), so there
+        # is nothing to assure until this has run. Built into one tree so the
+        # assurance run sees the same layout as sample/data.
+        run: |
+          failed=0
+          for c in catalogue/*.yml; do
+            slug="$(basename "$c" .yml)"
+            echo "::group::build $slug"
+            python build/build.py build --challenge "$slug" --version v0000-00-00 \
+              --out "corpus/$slug" || failed=1
+            echo "::endgroup::"
+          done
+          exit $failed
+
+      - name: Assure
+        id: assure
+        run: |
+          flags=""
+          if [ "${{ github.event_name }}" = "pull_request" ] \
+             && [ "${{ inputs.strict }}" != "true" ]; then
+            flags="--allow-known-findings"
+          fi
+          python quality/run_assurance.py --data-root corpus --vendor $flags
+
+      # DELIBERATELY NO ARTEFACT UPLOAD.
+      #
+      # This repository is PUBLIC, and an artefact on a public repository is
+      # downloadable by anyone who can read the repository — which is everyone.
+      # The report is organiser-facing: it carries the pass/fail verdict, the
+      # open findings, and the rows that caused them. Uploading it here would
+      # publish all of that to participants.
+      #
+      # The report is produced instead by the sibling workflow in the PRIVATE
+      # hackathon-organisers repository, which checks this repository out, runs
+      # the same command, and keeps the artefact where only organisers can reach
+      # it. This job's job is to be a gate: it passes or it fails.
+
+      - name: Summary
+        if: always()
+        # Counts and a verdict only. No findings detail, no affected rows — the
+        # step summary of a public repository is public.
+        run: |
+          {
+            echo "### Data assurance"
+            echo ""
+            if [ "${{ steps.assure.outcome }}" = "success" ]; then
+              echo "Contract holds, deliberate defects intact, no structural drift."
+            else
+              echo "**The assurance run did not pass.** See the log above for which"
+              echo "expectation failed. The full report, with the affected rows, is"
+              echo "built by the workflow in the private organisers repository."
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"

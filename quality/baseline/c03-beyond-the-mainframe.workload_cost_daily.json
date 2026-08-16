@@ -1,0 +1,256 @@
+{
+  "columns": {
+    "business_unit": {
+      "distinct": 25,
+      "domain": {
+        "Cards": 13870,
+        "Collections": 18980,
+        "Commercial Banking": 17520,
+        "Compliance": 16425,
+        "Customer Operations": 23360,
+        "Cyber Security": 18250,
+        "Data and Analytics": 15330,
+        "Digital Channels": 13870,
+        "Finance": 14600,
+        "Fraud Operations": 22630,
+        "Group Technology": 13140,
+        "Human Resources": 16790,
+        "Infrastructure": 13140,
+        "Insurance": 19345,
+        "Internal Audit": 17885,
+        "Legal": 14600,
+        "Marketing": 14600,
+        "Mortgages": 14600,
+        "Payments": 17155,
+        "Procurement": 11315,
+        "Retail Banking": 14965,
+        "Risk": 18615,
+        "Treasury": 14965,
+        "UNALLOCATED": 25185,
+        "Wealth Management": 18615
+      },
+      "dtype": "string",
+      "kind": "O",
+      "length_max": 19,
+      "length_min": 4,
+      "null_count": 0,
+      "null_rate": 0.0,
+      "present": true
+    },
+    "cost_gbp": {
+      "distinct": 31175,
+      "dtype": "float64",
+      "kind": "f",
+      "mean": 36.510382,
+      "null_count": 0,
+      "null_rate": 0.0,
+      "present": true,
+      "quantiles": {
+        "0.0": 0.51,
+        "0.01": 1.09,
+        "0.05": 1.58,
+        "0.25": 3.41,
+        "0.5": 8.16,
+        "0.75": 31.51,
+        "0.95": 174.81,
+        "0.99": 360.7851,
+        "1.0": 3737.1
+      },
+      "skew": 6.573099,
+      "stdev": 78.766016,
+      "zero_rate": 0.0
+    },
+    "environment": {
+      "distinct": 4,
+      "domain": {
+        "development": 86140,
+        "production": 228125,
+        "staging": 59860,
+        "test": 45625
+      },
+      "dtype": "string",
+      "kind": "O",
+      "length_max": 11,
+      "length_min": 4,
+      "null_count": 0,
+      "null_rate": 0.0,
+      "present": true
+    },
+    "memory_gb_hours": {
+      "distinct": 129268,
+      "dtype": "float64",
+      "kind": "f",
+      "mean": 585.732062,
+      "null_count": 0,
+      "null_rate": 0.0,
+      "present": true,
+      "quantiles": {
+        "0.0": 19.93,
+        "0.01": 50.77,
+        "0.05": 81.3245,
+        "0.25": 180.2,
+        "0.5": 363.47,
+        "0.75": 699.92,
+        "0.95": 1853.3555,
+        "0.99": 3342.4661,
+        "1.0": 30766.56
+      },
+      "skew": 6.196611,
+      "stdev": 755.173391,
+      "zero_rate": 0.0
+    },
+    "platform": {
+      "distinct": 3,
+      "domain": {
+        "cloud": 166805,
+        "distributed": 126290,
+        "mainframe": 126655
+      },
+      "dtype": "string",
+      "kind": "O",
+      "length_max": 11,
+      "length_min": 5,
+      "null_count": 0,
+      "null_rate": 0.0,
+      "present": true
+    },
+    "region": {
+      "distinct": 5,
+      "domain": {
+        "eu-west": 51465,
+        "on-premises-eu": 123735,
+        "on-premises-uk": 129210,
+        "uk-south": 55480,
+        "uk-west": 59860
+      },
+      "dtype": "string",
+      "kind": "O",
+      "length_max": 14,
+      "length_min": 7,
+      "null_count": 0,
+      "null_rate": 0.0,
+      "present": true
+    },
+    "service": {
+      "distinct": 40,
+      "dtype": "string",
+      "kind": "O",
+      "length_max": 28,
+      "length_min": 6,
+      "null_count": 0,
+      "null_rate": 0.0,
+      "present": true,
+      "top_values": {
+        "IMS Transaction Manager": 14235,
+        "Object Storage": 12410,
+        "Tape Virtualisation": 12410,
+        "Tomcat": 14600,
+        "VSAM Storage": 13505
+      }
+    },
+    "storage_gb": {
+      "distinct": 1147,
+      "dtype": "float64",
+      "kind": "f",
+      "mean": 668.4974,
+      "null_count": 0,
+      "null_rate": 0.0,
+      "present": true,
+      "quantiles": {
+        "0.0": 10.68,
+        "0.01": 34.17,
+        "0.05": 68.23,
+        "0.25": 173.6,
+        "0.5": 363.64,
+        "0.75": 783.64,
+        "0.95": 2421.09,
+        "0.99": 4875.53,
+        "1.0": 10248.98
+      },
+      "skew": 4.020635,
+      "stdev": 940.689936,
+      "zero_rate": 0.0
+    },
+    "usage_date": {
+      "distinct": 365,
+      "dtype": "object",
+      "kind": "O",
+      "length_max": 10,
+      "length_min": 10,
+      "null_count": 0,
+      "null_rate": 0.0,
+      "present": true,
+      "top_values": {
+        "2025-10-01": 1150,
+        "2026-06-05": 1150,
+        "2026-06-06": 1150,
+        "2026-06-07": 1150,
+        "2026-06-09": 1150
+      }
+    },
+    "utilisation_pct": {
+      "distinct": 994,
+      "dtype": "float64",
+      "kind": "f",
+      "mean": 40.315481,
+      "null_count": 0,
+      "null_rate": 0.0,
+      "present": true,
+      "quantiles": {
+        "0.0": 0.2,
+        "0.01": 0.2,
+        "0.05": 1.0,
+        "0.25": 15.6,
+        "0.5": 36.1,
+        "0.75": 68.1,
+        "0.95": 86.2,
+        "0.99": 94.1,
+        "1.0": 99.5
+      },
+      "skew": 0.233022,
+      "stdev": 28.750349,
+      "zero_rate": 0.0
+    },
+    "vcpu_hours": {
+      "distinct": 53930,
+      "dtype": "float64",
+      "kind": "f",
+      "mean": 129.878432,
+      "null_count": 0,
+      "null_rate": 0.0,
+      "present": true,
+      "quantiles": {
+        "0.0": 8.48,
+        "0.01": 14.43,
+        "0.05": 21.07,
+        "0.25": 40.66,
+        "0.5": 78.87,
+        "0.75": 150.96,
+        "0.95": 414.1555,
+        "0.99": 763.8226,
+        "1.0": 7691.64
+      },
+      "skew": 6.071698,
+      "stdev": 168.705539,
+      "zero_rate": 0.0
+    },
+    "workload_id": {
+      "distinct": 1150,
+      "dtype": "string",
+      "kind": "O",
+      "length_max": 8,
+      "length_min": 8,
+      "null_count": 0,
+      "null_rate": 0.0,
+      "present": true,
+      "top_values": {
+        "WL-00001": 365,
+        "WL-00765": 365,
+        "WL-00769": 365,
+        "WL-00770": 365,
+        "WL-00771": 365
+      }
+    }
+  },
+  "row_count": 419750
+}

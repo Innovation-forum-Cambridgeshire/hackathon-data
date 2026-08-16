@@ -1,0 +1,159 @@
+{
+  "columns": {
+    "category": {
+      "distinct": 12,
+      "domain": {
+        "Advocacy": 16,
+        "Employer HR route": 13,
+        "Legal advice": 16,
+        "Mental health support": 14,
+        "Online safety": 16,
+        "Peer support": 18,
+        "Police emergency": 16,
+        "Police non-emergency": 10,
+        "Reporting abuse": 17,
+        "Safeguarding referral": 14,
+        "Standards complaint": 13,
+        "Victim support": 17
+      },
+      "dtype": "string",
+      "kind": "O",
+      "length_max": 21,
+      "length_min": 8,
+      "null_count": 0,
+      "null_rate": 0.0,
+      "present": true
+    },
+    "contact_type": {
+      "distinct": 5,
+      "domain": {
+        "24/7 helpline": 44,
+        "Email": 28,
+        "In person": 32,
+        "Online form": 34,
+        "Telephone": 42
+      },
+      "dtype": "string",
+      "kind": "O",
+      "length_max": 13,
+      "length_min": 5,
+      "null_count": 0,
+      "null_rate": 0.0,
+      "present": true
+    },
+    "contact_value": {
+      "distinct": 129,
+      "dtype": "string",
+      "kind": "O",
+      "length_max": 54,
+      "length_min": 13,
+      "null_count": 0,
+      "null_rate": 0.0,
+      "present": true,
+      "top_values": {
+        "https://example.invalid/citizens-advice": 7,
+        "https://example.invalid/mind": 7,
+        "https://example.invalid/protection-against-stalking": 6,
+        "https://example.invalid/samaritans": 6,
+        "https://example.invalid/standards-committee": 7
+      }
+    },
+    "coverage": {
+      "distinct": 4,
+      "domain": {
+        "Force area": 44,
+        "Local authority": 47,
+        "National": 39,
+        "Regional": 50
+      },
+      "dtype": "string",
+      "kind": "O",
+      "length_max": 15,
+      "length_min": 8,
+      "null_count": 0,
+      "null_rate": 0.0,
+      "present": true
+    },
+    "hours": {
+      "distinct": 2,
+      "domain": {
+        "24/7": 57,
+        "Mon-Fri 09:00-17:00": 123
+      },
+      "dtype": "string",
+      "kind": "O",
+      "length_max": 19,
+      "length_min": 4,
+      "null_count": 0,
+      "null_rate": 0.0,
+      "present": true
+    },
+    "is_emergency": {
+      "distinct": 2,
+      "dtype": "boolean",
+      "kind": "b",
+      "null_count": 0,
+      "null_rate": 0.0,
+      "present": true,
+      "true_rate": 0.088889
+    },
+    "notes": {
+      "distinct": 1,
+      "domain": {
+        "SYNTHETIC contact details \u2014 never dial or email these in a demo.": 180
+      },
+      "dtype": "string",
+      "kind": "O",
+      "length_max": 64,
+      "length_min": 64,
+      "null_count": 0,
+      "null_rate": 0.0,
+      "present": true
+    },
+    "organisation": {
+      "distinct": 15,
+      "domain": {
+        "Action Fraud": 7,
+        "Cambridgeshire Constabulary": 12,
+        "Citizens Advice": 14,
+        "Internet Watch Foundation": 15,
+        "Local Government Association": 6,
+        "Mind": 15,
+        "Monitoring Officer": 11,
+        "National Cyber Security Centre": 11,
+        "Police and Crime Commissioner": 16,
+        "Protection Against Stalking": 13,
+        "Samaritans": 12,
+        "Standards Committee": 15,
+        "Stop Hate UK": 11,
+        "Suzy Lamplugh Trust": 12,
+        "Victim Support": 10
+      },
+      "dtype": "string",
+      "kind": "O",
+      "length_max": 30,
+      "length_min": 4,
+      "null_count": 0,
+      "null_rate": 0.0,
+      "present": true
+    },
+    "route_id": {
+      "distinct": 180,
+      "dtype": "string",
+      "kind": "O",
+      "length_max": 6,
+      "length_min": 6,
+      "null_count": 0,
+      "null_rate": 0.0,
+      "present": true,
+      "top_values": {
+        "R-0001": 1,
+        "R-0114": 1,
+        "R-0116": 1,
+        "R-0117": 1,
+        "R-0118": 1
+      }
+    }
+  },
+  "row_count": 180
+}

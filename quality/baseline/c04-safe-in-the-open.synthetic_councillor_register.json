@@ -1,0 +1,237 @@
+{
+  "columns": {
+    "authority": {
+      "distinct": 6,
+      "domain": {
+        "Cambridgeshire County Council": 692,
+        "Huntingdon Town Council": 680,
+        "Huntingdonshire District Council": 750,
+        "Ramsey Town Council": 746,
+        "South Cambridgeshire District Council": 621,
+        "St Ives Town Council": 755
+      },
+      "dtype": "string",
+      "kind": "O",
+      "length_max": 37,
+      "length_min": 19,
+      "null_count": 0,
+      "null_rate": 0.0,
+      "present": true
+    },
+    "committee": {
+      "distinct": 11,
+      "domain": {
+        "(none)": 380,
+        "Audit and Governance": 406,
+        "Corporate Governance": 404,
+        "Employment": 384,
+        "Environment": 345,
+        "Finance": 370,
+        "Health and Wellbeing": 379,
+        "Licensing": 384,
+        "Overview and Scrutiny": 373,
+        "Planning": 428,
+        "Standards": 391
+      },
+      "dtype": "string",
+      "kind": "O",
+      "length_max": 21,
+      "length_min": 6,
+      "null_count": 0,
+      "null_rate": 0.0,
+      "present": true
+    },
+    "declaration_category": {
+      "distinct": 13,
+      "domain": {
+        "Contracts with the authority": 348,
+        "Corporate tenancies": 331,
+        "Directorship": 339,
+        "Employment, office, trade or profession": 343,
+        "Land and property in the area": 380,
+        "Licences to occupy land": 335,
+        "Membership of a body exercising public functions": 362,
+        "Membership of a charity or voluntary body": 324,
+        "Membership of a political party": 332,
+        "Securities": 354,
+        "Sensitive interest (withheld under s.32)": 150,
+        "Sponsorship": 324,
+        "Trade union membership": 322
+      },
+      "dtype": "string",
+      "kind": "O",
+      "length_max": 48,
+      "length_min": 10,
+      "null_count": 0,
+      "null_rate": 0.0,
+      "present": true
+    },
+    "declaration_detail": {
+      "distinct": 12,
+      "domain": {
+        "Contracts with the authority declared in the register": 348,
+        "Corporate tenancies declared in the register": 331,
+        "Directorship declared in the register": 339,
+        "Employment declared in the register": 343,
+        "Land and property in the area declared in the register": 380,
+        "Licences to occupy land declared in the register": 335,
+        "Membership of a body exercising public functions declared in the register": 362,
+        "Membership of a charity or voluntary body declared in the register": 324,
+        "Membership of a political party declared in the register": 332,
+        "Securities declared in the register": 354,
+        "Sponsorship declared in the register": 324,
+        "Trade union membership declared in the register": 322
+      },
+      "dtype": "string",
+      "kind": "O",
+      "length_max": 73,
+      "length_min": 35,
+      "null_count": 150,
+      "null_rate": 0.035344,
+      "present": true
+    },
+    "declaration_id": {
+      "distinct": 4244,
+      "dtype": "string",
+      "kind": "O",
+      "length_max": 8,
+      "length_min": 8,
+      "null_count": 0,
+      "null_rate": 0.0,
+      "present": true,
+      "top_values": {
+        "D-000001": 1,
+        "D-002822": 1,
+        "D-002823": 1,
+        "D-002824": 1,
+        "D-002836": 1
+      }
+    },
+    "last_updated_date": {
+      "distinct": 1118,
+      "dtype": "object",
+      "kind": "O",
+      "length_max": 10,
+      "length_min": 10,
+      "null_count": 0,
+      "null_rate": 0.0,
+      "present": true,
+      "top_values": {
+        "2024-04-24": 10,
+        "2024-08-21": 10,
+        "2024-09-26": 11,
+        "2024-10-04": 14,
+        "2025-06-23": 10
+      }
+    },
+    "member_id": {
+      "distinct": 1400,
+      "dtype": "string",
+      "kind": "O",
+      "length_max": 7,
+      "length_min": 7,
+      "null_count": 0,
+      "null_rate": 0.0,
+      "present": true,
+      "top_values": {
+        "M-00372": 5,
+        "M-00684": 5,
+        "M-00939": 5,
+        "M-01064": 5,
+        "M-01288": 5
+      }
+    },
+    "register_held_by": {
+      "distinct": 3,
+      "domain": {
+        "Cambridgeshire County Council": 692,
+        "Huntingdonshire District Council": 2931,
+        "South Cambridgeshire District Council": 621
+      },
+      "dtype": "string",
+      "kind": "O",
+      "length_max": 37,
+      "length_min": 29,
+      "null_count": 0,
+      "null_rate": 0.0,
+      "present": true
+    },
+    "registered_date": {
+      "distinct": 888,
+      "dtype": "object",
+      "kind": "O",
+      "length_max": 10,
+      "length_min": 10,
+      "null_count": 0,
+      "null_rate": 0.0,
+      "present": true,
+      "top_values": {
+        "2024-04-06": 12,
+        "2024-04-22": 14,
+        "2024-06-16": 13,
+        "2025-06-05": 11,
+        "2025-07-04": 11
+      }
+    },
+    "role": {
+      "distinct": 6,
+      "domain": {
+        "Cabinet Member": 379,
+        "Chair": 283,
+        "Committee Member": 603,
+        "Councillor": 2577,
+        "Mayor": 119,
+        "Vice-Chair": 283
+      },
+      "dtype": "string",
+      "kind": "O",
+      "length_max": 16,
+      "length_min": 5,
+      "null_count": 0,
+      "null_rate": 0.0,
+      "present": true
+    },
+    "ward": {
+      "distinct": 20,
+      "domain": {
+        "Alconbury": 196,
+        "Brampton": 222,
+        "Buckden": 231,
+        "Fenstanton": 267,
+        "Godmanchester": 207,
+        "Hemingfords": 220,
+        "Huntingdon East": 198,
+        "Huntingdon North": 249,
+        "Huntingdon West": 182,
+        "Little Paxton": 177,
+        "Ramsey": 221,
+        "Sawtry": 180,
+        "Somersham": 201,
+        "St Ives East": 180,
+        "St Ives South": 208,
+        "St Ives West": 222,
+        "St Neots East": 225,
+        "St Neots Eynesbury": 204,
+        "Warboys": 222,
+        "Yaxley": 232
+      },
+      "dtype": "string",
+      "kind": "O",
+      "length_max": 18,
+      "length_min": 6,
+      "null_count": 0,
+      "null_rate": 0.0,
+      "present": true
+    },
+    "withheld": {
+      "distinct": 2,
+      "dtype": "boolean",
+      "kind": "b",
+      "null_count": 0,
+      "null_rate": 0.0,
+      "present": true,
+      "true_rate": 0.035344
+    }
+  },
+  "row_count": 4244
+}

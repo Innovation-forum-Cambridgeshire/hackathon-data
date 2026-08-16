@@ -1,0 +1,266 @@
+# Cross-table relationships and the data architecture, declared once.
+#
+# WHY THIS FILE EXISTS SEPARATELY FROM THE CATALOGUE
+# ---------------------------------------------------
+# catalogue/*.yml describes each table on its own — columns, types, grain. It says
+# nothing about how the tables relate, because nothing in the build needs to know.
+# The assurance run does: referential integrity is the one class of defect that is
+# invisible from inside a single table, and it is also the one participants hit
+# first, because the whole point of every challenge is a join.
+#
+# Every relationship below was checked against the built corpus before it was
+# written down (see quality/README.md, "How the relationships were established").
+# Declaring an FK that does not hold would be worse than declaring none: the suite
+# would fail on correct data and teach people to ignore it.
+#
+# THE `hazard` ENTRIES ARE NOT BUGS.
+# A hazard is a join a participant will reasonably attempt that the data does not
+# support. They are recorded here so the ERD can draw them, and so the assessment
+# can say plainly that they were considered and left in place deliberately.
+
+version: 1
+
+challenges:
+  c01-one-farm-one-picture:
+    title: One Farm, One Picture
+    tables: [field_daily, station_weather]
+
+    relationships:
+      - name: field_to_station
+        from: {table: field_daily, columns: [nearest_station_id]}
+        to: {table: station_weather, columns: [station_id]}
+        # Many field-days point at one station; the station side is NOT unique on
+        # station_id alone (one row per station per day), so this is many-to-many
+        # on the raw tables and only becomes many-to-one against the station list.
+        cardinality: many-to-many
+        enforced: true
+        note: >-
+          Every field's nearest station resolves. Checked: 0 orphans in 180,000
+          field-days. This must keep holding — a broken join here makes the
+          weather half of the challenge unreachable.
+
+    hazards:
+      - name: station_grain_is_not_unique
+        tables: [station_weather]
+        note: >-
+          station_weather is declared "one row per station x day" and is not:
+          ~1.5% of station-days are duplicated. Joining field_daily to it on
+          (station_id, observation_date) therefore FANS OUT and silently inflates
+          any sum. This is the central lesson of c01 and is deliberate.
+      - name: distance_is_not_carried_into_the_join
+        tables: [field_daily]
+        note: >-
+          distance_to_station_km reaches 28km. A join treats a 28km reading and a
+          1km reading identically, and nothing in the joined result records that
+          the first is a far weaker proxy.
+
+  c02-mapping-the-gaps:
+    title: Mapping the Gaps
+    tables: [lsoa_deprivation, lsoa_crime_monthly]
+
+    relationships:
+      - name: crime_to_deprivation
+        from: {table: lsoa_crime_monthly, columns: [lsoa_code]}
+        to: {table: lsoa_deprivation, columns: [lsoa_code]}
+        cardinality: many-to-one
+        enforced: true
+        parent_key_unique: true
+        note: >-
+          Checked: 0 orphans in 2,430,360 crime rows, and lsoa_code is unique in
+          lsoa_deprivation. This is a true foreign key and the only route to the
+          population denominator.
+
+    hazards:
+      - name: counts_without_a_denominator
+        tables: [lsoa_crime_monthly]
+        note: >-
+          recorded_count is a COUNT, and resident_population varies about 4x
+          between LSOAs. Mapping counts rather than rates draws a population map
+          and calls it a crime map. The join is required before any comparison.
+      - name: crime_score_is_inside_the_rank
+        tables: [lsoa_deprivation]
+        note: >-
+          crime_score is a component of imd_rank. Correlating recorded crime
+          against the overall rank is partly correlating crime with itself.
+
+  c03-beyond-the-mainframe:
+    title: Beyond the Mainframe
+    tables: [workload_cost_daily, chargeback_allocation, carbon_by_workload]
+
+    relationships:
+      - name: carbon_to_cost
+        from: {table: carbon_by_workload, columns: [workload_id]}
+        to: {table: workload_cost_daily, columns: [workload_id]}
+        cardinality: one-to-one
+        enforced: true
+        grain_aligned_on: [workload_id, usage_date]
+        note: >-
+          Both tables are one row per workload x day over the same window, so this
+          is a 1:1 join on (workload_id, usage_date). Checked: 0 orphans.
+
+      - name: chargeback_reconciles_to_cost
+        from: {table: chargeback_allocation, columns: [business_unit, month, service]}
+        to: {table: workload_cost_daily, columns: [business_unit, usage_date, service]}
+        cardinality: aggregate
+        enforced: false
+        reconciliation:
+          measure: allocated_cost_gbp
+          against: cost_gbp
+          tolerance_gbp: 0.01
+        note: >-
+          Not a foreign key — an AGGREGATE. chargeback_allocation is the monthly
+          roll-up of workload_cost_daily. Checked: both sides total GBP
+          15,325,232.68, equal to the penny. Asserted as a reconciliation rather
+          than a join, because a chargeback table that no longer reconciles still
+          looks exactly like a chargeback table.
+
+    hazards:
+      - name: unallocated_is_a_real_business_unit
+        tables: [workload_cost_daily, chargeback_allocation, carbon_by_workload]
+        note: >-
+          business_unit is 'UNALLOCATED' where ownership is untagged. Filtering it
+          out to make the chart tidy silently drops real spend and breaks the
+          reconciliation above. It is a finding, not a null.
+      - name: first_month_variance_is_absent_not_zero
+        tables: [chargeback_allocation]
+        note: >-
+          variance_vs_prior_month_pct is NULL in the first month a combination
+          appears (678 rows). Filling those with 0 asserts "no change" where the
+          truth is "no prior month".
+
+  c04-safe-in-the-open:
+    title: Safe in the Open
+    tables: [synthetic_councillor_register, support_directory, message_signals]
+
+    relationships: []
+    # There is deliberately no cross-table key in c04. The register, the support
+    # directory and the message signals are three separate evidence bases about
+    # the same problem, and joining them would imply a link between a named role
+    # and a specific message that the data must not support.
+
+    hazards:
+      - name: withheld_is_lawful_absence
+        tables: [synthetic_councillor_register]
+        note: >-
+          declaration_detail is NULL exactly where `withheld` is true — an
+          interest lawfully withheld under Localism Act 2011 s.32. The row records
+          THAT an interest exists. Imputing the detail, or dropping the row as
+          incomplete, both misrepresent the statutory position.
+      - name: robust_criticism_is_the_hard_negative
+        tables: [message_signals]
+        note: >-
+          Category 'Robust criticism' is deliberately NOT flagged, and
+          sentiment_score overlaps between flagged and robust-criticism rows. A
+          classifier trained on sentiment alone will suppress legitimate criticism
+          of public figures. The overlap is the point.
+      - name: ward_is_a_quasi_identifier
+        tables: [synthetic_councillor_register]
+        note: >-
+          ward, authority and role together narrow to very few members. The data
+          is synthetic, but the re-identification shape is real and is what the
+          k-anonymity check in the c05 sibling corpus guards against.
+
+  c05-ahead-of-the-heat:
+    title: Ahead of the Heat
+    tables: [alert_history, synthetic_cohort, region_weather_daily]
+
+    relationships:
+      - name: cohort_region_within_alert_regions
+        from: {table: synthetic_cohort, columns: [region]}
+        to: {table: alert_history, columns: [region]}
+        cardinality: many-to-many
+        enforced: true
+        note: >-
+          Shared domain rather than a key: both use the nine English regions UKHSA
+          issues alerts for. Checked: all 9 cohort regions appear in alert_history.
+          Enforced so that a generator drift renaming a region is caught, since it
+          would silently drop a whole region from any cohort-to-alert join.
+
+    hazards:
+      - name: no_join_key_between_weather_and_alerts
+        tables: [region_weather_daily, alert_history]
+        severity: high
+        note: >-
+          THE MOST IMPORTANT HAZARD IN THE PROGRAMME, and it is invisible from
+          either table alone. region_weather_daily is keyed on `area` (41
+          county-level areas); alert_history is keyed on `region` (9 regions).
+          The intersection of those two value sets is EMPTY — checked, 0 of 41.
+          There is no lookup table shipped. A team that joins area to region gets
+          zero rows, and a team that joins on date alone silently crosses every
+          area with every region. Building the area-to-region mapping is real
+          work and is part of the challenge, so the gap is left in place. It is
+          recorded here so nobody mistakes it for a build failure.
+      - name: predicted_risk_is_miscalibrated_by_design
+        tables: [synthetic_cohort]
+        note: >-
+          predicted_risk ranks correctly but is roughly 2.7x too high in absolute
+          terms. Ranking-based use is sound; reading it as a probability is not.
+          heat_event_last_summer is the ground truth to calibrate against.
+
+# ---------------------------------------------------------------------------
+# THE PIPELINE, AS LANES.
+# Drives the swimlane diagram. Each stage names the artefact it hands on, because
+# the handoffs are where this pipeline can silently lose a guarantee — the CSV
+# twin is the obvious one, the release asset is the one nobody watches.
+# ---------------------------------------------------------------------------
+architecture:
+  lanes:
+    - id: source
+      title: Source
+      owner: Publisher
+      stages:
+        - {id: open, title: Open data sources, detail: "Copernicus, MIDAS Open, Defra, AHDB, police.uk", kind: external}
+        - {id: gate, title: Licence gate, detail: "redistributable + licence_reviewed, both required", kind: control}
+
+    - id: build
+      title: Build
+      owner: Innovation Forum x R1X
+      stages:
+        - {id: generators, title: Seeded generators, detail: "build/generators/*.py, deterministic for a fixed seed", kind: process}
+        - {id: contract, title: Column contract, detail: "generator output checked against catalogue/*.yml", kind: control}
+
+    - id: gold
+      title: Gold
+      owner: Innovation Forum x R1X
+      stages:
+        - {id: parquet, title: Parquet, detail: "13 tables, canonical types", kind: artefact}
+        - {id: csv, title: CSV twin, detail: "UTF-8 BOM, ISO-8601, Excel-safe", kind: artefact}
+
+    - id: assure
+      title: Assure
+      owner: Assurance
+      stages:
+        - {id: gx_contract, title: GX contract suites, detail: "schema, keys, ranges, referential integrity", kind: control}
+        - {id: gx_defect, title: GX defect-profile suites, detail: "deliberate flaws held within bounds", kind: control}
+        - {id: gx_recon, title: Twin reconciliation, detail: "CSV vs parquet, row for row", kind: control}
+        - {id: docs, title: Branded Data Docs, detail: "top 10 affected rows per failure", kind: artefact}
+
+    - id: publish
+      title: Publish
+      owner: Innovation Forum x R1X
+      stages:
+        - {id: release, title: GitHub Release assets, detail: "immutable, versioned, 2 GiB per file", kind: artefact}
+        - {id: worker, title: Cloudflare Worker, detail: "CORS front door at data.inno-forum.co.uk", kind: process}
+
+    - id: consume
+      title: Consume
+      owner: Participants
+      stages:
+        - {id: notebooks, title: Starter notebooks, detail: "one per challenge", kind: artefact}
+        - {id: tools, title: DuckDB, Power BI, Excel, R, detail: "consumers/*", kind: external}
+
+  flows:
+    - {from: open, to: gate}
+    - {from: gate, to: generators}
+    - {from: generators, to: contract}
+    - {from: contract, to: parquet}
+    - {from: parquet, to: csv}
+    - {from: parquet, to: gx_contract}
+    - {from: gx_contract, to: gx_defect}
+    - {from: csv, to: gx_recon}
+    - {from: gx_defect, to: docs}
+    - {from: gx_recon, to: docs}
+    - {from: docs, to: release}
+    - {from: release, to: worker}
+    - {from: worker, to: notebooks}
+    - {from: notebooks, to: tools}
