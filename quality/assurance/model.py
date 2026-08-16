@@ -142,8 +142,25 @@ DTYPE_KINDS: dict[str, tuple[str, ...]] = {
     ),
     "double": ("Float64Dtype", "Float32Dtype", "float64", "float32", "double"),
     "boolean": ("BooleanDtype", "bool", "bool_"),
-    "date": ("date", "datetime64[ns]", "Timestamp"),
-    "datetime": ("datetime64[ns]", "Timestamp", "datetime", "date"),
+    # Every time PRECISION, not just [ns]. pandas 2 with pyarrow 21 hands back
+    # datetime64[ns]; pandas 3 with pyarrow 25 preserves the parquet's own unit,
+    # which is microseconds. Listing only [ns] made the suite pass on the machine
+    # it was written on and fail in CI on identical data — the worst failure mode
+    # a data-quality tool has, because it looks exactly like a data defect.
+    #
+    # Precision is not something this contract has an opinion about: the
+    # catalogue says "date" and "datetime", and a timestamp is the same instant
+    # at any unit. What it does have an opinion about is a date arriving as a
+    # string, which every spelling below still rejects.
+    "date": (
+        "date", "Timestamp",
+        "datetime64[ns]", "datetime64[us]", "datetime64[ms]", "datetime64[s]",
+    ),
+    "datetime": (
+        "datetime", "date", "Timestamp",
+        "datetime64[ns]", "datetime64[us]", "datetime64[ms]", "datetime64[s]",
+        "datetime64[ns, UTC]", "datetime64[us, UTC]",
+    ),
 }
 
 
