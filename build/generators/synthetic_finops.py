@@ -16,8 +16,15 @@ can be regenerated at a different size for a dry run without renegotiating anyth
 DETERMINISM IS A JUDGING REQUIREMENT, NOT A CONVENIENCE
 -------------------------------------------------------
 `numpy.random.default_rng(seed)` uses PCG64, which NumPy documents as
-stream-compatible across releases — the same seed gives the same numbers on a
-participant's laptop and in CI. Do not swap it for `numpy.random.seed()` (legacy
+stream-compatible across releases — verified here across numpy 1.26.4 and 2.2.6,
+where every value in all thirteen tables was identical.
+
+Be precise about what that buys, because the looser version of this claim is
+wrong: same seed gives the same VALUES anywhere, but the same BYTES only within
+a pinned environment. Parquet embeds its writer version, so pyarrow 21 and 23
+produce different files with identical contents. Only value-identity matters for
+fairness — judging runs against the downloaded release asset, a fixed file. See
+build/determinism.py. Do not swap it for `numpy.random.seed()` (legacy
 global state, and shared with any library that touches it) or for Python's `random`
 (different stream, and unusably slow at this row count).
 

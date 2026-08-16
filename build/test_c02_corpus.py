@@ -28,6 +28,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parent / "generators"))
 
 import yaml  # noqa: E402
 
+from determinism import fingerprint_tables  # noqa: E402
+
 import synthetic_lsoa as gen  # noqa: E402
 
 CATALOGUE = Path(__file__).resolve().parent.parent / "catalogue" / "c02-mapping-the-gaps.yml"

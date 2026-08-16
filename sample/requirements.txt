@@ -1,18 +1,38 @@
 # Pinned, not floating. A notebook that only ran on the author's laptop is worse
 # than no notebook: it wastes a participant's first hour and teaches them the
-# material is unreliable. Upper bounds are deliberate — a major release of any of
-# these during the event window should not silently change what a team sees.
+# material is unreliable.
+#
+# REQUIRES PYTHON >= 3.10. pyarrow dropped 3.9 at 22.0, and the version we need
+# for CVE-2026-25087 is 23.0.1. Python 3.9 reached end of life in October 2025,
+# so this costs nothing real — but setup.sh checks it explicitly, because the
+# alternative is a pip resolver error that reads like a network problem.
+#
+# SECURITY PINS — do not lower these without checking the advisories:
+#   jupyterlab >= 4.5.10  eight advisories, five HIGH. Mostly XSS reachable
+#                         through opened content: a crafted image, an
+#                         overrides.json, package metadata. This environment
+#                         exists so ~100 participants can open notebooks they
+#                         were handed, which is exactly that path.
+#                         GHSA-gx64-gj6p-pc4c, -pppj-hq3g-57pj, -rch3-82jr-f9w9,
+#                         -mqcg-5x36-vfcg, -37w4-hwhx-4rc4, -h5v5-8746-g7mm,
+#                         -vmhf-c436-hxj4, -whvh-wf3x-g77j, -vvfj-2jqx-52jm
+#   pyarrow    >= 23.0.1  GHSA-rgxp-2hwp-jwgg, use-after-free reading an IPC
+#                         file with pre-buffering. Reading parquet is what every
+#                         notebook and every generator does, so this is the one
+#                         with the shortest path to us.
+# pandas stays on 2.x deliberately. 3.0 is available and is a breaking release;
+# a security bump is the wrong moment to take an API migration with it.
 pandas==2.3.3
-pyarrow==21.0.0
-numpy==1.26.4
-matplotlib==3.9.2
-scikit-learn==1.5.2
-jupyterlab==4.2.5
-ipykernel==6.29.5
-PyYAML==6.0.2
+pyarrow==23.0.1
+numpy==2.2.6
+matplotlib==3.10.6
+scikit-learn==1.6.1
+jupyterlab==4.5.10
+ipykernel==6.31.0
+PyYAML==6.0.3
 
 # NOT included on purpose:
-#   seaborn / plotly  — one plotting library is enough to read a notebook
+#   seaborn / plotly   — one plotting library is enough to read a notebook
 #   xgboost / lightgbm — the point is the method, and a gradient booster invites
 #                        teams to skip straight to tuning a model they have not
 #                        understood the inputs to
