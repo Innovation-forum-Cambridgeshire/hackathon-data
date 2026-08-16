@@ -6,3 +6,7 @@ __pycache__/
 node_modules/
 .wrangler/
 .DS_Store
+
+# Generated programme reports. Regenerate with scripts/programme-report.py —
+# committing them would put a stale snapshot in every clone.
+report/
