@@ -28,6 +28,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parent / "generators"))
 
 import yaml  # noqa: E402
 
+from determinism import fingerprint_tables  # noqa: E402
+
 import synthetic_finops as gen  # noqa: E402
 
 CATALOGUE = Path(__file__).resolve().parent.parent / "catalogue" / "c03-beyond-the-mainframe.yml"
@@ -83,7 +85,7 @@ def main() -> int:
                     )
 
     # Determinism: judging reproducibility depends on it.
-    if gen.generate(gen.DEFAULT_SEED) != gen.generate(gen.DEFAULT_SEED):
+    if fingerprint_tables(gen.generate(gen.DEFAULT_SEED)) != fingerprint_tables(gen.generate(gen.DEFAULT_SEED)):
         failures.append("generator is not deterministic for a fixed seed")
     if gen.generate(1)["workload_cost_daily"][1] == gen.generate(2)["workload_cost_daily"][1]:
         failures.append("generator ignores its seed — two different seeds gave identical data")

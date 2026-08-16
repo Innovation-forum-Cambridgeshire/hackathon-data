@@ -27,6 +27,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parent / "generators"))
 
 import yaml  # noqa: E402
 
+from determinism import fingerprint_tables  # noqa: E402
+
 import synthetic_abuse  # noqa: E402
 import synthetic_register  # noqa: E402
 
@@ -64,7 +66,7 @@ def main() -> int:
                 failures.append(f"{name}: {len(rows):,} rows vs declared ~{approx:,} ({drift:.0%})")
 
     for mod in (synthetic_register, synthetic_abuse):
-        if mod.generate(mod.DEFAULT_SEED) != mod.generate(mod.DEFAULT_SEED):
+        if fingerprint_tables(mod.generate(mod.DEFAULT_SEED)) != fingerprint_tables(mod.generate(mod.DEFAULT_SEED)):
             failures.append(f"{mod.__name__} is not deterministic for a fixed seed")
 
     # ---------- SAFETY ----------
