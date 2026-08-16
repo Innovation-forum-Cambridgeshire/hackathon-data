@@ -1,0 +1,237 @@
+# Judging rubric — Innovation Forum × R1X
+#
+# Milestone M08, "Judging criteria and scoring sheet signed off", due T-60.
+# DRAFT for the Judging Chair. Nothing here is agreed until that role is filled
+# and signs it.
+#
+# ─────────────────────────────────────────────────────────────────────────────
+# WHAT THIS DOES AND DOES NOT CHANGE
+#
+# It does NOT rename the criteria. Five criteria per challenge, equal weight, are
+# already published on the challenge pages and on the home page ("Five criteria,
+# equal weight"), and they are client-approved copy. Renaming them after people
+# have entered would be worse than the problem it solved.
+#
+# What was actually missing is everything else: there is no scale, no anchors, no
+# definition of what counts as evidence, and no rule for what disqualifies a
+# polished demo. That is what this file supplies.
+#
+# ─────────────────────────────────────────────────────────────────────────────
+# THE ONE CONTRADICTION THAT MUST BE FIXED IN THE WORD MASTERS
+#
+# Participant T&Cs §12.1 currently reads: "Submissions are judged against the
+# published criteria: usefulness, clarity, integration/feasibility, and
+# creativity." That is FOUR criteria and it matches only challenge 01. Every
+# other challenge publishes a different set.
+#
+# The contract and the brief already disagree, today, before anything here is
+# adopted. §12.2 says "The judges' decision is final and no correspondence will
+# be entered into" — which is exactly the clause that gets tested when the
+# criteria a team was judged against are not the criteria they agreed to.
+#
+# FIX: amend §12.1 to say submissions are judged against the five criteria
+# published on the brief for the challenge entered. That is true of all five
+# challenges and does not need re-amending when a sixth challenge is added.
+# `build/validate_rubric.py` fails if this file and the published briefs drift.
+#
+# ─────────────────────────────────────────────────────────────────────────────
+# WHY BOARD DISCIPLINE IS A GATE AND NOT A SCORE
+#
+# Organisation is assessed, but as a THRESHOLD rather than a scored dimension.
+# Three reasons, and the third is the one that settles it:
+#
+#   1. It preserves "five criteria, equal weight", which is published, and the
+#      staffing model's "one judge per criterion" with five judges.
+#   2. Scoring it rewards theatre. A team that dumps forty cards on Monday and
+#      drags them all to Done on Friday scores identically to a team that worked
+#      properly — unless you measure the timing.
+#   3. Measuring the timing means systematic monitoring of individuals, most of
+#      whom are children. The ICO Children's Code exists to stop exactly that.
+#      So: automate the SNAPSHOT, never the score. A human confirms the
+#      threshold from a static view in under a minute.
+#
+# The precedent is already in this programme: the C04 Participant Output Rules
+# say "They are judging criteria, not paperwork: entries that break them cannot
+# be scored." Same mechanism.
+
+version: DRAFT-2026-08-16
+status: awaiting sign-off by the Judging Chair (role currently unfilled)
+milestone: M08
+
+# ── Scale ────────────────────────────────────────────────────────────────────
+# 1–5 with written anchors at every band. Anchors exist so two judges scoring the
+# same demo land in roughly the same place; without them a five-point scale is
+# five people's private opinions wearing the same number.
+scale:
+  min: 1
+  max: 5
+  anchors:
+    1: "Absent. The criterion was not addressed, or what was shown does not support the claim made about it."
+    2: "Asserted. The team says it is true and shows nothing that would let a sceptic check."
+    3: "Demonstrated. Shown working on the challenge data, with the obvious caveats acknowledged."
+    4: "Evidenced. Shown working, with the team able to say why it works, where it breaks, and what they ruled out."
+    5: "Transferable. As 4, and someone outside the team could pick it up and carry it on from what was left behind."
+
+# The distinction that does the most work in practice. Judges are briefed on it
+# explicitly, because "we could integrate this" and "here it is integrated" are
+# scored three bands apart and teams present them identically.
+evidence_rules:
+  counts_as_evidence:
+    - "Something running against the published challenge data"
+    - "A number a judge can trace back to a table and a query"
+    - "A named limitation the team found themselves, not one the brief handed them"
+    - "A decision they reversed during the week, and why"
+  counts_as_assumption:
+    - "A slide describing what the thing would do"
+    - "A number with no path back to the data"
+    - "A roadmap presented in place of a result"
+  never_rewarded:
+    - "Visual polish that is not backed by anything working"
+    - "Scope claimed in the pitch that is absent from the repository"
+    - "A result that cannot be reproduced from the pinned release version"
+
+# ── Eligibility gates ────────────────────────────────────────────────────────
+# Checked BEFORE scoring. A gate is pass/fail and a judge does not score an entry
+# that fails one — the same rule the C04 output rules already use.
+gates:
+  - id: pinned-version
+    name: The submission names the release version it used
+    why: >-
+      Every challenge corpus is published as an immutable tagged release
+      precisely so a result can be reproduced. A submission that does not say
+      which version it ran against cannot be checked, and reproducibility is the
+      whole reason the data is versioned that way.
+    check: "SUBMISSION.md names a challenge release tag that exists"
+
+  - id: output-rules
+    name: The entry obeys the challenge's participant output rules
+    why: >-
+      Already binding for challenge 04, where the rules exist because the
+      alternative risks PHA 1997, the Defamation Act 2013 and misuse of private
+      information. "Entries that break them cannot be scored" is the existing
+      wording and is carried through unchanged.
+    check: "No real named individual is profiled, ranked or scored; no withheld interest is inferred"
+
+  - id: board-in-use
+    name: The team ran its work on its board
+    why: >-
+      Organisation is part of what the event teaches. This is a threshold, not a
+      score — see the note at the top of this file on why scoring it would be
+      both gameable and, for participants under 18, a Children's Code problem.
+    check: >-
+      A human confirms from a single static view of the board that: work was
+      broken into more than a handful of items; items moved across the week
+      rather than all at the end; and the final board state matches what was
+      demonstrated.
+    deliberately_not_measured:
+      - "Per-person activity counts"
+      - "Timestamps of individual card movements"
+      - "Any comparison between named individuals"
+
+# ── Criteria ─────────────────────────────────────────────────────────────────
+# Names are AS PUBLISHED on each challenge page and are not changed here.
+# `build/validate_rubric.py` fails if they drift from src/data/challenges.ts.
+#
+# Three criteria are common to all five challenges — Clarity, Integration,
+# Feasibility. The fourth is the challenge's own impact criterion. The fifth is
+# either Responsible use or Creativity/Innovation depending on the challenge.
+# That structure was already there; it had simply never been written down.
+challenges:
+  c01-one-farm-one-picture:
+    criteria: [Usefulness, Clarity, Integration, Feasibility, Creativity]
+  c02-mapping-the-gaps:
+    criteria: [Insight, Clarity, Integration, "Responsible use", Feasibility]
+  c03-beyond-the-mainframe:
+    criteria: ["Market impact", Feasibility, Clarity, Integration, Innovation]
+  c04-safe-in-the-open:
+    criteria: [Protection, Clarity, Integration, "Responsible use", Feasibility]
+  c05-ahead-of-the-heat:
+    criteria: ["Safety impact", Clarity, Integration, "Responsible use", Feasibility]
+
+# What each criterion means when scoring, and what a 5 looks like specifically.
+# Framework anchors are named so a judge can point at something other than taste.
+criterion_guidance:
+  Clarity:
+    scoring: "Could someone who was not in the room follow the argument, and act on it?"
+    a_five_looks_like: "A non-specialist restates the finding correctly after one hearing."
+    framework: "GDS Service Standard point 4 — make the service simple to use"
+
+  Integration:
+    scoring: "Did separate sources actually get joined, and does the join hold up?"
+    a_five_looks_like: >-
+      The join is on a real key, the row counts are explained rather than
+      hand-waved, and the team can say what the join loses.
+    framework: "DMBOK — data integration and interoperability"
+
+  Feasibility:
+    scoring: "Could this be built and run by the organisation that would own it?"
+    a_five_looks_like: "The team names what it would cost, who would run it, and what would break first."
+    framework: "Technology Readiness Levels — state the TRL honestly rather than claiming production readiness"
+
+  "Responsible use":
+    scoring: >-
+      Does the entry name the limits of the data rather than overreaching? This
+      criterion carries a compliance function: the C04 method statement relies on
+      "judging criteria that reward naming the limits of the data rather than
+      overreaching" as a control it cannot achieve any other way.
+    a_five_looks_like: >-
+      The team states what their result does NOT support, and can name who could
+      be harmed by it being wrong.
+    framework: "ODI Data Ethics Canvas — 'who could be negatively affected by this project?'"
+
+  Usefulness:
+    scoring: "Would a real user act on this?"
+    a_five_looks_like: "The team can name the user, the decision, and what changes for them."
+    framework: "GDS Service Standard points 1–2 — understand users, solve a whole problem"
+
+  Insight:
+    scoring: "Did they find something genuinely not obvious from the raw data?"
+    a_five_looks_like: >-
+      The finding survives the obvious challenge. For c02 specifically: they
+      normalised to rates rather than mapping counts, and they noticed that
+      recorded crime measures reporting as much as incidence.
+    framework: "ODI Data Ethics Canvas — limitations and bias"
+
+  "Market impact":
+    scoring: "Would this move the sponsor toward leadership in their market?"
+    a_five_looks_like: "A number the sponsor's own finance function would recognise."
+    framework: "Value-driver framing — cost, risk, revenue, or time"
+
+  Protection:
+    scoring: "Does it protect people in public life without harming anyone else?"
+    a_five_looks_like: >-
+      The team can state the cost of a false accusation as clearly as the cost of
+      a missed abusive message, and has designed for the asymmetry.
+    framework: "ICO Children's Code and the challenge's own output rules"
+
+  "Safety impact":
+    scoring: "Would this help a real person at risk in a heat event?"
+    a_five_looks_like: >-
+      It fails safe. The team can say what happens when the model is wrong and
+      why that failure mode is the acceptable one.
+    framework: "Clinical-safety thinking — fail safe, support judgement, never replace it"
+
+  Creativity:
+    scoring: "A genuinely new angle, or a competent version of the obvious one?"
+    a_five_looks_like: "An approach the judges had not considered, which survives contact with the data."
+    framework: "—"
+
+  Innovation:
+    scoring: "A genuinely new angle, or a competent version of the obvious one?"
+    a_five_looks_like: "An approach the judges had not considered, which survives contact with the data."
+    framework: "—"
+
+# ── Panel ────────────────────────────────────────────────────────────────────
+panel:
+  judges: 5
+  weighting: equal
+  note: >-
+    Five judges, one per criterion, is the existing staffing assumption and the
+    published position. One judge owning one criterion across all teams gives
+    better consistency within a criterion than five judges each scoring
+    everything — which is the trade this panel design makes deliberately.
+  briefing_required:
+    - "The 1–5 anchors, and that a 3 means demonstrated rather than adequate"
+    - "The evidence-versus-assumption distinction"
+    - "That gates are checked before scoring, and a failed gate is not a low score"
+    - "That scores are recorded append-only and a changed score keeps its history"
