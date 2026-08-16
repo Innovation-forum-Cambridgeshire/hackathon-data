@@ -94,6 +94,29 @@ export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
           slug: t.slug,
           // Convention, not a lookup: the team's repository is named after the
           // team. One less thing to store, and it cannot go stale.
+          //
+          // THIS LINE IS THE ONLY PLACE THE SYSTEM SAYS WHO OWNS TEAM WORK, AND
+          // THREE LEGAL DOCUMENTS DEPEND ON THE ANSWER.
+          //
+          // Repositories live under the ORGANISATION, not under participants'
+          // personal accounts. That is what makes the safeguarding position
+          // workable: the Organiser holds admin, so it can moderate issues and
+          // pull requests, take a repository down on a young person's behalf,
+          // and create it private from the outset if the Designated
+          // Safeguarding Lead decides a team containing a minor should not work
+          // in public.
+          //
+          // If provisioning is ever changed to create repositories under
+          // participants' own accounts, the Code of Conduct (section 7), the
+          // IP, Media & Consent Policy (2.3 and the parental consent form) and
+          // the Participant Privacy Notice all become false in the same breath,
+          // because each states what the Organiser can do about published work.
+          // Change this line and those documents must be amended with it.
+          //
+          // What org ownership does NOT buy: control over clones, forks,
+          // mirrors and archives that other people have already taken. Deleting
+          // the original never reaches those, which is why the notices promise
+          // prompt action rather than removal.
           repo: `https://github.com/${cfg.GITHUB_ORG}/${t.slug}`,
         }));
     }
