@@ -10,6 +10,7 @@
  * there is no second list to drift out of step with the first.
  */
 import { sign, cookieHeader, readCookie } from "../../src/lib/session";
+import { ConfigError, configErrorResponse, requireEnv } from "../../src/lib/config";
 
 interface Env {
   GITHUB_CLIENT_ID: string;
@@ -29,8 +30,28 @@ function fail(origin: string, reason: string): Response {
   });
 }
 
+const REQUIRED = [
+  "GITHUB_CLIENT_ID",
+  "GITHUB_CLIENT_SECRET",
+  "SESSION_SECRET",
+  "GITHUB_ORG",
+] as const;
+
 export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
   const url = new URL(request.url);
+
+  // Nothing below may run on a partial configuration. An unset SESSION_SECRET
+  // does not throw inside sign() — it signs with the literal string "undefined",
+  // producing a session cookie anyone can forge, and every signature still
+  // verifies. Fail closed here rather than issue a worthless credential.
+  let cfg: Record<(typeof REQUIRED)[number], string>;
+  try {
+    cfg = requireEnv(env as unknown as Record<string, unknown>, REQUIRED);
+  } catch (err) {
+    if (err instanceof ConfigError) return configErrorResponse(err);
+    throw err;
+  }
+
   const code = url.searchParams.get("code");
   const state = url.searchParams.get("state");
 
@@ -47,8 +68,8 @@ export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
     method: "POST",
     headers: { Accept: "application/json", "Content-Type": "application/json", "User-Agent": UA },
     body: JSON.stringify({
-      client_id: env.GITHUB_CLIENT_ID,
-      client_secret: env.GITHUB_CLIENT_SECRET,
+      client_id: cfg.GITHUB_CLIENT_ID,
+      client_secret: cfg.GITHUB_CLIENT_SECRET,
       code,
       redirect_uri: `${url.origin}/auth/callback`,
     }),
@@ -71,7 +92,7 @@ export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
   // 204 = member, 302/404 = not. Checked with the USER's token so it reflects
   // their own visibility rather than an elevated one.
   const memberRes = await fetch(
-    `https://api.github.com/user/memberships/orgs/${env.GITHUB_ORG}`,
+    `https://api.github.com/user/memberships/orgs/${encodeURIComponent(cfg.GITHUB_ORG)}`,
     { headers: ghHeaders },
   );
   if (!memberRes.ok) return fail(url.origin, "not_a_member");
@@ -85,7 +106,7 @@ export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
       avatar: user.avatar_url || "",
       token,
     },
-    env.SESSION_SECRET,
+    cfg.SESSION_SECRET,
   );
 
   return new Response(null, {

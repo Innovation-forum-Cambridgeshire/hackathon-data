@@ -10,3 +10,6 @@ node_modules/
 # Generated programme reports. Regenerate with scripts/programme-report.py —
 # committing them would put a stale snapshot in every clone.
 report/
+
+# Agent worktrees are local scratch, never shared history.
+.claude/worktrees/

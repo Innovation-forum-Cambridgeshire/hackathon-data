@@ -19,6 +19,7 @@
  */
 import { currentSession, NO_STORE_HEADERS } from "../../src/lib/session";
 import { EVENT, remainingUntil, inLondon } from "../../src/lib/countdown";
+import { ConfigError, configErrorResponse, requireEnv } from "../../src/lib/config";
 
 interface Env {
   SESSION_SECRET: string;
@@ -28,7 +29,21 @@ interface Env {
 const UA = "if-hackathon-workspace";
 
 export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
-  const session = await currentSession(request, env.SESSION_SECRET);
+  // Verifying against an unset secret is the dangerous case, not a failing one:
+  // it would verify a forged cookie signed with the string "undefined" and hand
+  // back a valid-looking session. 503 before any verification is attempted.
+  let cfg: Record<"SESSION_SECRET" | "GITHUB_ORG", string>;
+  try {
+    cfg = requireEnv(env as unknown as Record<string, unknown>, [
+      "SESSION_SECRET",
+      "GITHUB_ORG",
+    ] as const);
+  } catch (err) {
+    if (err instanceof ConfigError) return configErrorResponse(err, true);
+    throw err;
+  }
+
+  const session = await currentSession(request, cfg.SESSION_SECRET);
   if (!session) {
     return new Response(JSON.stringify({ signedIn: false }), {
       status: 401,
@@ -54,13 +69,13 @@ export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
         organization?: { login: string };
       }>;
       teams = all
-        .filter((t) => t.organization?.login === env.GITHUB_ORG)
+        .filter((t) => t.organization?.login === cfg.GITHUB_ORG)
         .map((t) => ({
           name: t.name,
           slug: t.slug,
           // Convention, not a lookup: the team's repository is named after the
           // team. One less thing to store, and it cannot go stale.
-          repo: `https://github.com/${env.GITHUB_ORG}/${t.slug}`,
+          repo: `https://github.com/${cfg.GITHUB_ORG}/${t.slug}`,
         }));
     }
   } catch {
