@@ -41,7 +41,27 @@ from .model import DTYPE_KINDS, Table
 # Columns we add to the frame before validating. Named with a leading underscore
 # so they cannot collide with a catalogue column, and stripped from the ordered
 # column-list expectation so the schema check still sees the real schema.
-DERIVED_PREFIX = "_gxq_"
+# Prefix for the columns we add to a frame before validating it.
+#
+# `check_` rather than something obviously internal like `_gxq_`, because GX uses
+# the COLUMN NAME as the section heading in Data Docs. A reader of the report
+# sees this text, and "_gxq_fk_cohort_region_within_alert_regions" reads as
+# something that leaked out of the tooling. "check_fk_..." reads as what it is.
+#
+# Collision with a catalogue column is checked at runtime (assert_no_collision)
+# rather than being assumed away by an unlikely prefix, which is the more honest
+# guarantee and costs one set lookup.
+DERIVED_PREFIX = "check_"
+
+
+def assert_no_collision(df: pd.DataFrame, declared: list[str], name: str) -> None:
+    """A derived column must never shadow a real one."""
+    if name in declared:
+        raise SystemExit(
+            f"derived column {name!r} collides with a column declared in the "
+            f"catalogue. Rename the relationship or the check that produces it — "
+            f"silently overwriting real data would make every result downstream a lie."
+        )
 
 
 # ---------------------------------------------------------------------------
@@ -67,6 +87,7 @@ def add_referential_columns(
             continue
         child, parent = frames[rel.from_table], frames[rel.to_table]
         col = f"{DERIVED_PREFIX}fk_{rel.name}"
+        assert_no_collision(child, list(child.columns), col)
 
         if len(rel.from_columns) == 1:
             resolves = child[rel.from_columns[0]].isin(set(parent[rel.to_columns[0]].dropna()))
