@@ -358,9 +358,9 @@ def render(k: dict) -> str:
     hist = k["history"]
     one_day = hist["distinct_days"] <= 1
 
-    return f"""<title>Programme Report</title>
+    return f"""<title>Hackathon Programme Report</title>
 <style>
-  .viz-root {{
+  :root {{
     color-scheme: light;
     --surface-1: #fcfcfb; --surface-2: #f4f4f2;
     --text-primary: #0b0b0b; --text-secondary: #52514e; --text-muted: #6f6e6a;
@@ -368,7 +368,7 @@ def render(k: dict) -> str:
     --s1: {SERIES[0][1]}; --s2: {SERIES[1][1]}; --s3: {SERIES[2][1]};
   }}
   @media (prefers-color-scheme: dark) {{
-    :root:where(:not([data-theme="light"])) .viz-root {{
+    :root:where(:not([data-theme="light"])) {{
       color-scheme: dark;
       --surface-1: #1a1a19; --surface-2: #232322;
       --text-primary: #ffffff; --text-secondary: #c3c2b7; --text-muted: #9b9a92;
@@ -376,7 +376,7 @@ def render(k: dict) -> str:
       --s1: {SERIES[0][2]}; --s2: {SERIES[1][2]}; --s3: {SERIES[2][2]};
     }}
   }}
-  :root[data-theme="dark"] .viz-root {{
+  :root[data-theme="dark"] {{
     color-scheme: dark;
     --surface-1: #1a1a19; --surface-2: #232322;
     --text-primary: #ffffff; --text-secondary: #c3c2b7; --text-muted: #9b9a92;
