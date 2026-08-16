@@ -131,6 +131,11 @@ def load_board() -> tuple[dict, list[dict]]:
             "title": content["title"],
             "state": content["state"],
             "status": fields.get("Status") or "(none)",
+            # Derived from the item's parent chain up to its owning EPIC, so it is
+            # accurate by construction rather than by anyone remembering to set it.
+            # This is also the field the second Insights chart groups by — see
+            # docs/PROJECT-INSIGHTS.md — so the two views stay in step.
+            "area": fields.get("Area") or "(unassigned)",
             "started": fields.get("Started") or "",
             "finished": fields.get("Finished") or "",
             "created": content["createdAt"][:10],
@@ -340,6 +345,7 @@ def render(k: dict) -> str:
         title = escape(r["title"])
         return (
             f"<tr><td>#{r['number']}</td><td>{title}</td><td>{escape(r['status'])}</td>"
+            f"<td>{escape(r.get('area',''))}</td>"
             f"<td>{escape(r['repository'])}</td><td>{parent}</td><td>{children}</td></tr>"
         )
 
@@ -471,7 +477,7 @@ def render(k: dict) -> str:
   <h2>All items</h2>
   <details><summary>Show the full table ({t['items']} items) — the accessible view of every chart above</summary>
   <div class="wrap"><table>
-    <thead><tr><th>#</th><th>Title</th><th>Status</th><th>Repo</th><th>Parent</th><th>Children</th></tr></thead>
+    <thead><tr><th>#</th><th>Title</th><th>Status</th><th>Area</th><th>Repo</th><th>Parent</th><th>Children</th></tr></thead>
     <tbody>{rows_html}</tbody>
   </table></div></details>
 </div>
