@@ -211,22 +211,46 @@ a:hover {{ color: {ACCENT_800}; }}
 :focus-visible {{ outline: 2px solid var(--if-accent); outline-offset: 2px; }}
 
 /* --- the top bar ---------------------------------------------------------
-   GX ships a dark navbar. Recoloured to the ink used behind the site's own
-   footer, with the brand green as the underline rule. */
+   GX ships a dark navbar carrying its own wordmark, and hard-codes
+   `style="height: 70px"` ON THE ELEMENT — so it survives any stylesheet rule
+   without !important. With our header injected above it and GX's logo removed
+   (docs.py strips the element, which is the only way to stop the request), that
+   70px became a black band across the top of every page with nothing in it.
+
+   Collapsed to fit its contents. On an index page that leaves nothing but the
+   3px brand rule under our own header; on a validation page the breadcrumbs
+   still sit in it and give it height. Height comes from what is inside it, which
+   is what it should have been in the first place. */
 .navbar, nav.navbar, .navbar-dark, .bg-dark {{
   background: var(--if-ink) !important;
   border-bottom: 3px solid var(--if-accent) !important;
-  padding: 10px 18px !important;
+  height: auto !important;
+  min-height: 0 !important;
+  padding: 0 !important;
+  position: static !important;   /* it ships sticky-top; nothing to stick */
 }}
+.navbar > .mr-auto:empty, .navbar nav:empty {{ display: none !important; }}
 .navbar a, .navbar .navbar-brand, .navbar-dark .navbar-nav .nav-link {{
   color: #ffffff !important;
   font-family: {FONT_HEADING} !important;
   font-weight: 600;
   letter-spacing: 0.02em;
 }}
-/* GX's own logo in the navbar. Ours replaces it in the injected header, and
-   leaving both would read as a co-brand that does not exist. */
-.navbar img[src*="logo"], .navbar .ge-logo, img[src*="short-logo"] {{ display: none !important; }}
+/* Breadcrumbs are the only thing we keep in there, so they carry the padding. */
+.navbar .ge-breadcrumbs, .navbar .breadcrumb, .navbar ol.breadcrumb {{
+  margin: 0 !important;
+  padding: 9px 18px !important;
+  background: transparent !important;
+  font-family: {FONT_MONO}; font-size: 12px;
+}}
+.navbar .ge-breadcrumbs a, .navbar .breadcrumb a {{ color: {AQUA} !important; }}
+
+/* --- GX's own empty furniture -------------------------------------------
+   The left rail renders an "Actions" card that is empty on every page in this
+   report, because the actions it offers are for someone editing a suite. An
+   empty titled box reads as something that failed to load. */
+.navbar img[src*="logo"], .navbar .ge-logo, img[src*="short-logo"],
+img[alt="Great Expectations"] {{ display: none !important; }}
 
 /* --- the header we inject (see docs.py) ---------------------------------- */
 .if-header {{

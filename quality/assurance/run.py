@@ -92,21 +92,6 @@ class RunResult:
         )
 
 
-def _result_format(index_columns: list[str]) -> dict[str, Any]:
-    """The setting that makes the report worth reading.
-
-    partial_unexpected_count = 10 gives the ten affected rows the brief asked
-    for; unexpected_index_column_names addresses them by business key, so the
-    reader gets ('S-0001', '2016-11-27') and not row 48,213 — which would be a
-    different row after the next rebuild.
-    """
-    fmt: dict[str, Any] = {"result_format": "SUMMARY", "partial_unexpected_count": 10}
-    if index_columns:
-        fmt["unexpected_index_column_names"] = list(index_columns)
-        fmt["return_unexpected_index_query"] = True
-    return fmt
-
-
 def _collect_failures(validation_result, index_columns: list[str]) -> list[dict[str, Any]]:
     """Pull the failing expectations, with their top ten affected rows."""
     out = []
@@ -161,7 +146,33 @@ def run(
     context.variables.progress_bars = {"globally": progress_bars}
     _install_branding(gx_root)
 
-    datasource = context.data_sources.add_or_update_pandas("hackathon-corpus")
+    # TWO DATASOURCES, BOTH PATH-BASED, AND THE REASON MATTERS.
+    #
+    # A dataframe asset needs its dataframe handed in at run time, via
+    # Checkpoint.run(batch_parameters=...). That parameter is global to the
+    # checkpoint, so a checkpoint over dataframe assets can only ever validate
+    # ONE table — which is why this used to run forty separate checkpoints and
+    # produce forty separate entries in Data Docs.
+    #
+    # A path-based asset carries its own data. Every batch becomes self-contained,
+    # so a single master checkpoint can hold every validation definition and run
+    # the whole programme in one pass, producing one report.
+    #
+    #   source    reads the corpus exactly as built — used by the schema suites,
+    #             which must see the table before any derived column is added.
+    #   prepared  the augmented frames written out below, carrying the foreign-key
+    #             resolution flags and computed residuals the contract suites need.
+    #
+    # Splitting them means the raw tables are never copied: only the augmented
+    # ones are written, and the schema checks read the originals in place.
+    prepared_dir = out_dir / "prepared"
+    prepared_dir.mkdir(parents=True, exist_ok=True)
+    ds_source = _filesystem_source(context, "corpus-as-built", data_root)
+    ds_prepared = _filesystem_source(context, "corpus-prepared", prepared_dir)
+
+    # suite name -> (TableResult or None, which flag its outcome sets)
+    suite_owner: dict[str, tuple[Any, str]] = {}
+    validation_defs: list[Any] = []
 
     result = RunResult(
         started=datetime.now(timezone.utc).isoformat(timespec="seconds"),
@@ -219,51 +230,42 @@ def run(
             )
             defect_suite = suites_mod.build_defect_suite(table, df)
 
-            asset = datasource.add_dataframe_asset(f"{challenge.slug}__{table.name}")
-            batch_def = asset.add_batch_definition_whole_dataframe("current")
+            # The augmented frame goes to disk so its batch is self-contained.
+            prepared = prepared_dir / f"{table.challenge}__{table.name}.parquet"
+            df.to_parquet(prepared, index=False)
 
-            # (suite, frame, which result flag it sets)
-            plan = [
-                (schema_suite, df[raw_columns[table.name]], "contract"),
-                (contract_suite, df, "contract"),
-                (defect_suite, df, "defects"),
-            ]
+            # Same asset name on both datasources — they are different sources,
+            # so the names do not collide, and the report should say which TABLE
+            # a result is about, not which staging file it happened to read.
+            # The datasource name (corpus-as-built / corpus-prepared) already
+            # carries that distinction in the batch id for anyone who needs it.
+            asset_name = f"{table.challenge}__{table.name}"
+            source_rel = f"{table.challenge}/gold/{table.name}.parquet"
+            schema_batch = _batch(ds_source, asset_name, source_rel)
+            data_batch = _batch(ds_prepared, asset_name, prepared.name)
 
-            for suite, frame, flag in plan:
+            # (suite, batch it validates, which flag its outcome sets)
+            for suite, batch, flag in (
+                (schema_suite, schema_batch, "contract"),
+                (contract_suite, data_batch, "contract"),
+                (defect_suite, data_batch, "defects"),
+            ):
                 if suite is None:
                     continue
                 context.suites.add_or_update(suite)
-                vd = context.validation_definitions.add_or_update(
-                    gx.ValidationDefinition(
-                        name=suite.name, data=batch_def, suite=suite
+                validation_defs.append(
+                    context.validation_definitions.add_or_update(
+                        gx.ValidationDefinition(name=suite.name, data=batch, suite=suite)
                     )
                 )
-                cp = context.checkpoints.add_or_update(
-                    Checkpoint(
-                        name=suite.name,
-                        validation_definitions=[vd],
-                        actions=[UpdateDataDocsAction(name="update_data_docs")],
-                        result_format=_result_format(table.index_columns),
-                    )
-                )
-                t0 = time.monotonic()
-                cp_result = cp.run(batch_parameters={"dataframe": frame})
-                vr = list(cp_result.run_results.values())[0]
-                label = suite.name.rsplit(".", 1)[-1]
-                print(
-                    f"    {label:9s} {'ok  ' if vr.success else 'FAIL'} "
-                    f"{len(vr.results):3d} expectations  {time.monotonic() - t0:5.1f}s  "
-                    f"{table.name}",
-                    flush=True,
-                )
-                tr.expectations += len(vr.results)
-                tr.failures.extend(_collect_failures(vr, table.index_columns))
-                # Schema and contract both roll up into "contract holds"; they are
-                # split only so the schema check can see the unaugmented frame.
-                if flag == "contract":
-                    tr.contract_success = tr.contract_success and vr.success
-                else:
-                    tr.defect_success = vr.success
+                # Schema and contract both roll up into "the contract holds"; they
+                # are separate suites only so the schema check can see the table
+                # before the derived columns go on.
+                suite_owner[suite.name] = (tr, flag)
+                tr.expectations += len(suite.expectations)
+
+            print(f"    prepared {table.name} ({len(df):,} rows, "
+                  f"{len(df.columns)} cols incl. derived)", flush=True)
 
             # --- profile and drift ---------------------------------------
             prof = profile_mod.profile_frame(df, table.column_names)
@@ -300,25 +302,20 @@ def run(
         challenge_metrics = metrics_mod.compute_all(challenge.slug, defect_tables, frames)
         if challenge_metrics:
             result.metrics.extend(challenge_metrics)
-            mframe = metrics_mod.to_frame(challenge_metrics)
             msuite = suites_mod.build_metric_suite(challenge.slug, challenge_metrics)
+            mpath = prepared_dir / f"{challenge.slug}__derived_metrics.parquet"
+            metrics_mod.to_frame(challenge_metrics).to_parquet(mpath, index=False)
             context.suites.add_or_update(msuite)
-            masset = datasource.add_dataframe_asset(f"{challenge.slug}__derived_metrics")
-            mbatch = masset.add_batch_definition_whole_dataframe("current")
-            mvd = context.validation_definitions.add_or_update(
-                gx.ValidationDefinition(name=msuite.name, data=mbatch, suite=msuite)
-            )
-            mcp = context.checkpoints.add_or_update(
-                Checkpoint(
-                    name=msuite.name,
-                    validation_definitions=[mvd],
-                    actions=[UpdateDataDocsAction(name="update_data_docs")],
-                    result_format={"result_format": "SUMMARY"},
+            validation_defs.append(
+                context.validation_definitions.add_or_update(
+                    gx.ValidationDefinition(
+                        name=msuite.name,
+                        data=_batch(ds_prepared, f"{challenge.slug}__derived_metrics", mpath.name),
+                        suite=msuite,
+                    )
                 )
             )
-            mres = mcp.run(batch_parameters={"dataframe": mframe})
-            mvr = list(mres.run_results.values())[0]
-            result.metric_failures.extend(_collect_failures(mvr, []))
+            suite_owner[msuite.name] = (None, "metrics")
 
     # --- CSV twin reconciliation, all tables at once ----------------------
     if recon_rows:
@@ -329,29 +326,90 @@ def run(
         checkable = rframe[rframe["csv_present"]]
         if len(checkable):
             rsuite = reconcile_mod.build_suite(checkable)
+            rpath = prepared_dir / "programme__csv_twins.parquet"
+            checkable.to_parquet(rpath, index=False)
             context.suites.add_or_update(rsuite)
-            rasset = datasource.add_dataframe_asset("programme__csv_twins")
-            rbatch = rasset.add_batch_definition_whole_dataframe("current")
-            rvd = context.validation_definitions.add_or_update(
-                gx.ValidationDefinition(name=rsuite.name, data=rbatch, suite=rsuite)
-            )
-            rcp = context.checkpoints.add_or_update(
-                Checkpoint(
-                    name=rsuite.name,
-                    validation_definitions=[rvd],
-                    actions=[UpdateDataDocsAction(name="update_data_docs")],
-                    result_format=_result_format(["table"]),
+            validation_defs.append(
+                context.validation_definitions.add_or_update(
+                    gx.ValidationDefinition(
+                        name=rsuite.name,
+                        data=_batch(ds_prepared, "programme__csv_twins", rpath.name),
+                        suite=rsuite,
+                    )
                 )
             )
-            rres = rcp.run(batch_parameters={"dataframe": checkable})
-            rvr = list(rres.run_results.values())[0]
-            result.reconciliation_success = rvr.success
+            suite_owner[rsuite.name] = (None, "reconciliation")
+
+    # ======================================================================
+    # ONE CHECKPOINT, EVERY BATCH.
+    #
+    # Each validation definition carries its own batch, so this runs the whole
+    # programme in a single pass and writes a single entry into Data Docs
+    # covering all of it — rather than the forty separate runs this produced when
+    # every suite had its own checkpoint. The Data Docs index then reads as one
+    # report of the corpus, which is what it is.
+    #
+    # No result_format here on purpose: a checkpoint carries exactly one, and
+    # these batches have thirteen different business keys between them. Each
+    # expectation was stamped with its own in suites.adder().
+    # ======================================================================
+    print(f"\nmaster checkpoint: {len(validation_defs)} batches", flush=True)
+    t0 = time.monotonic()
+    master = context.checkpoints.add_or_update(
+        Checkpoint(
+            name="programme.master-assurance",
+            validation_definitions=validation_defs,
+            actions=[UpdateDataDocsAction(name="update_data_docs")],
+        )
+    )
+    cp_result = master.run()
+    print(f"  ran in {time.monotonic() - t0:.1f}s — "
+          f"{'all green' if cp_result.success else 'findings present'}", flush=True)
+
+    # Distribute the results back to the tables that own them.
+    for vr in cp_result.run_results.values():
+        owner, flag = suite_owner.get(vr.suite_name, (None, "unknown"))
+        failures = _collect_failures(vr, owner.table.index_columns if owner else [])
+        if flag == "metrics":
+            result.metric_failures.extend(failures)
+        elif flag == "reconciliation":
+            result.reconciliation_success = vr.success
+        elif owner is not None:
+            owner.failures.extend(failures)
+            if flag == "contract":
+                owner.contract_success = owner.contract_success and vr.success
+            else:
+                owner.defect_success = owner.defect_success and vr.success
+        label = "ok  " if vr.success else "FAIL"
+        print(f"  {label} {len(vr.results):3d}  {vr.suite_name}", flush=True)
 
     urls = context.get_docs_sites_urls()
     if urls:
         result.docs_url = urls[0]["site_url"]
 
     return result
+
+
+def _filesystem_source(context, name: str, base_directory: Path):
+    """A path-based pandas datasource, tolerant of already existing."""
+    try:
+        return context.data_sources.add_pandas_filesystem(
+            name, base_directory=base_directory
+        )
+    except Exception:
+        return context.data_sources.get(name)
+
+
+def _batch(datasource, asset_name: str, relative_path: str):
+    """One parquet file as a self-contained batch."""
+    try:
+        asset = datasource.add_parquet_asset(asset_name)
+    except Exception:
+        asset = datasource.get_asset(asset_name)
+    try:
+        return asset.add_batch_definition_path(f"{asset_name}__batch", relative_path)
+    except Exception:
+        return asset.get_batch_definition(f"{asset_name}__batch")
 
 
 def _install_branding(gx_root: Path) -> None:

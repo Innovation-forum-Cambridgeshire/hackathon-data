@@ -81,6 +81,55 @@ def _header_html(depth: int) -> str:
     )
 
 
+_DIV = re.compile(r"</?div\b", re.I)
+_INTERACTIVE = re.compile(r"<(button|label|input|select|a|table|img)\b", re.I)
+
+
+def _card_span(text: str, start: int) -> int | None:
+    """End offset of the <div> opening at `start`, by balancing nested divs."""
+    depth, pos = 0, start
+    while True:
+        m = _DIV.search(text, pos)
+        if not m:
+            return None
+        depth += 1 if m.group(0).lower() == "<div" else -1
+        pos = m.end()
+        if depth == 0:
+            end = text.find(">", pos)
+            return end + 1 if end != -1 else None
+
+
+def _drop_empty_cards(text: str) -> str:
+    """Remove Bootstrap cards that contain nothing a reader can use.
+
+    GX's left rail renders an "Actions" card and a second unlabelled card. On a
+    VALIDATION page they hold the Show All / Failed Only filter, which is genuinely
+    useful. Everywhere else they are titled boxes containing nothing, and an empty
+    bordered box reads as something that failed to load rather than as a
+    deliberate blank.
+
+    The test is "does this card contain anything interactive", not "does it
+    contain text" — the Actions card has a heading and no controls, and the
+    heading is precisely what makes the emptiness look like a bug.
+
+    Balanced-div scanning rather than a regex: a regex cannot match nested tags,
+    so it would either stop at the first </div> or swallow the rest of the page.
+    CSS cannot do it at all, because the cards are never literally empty — they
+    always contain a couple of empty layout divs.
+    """
+    while True:
+        for m in re.finditer(r'<div class="card\b[^"]*">', text):
+            end = _card_span(text, m.start())
+            if end is None:
+                continue
+            if _INTERACTIVE.search(text[m.start():end]):
+                continue
+            text = text[: m.start()] + text[end:]
+            break  # offsets moved; rescan
+        else:
+            return text
+
+
 def vendor_assets(site_dir: Path, timeout: int = 20) -> tuple[int, list[str]]:
     """Fetch the CDN assets once into the site. Returns (fetched, failures)."""
     vendor = site_dir / "static" / "vendor"
@@ -114,6 +163,23 @@ def postprocess_data_docs(site_dir: Path, vendored: bool) -> int:
             # After the opening <body ...>, so the header sits above GX's navbar
             # content but inside the document flow.
             text = re.sub(r"(<body[^>]*>)", r"\1" + _header_html(depth), text, count=1)
+
+        # REMOVE GX's wordmark rather than hiding it.
+        #
+        # It is an <img> pointing at great-expectations-web-assets.s3.amazonaws.com,
+        # with a cache-busting query string that carries this report's
+        # dataContextId. `display: none` does not stop a browser fetching an
+        # image, so the CSS rule left every page view making a request to a third
+        # party with an identifier attached — from a report about data governance,
+        # in a project that self-hosts its fonts precisely to avoid that.
+        #
+        # Deleting the element is the only thing that actually stops it. It also
+        # empties the navbar, which is why the CSS collapses it to its contents.
+        text = re.sub(
+            r'<div class="[^"]*navbar-brand[^"]*">.*?</div>', "", text, flags=re.S
+        )
+
+        text = _drop_empty_cards(text)
 
         if vendored:
             prefix = "../" * depth + "static/vendor/"

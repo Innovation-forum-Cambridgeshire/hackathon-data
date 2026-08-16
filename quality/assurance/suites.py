@@ -18,12 +18,15 @@ report explains itself to an organiser who has never opened Great Expectations �
 which is most of the audience for it.
 
 RESULT FORMAT
-    Set once on the checkpoint, not per expectation: SUMMARY with
-    partial_unexpected_count = 10 and unexpected_index_column_names set to the
-    table's business key. That is what turns "142 rows failed" into ten rows
-    somebody can go and look at, addressed by field_id and observation_date
-    rather than by pandas row number, which would be meaningless the moment the
-    corpus is rebuilt.
+    Set per expectation, via adder(): SUMMARY with partial_unexpected_count = 10
+    and unexpected_index_column_names set to that table's business key. That is
+    what turns "142 rows failed" into ten rows somebody can go and look at,
+    addressed by field_id and observation_date rather than by pandas row number,
+    which would be meaningless the moment the corpus is rebuilt.
+
+    It belongs on the expectation rather than the checkpoint because a checkpoint
+    carries exactly one result_format, and the master checkpoint runs all
+    thirteen tables in one pass — each with a different business key.
 """
 
 from __future__ import annotations
@@ -38,9 +41,6 @@ import great_expectations.expectations as gxe
 
 from .model import DTYPE_KINDS, Table
 
-# Columns we add to the frame before validating. Named with a leading underscore
-# so they cannot collide with a catalogue column, and stripped from the ordered
-# column-list expectation so the schema check still sees the real schema.
 # Prefix for the columns we add to a frame before validating it.
 #
 # `check_` rather than something obviously internal like `_gxq_`, because GX uses
@@ -52,6 +52,43 @@ from .model import DTYPE_KINDS, Table
 # rather than being assumed away by an unlikely prefix, which is the more honest
 # guarantee and costs one set lookup.
 DERIVED_PREFIX = "check_"
+
+
+def result_format(index_columns: list[str] | None) -> dict[str, Any]:
+    """The setting that makes a failure worth reading, set PER EXPECTATION.
+
+    partial_unexpected_count = 10 gives the ten affected rows;
+    unexpected_index_column_names addresses them by business key, so a reader
+    gets ('S-0001', '2016-11-27') rather than row 48,213 — which is a different
+    row after the next rebuild.
+
+    It is attached to each expectation rather than to the checkpoint because a
+    checkpoint has exactly one result_format and the master checkpoint runs every
+    table at once, each with a different business key. Per-expectation is the only
+    place the right key can be named.
+    """
+    fmt: dict[str, Any] = {"result_format": "SUMMARY", "partial_unexpected_count": 10}
+    if index_columns:
+        fmt["unexpected_index_column_names"] = list(index_columns)
+        fmt["return_unexpected_index_query"] = True
+    return fmt
+
+
+def adder(suite: gx.ExpectationSuite, index_columns: list[str] | None):
+    """Return an add() that stamps every expectation with the right result format.
+
+    Wrapping it is the difference between one line per suite and one line per
+    expectation, and between remembering on all ~370 and forgetting on one — a
+    forgotten one silently loses its affected rows, which is the single most
+    useful thing on the page.
+    """
+    fmt = result_format(index_columns)
+
+    def add(expectation):
+        expectation.result_format = fmt
+        return suite.add_expectation(expectation)
+
+    return add
 
 
 def assert_no_collision(df: pd.DataFrame, declared: list[str], name: str) -> None:
@@ -211,7 +248,8 @@ def build_schema_suite(table: Table, row_tolerance: float = 0.20) -> gx.Expectat
     So this runs first, on the frame as it was read.
     """
     suite = gx.ExpectationSuite(name=f"{table.challenge}.{table.name}.schema")
-    suite.add_expectation(
+    add = adder(suite, table.index_columns)
+    add(
         gxe.ExpectTableColumnsToMatchOrderedList(
             column_list=table.column_names,
             description=f"columns are exactly those declared in catalogue/{table.challenge}.yml, in order",
@@ -226,7 +264,7 @@ def build_schema_suite(table: Table, row_tolerance: float = 0.20) -> gx.Expectat
     if table.approx_rows:
         lo = int(table.approx_rows * (1 - row_tolerance))
         hi = int(table.approx_rows * (1 + row_tolerance))
-        suite.add_expectation(
+        add(
             gxe.ExpectTableRowCountToBeBetween(
                 min_value=lo, max_value=hi,
                 description=f"row count is within {row_tolerance:.0%} of the declared ~{table.approx_rows:,}",
@@ -250,7 +288,7 @@ def build_contract_suite(
     row_tolerance: float = 0.20,
 ) -> gx.ExpectationSuite:
     suite = gx.ExpectationSuite(name=f"{table.challenge}.{table.name}.contract")
-    add = suite.add_expectation
+    add = adder(suite, table.index_columns)
 
     # Table shape is asserted by build_schema_suite against the raw frame.
 
@@ -425,6 +463,7 @@ def build_defect_suite(table: Table, df: pd.DataFrame) -> gx.ExpectationSuite | 
     suite, because they are population properties rather than row properties.
     """
     suite = gx.ExpectationSuite(name=f"{table.challenge}.{table.name}.defects")
+    add = adder(suite, table.index_columns)
     n = 0
 
     for d in table.defects:
@@ -446,7 +485,7 @@ def build_defect_suite(table: Table, df: pd.DataFrame) -> gx.ExpectationSuite | 
         # would be the kind of thing a reader has to hold in their head.
         if kind == "null_rate":
             lo, hi = bounds.get("min_rate"), bounds.get("max_rate")
-            suite.add_expectation(
+            add(
                 gxe.ExpectColumnProportionOfNonNullValuesToBeBetween(
                     column=d["column"],
                     min_value=None if hi is None else 1 - hi,
@@ -467,7 +506,7 @@ def build_defect_suite(table: Table, df: pd.DataFrame) -> gx.ExpectationSuite | 
             df[flag] = df[col].eq(sentinel)
             lo, hi = bounds.get("min_cost_share"), bounds.get("max_cost_share")
             # Share of ROWS via mostly; the cost share is a derived metric.
-            suite.add_expectation(
+            add(
                 gxe.ExpectColumnValuesToBeInSet(
                     column=col, value_set=[sentinel],
                     mostly=lo if lo else 0.01,
@@ -482,7 +521,7 @@ def build_defect_suite(table: Table, df: pd.DataFrame) -> gx.ExpectationSuite | 
         elif kind == "class_balance":
             col = d["column"]
             lo, hi = bounds.get("min_rate"), bounds.get("max_rate")
-            suite.add_expectation(
+            add(
                 gxe.ExpectColumnMeanToBeBetween(
                     column=col, min_value=lo, max_value=hi,
                     description=f"between {lo:.0%} and {hi:.0%} of rows have {col} true",
@@ -495,7 +534,7 @@ def build_defect_suite(table: Table, df: pd.DataFrame) -> gx.ExpectationSuite | 
             for value in d.get("required_values") or []:
                 flag = f"{DERIVED_PREFIX}has_{d['column']}_{value}"
                 df[flag] = df[d["column"]].eq(value)
-                suite.add_expectation(
+                add(
                     gxe.ExpectColumnValuesToBeInSet(
                         column=d["column"], value_set=[value],
                         mostly=max(1.0 / len(df), 1e-9) if len(df) else 0.0,
@@ -510,7 +549,7 @@ def build_defect_suite(table: Table, df: pd.DataFrame) -> gx.ExpectationSuite | 
             allowed = d.get("condition_false_allowed") or []
             ok = f"{DERIVED_PREFIX}cond_{col}"
             df[ok] = np.where(df[cond].astype(bool), True, df[col].isin(allowed))
-            suite.add_expectation(
+            add(
                 gxe.ExpectColumnValuesToBeInSet(
                     column=ok, value_set=[True],
                     description=(
@@ -529,7 +568,7 @@ def build_defect_suite(table: Table, df: pd.DataFrame) -> gx.ExpectationSuite | 
             flag = f"{DERIVED_PREFIX}absurd_{col}"
             df[flag] = (df[col] < rng["min"]) | (df[col] > rng["max"])
             floor = bounds.get("min_rows", 1)
-            suite.add_expectation(
+            add(
                 gxe.ExpectColumnValuesToBeInSet(
                     column=flag, value_set=[True],
                     mostly=max(floor / len(df), 1e-9) if len(df) else 0.0,
@@ -554,6 +593,7 @@ def build_metric_suite(challenge: str, metrics: list) -> gx.ExpectationSuite | N
     if not metrics:
         return None
     suite = gx.ExpectationSuite(name=f"{challenge}.derived-metrics.defects")
+    add = adder(suite, None)
     for mt in metrics:
         notes = (mt.lesson or "").strip()
         if mt.if_it_disappears:
@@ -563,7 +603,7 @@ def build_metric_suite(challenge: str, metrics: list) -> gx.ExpectationSuite | N
         lo = "" if mt.min_value is None else f"at least {mt.min_value:g}"
         hi = "" if mt.max_value is None else f"at most {mt.max_value:g}"
         band = " and ".join(x for x in (lo, hi) if x)
-        suite.add_expectation(
+        add(
             gxe.ExpectColumnValuesToBeBetween(
                 column=mt.id, min_value=mt.min_value, max_value=mt.max_value,
                 description=f"{mt.table}: {mt.title} — {band} ({mt.unit})",
