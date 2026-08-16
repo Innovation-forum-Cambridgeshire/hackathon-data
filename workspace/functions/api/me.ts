@@ -62,6 +62,25 @@ export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
     const res = await fetch("https://api.github.com/user/teams?per_page=100", {
       headers: ghHeaders,
     });
+
+    // A dead token is NOT an outage, and must not be treated as one.
+    //
+    // The OAuth App issues tokens that expire after eight hours. Our session
+    // cookie also lasts eight hours, but the two clocks start at different
+    // moments and drift apart, so on a five-day event there is a window where
+    // the session is still valid and the token behind it is not. Falling
+    // through to the catch below would render "No team yet — find an
+    // organiser", which is both wrong and pointed straight at the support rota.
+    //
+    // 401 means re-authenticate. The workspace page already redirects to the
+    // login screen on a 401, so signing in again silently repairs it.
+    if (res.status === 401) {
+      return new Response(JSON.stringify({ signedIn: false, error: "token_expired" }), {
+        status: 401,
+        headers: NO_STORE_HEADERS,
+      });
+    }
+
     if (res.ok) {
       const all = (await res.json()) as Array<{
         name: string;

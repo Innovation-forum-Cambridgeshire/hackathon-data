@@ -96,6 +96,10 @@
     no_code:            "GitHub didn't complete the sign-in. Please try again.",
     no_token:           "GitHub didn't complete the sign-in. Please try again.",
     user_lookup_failed: "We couldn't reach GitHub just now. Please try again in a moment.",
+    // Not a failure — GitHub expires access tokens after eight hours, so this
+    // is the normal state on day two of a five-day event. Worded so it does not
+    // read as something going wrong.
+    session_expired:    "You've been signed out after eight hours. Sign in again to pick up where you left off — nothing has been lost.",
   };
   const err = new URLSearchParams(location.search).get("error");
   if (err) {

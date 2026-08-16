@@ -107,7 +107,23 @@
   const $ = (id) => document.getElementById(id);
 
   const res = await fetch("/api/me", { credentials: "same-origin" });
-  if (res.status === 401) { location.replace("/"); }
+
+  // location.replace() does not halt the script — it schedules a navigation and
+  // execution carries straight on. Without this guard the next lines read
+  // `data.user` off a 401 body and throw, so the last thing the participant
+  // sees before the redirect is a broken page. Stop here instead.
+  if (res.status === 401) {
+    const why = await res.json().catch(() => ({}));
+    location.replace(why.error === "token_expired" ? "/?error=session_expired" : "/");
+    throw new Error("not signed in");
+  }
+
+  if (!res.ok) {
+    $("loading").textContent =
+      "The workspace can't load right now. Please refresh in a moment — your work is safe on GitHub.";
+    throw new Error("workspace unavailable");
+  }
+
   const data = await res.json();
 
   $("loading").hidden = true;
