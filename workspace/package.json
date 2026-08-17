@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "node src/lib/countdown.test.mjs",
+    "test": "node --experimental-strip-types src/lib/session.test.mjs && node src/lib/countdown.test.mjs && node --experimental-strip-types src/lib/notebook-shape.test.mjs && node src/lib/notebook-markdown.test.mjs",
     "dev": "wrangler pages dev public --compatibility-date=2026-08-01",
     "deploy": "wrangler pages deploy public"
   },

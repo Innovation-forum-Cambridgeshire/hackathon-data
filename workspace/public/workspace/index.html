@@ -3,206 +3,265 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Your team — Innovation Forum × R1X</title>
+<title>Workspace — Innovation Forum × R1X</title>
 <meta name="robots" content="noindex, nofollow">
-<style>
-  :root {
-    color-scheme: light;
-    --bg: #fcfcfb; --panel: #f4f4f2; --rule: #e3e3df;
-    --ink: #0b0b0b; --ink-2: #52514e; --ink-3: #6f6e6a;
-    --accent: #00863a; --warn: #eb6834;
-  }
-  @media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) {
-      color-scheme: dark;
-      --bg: #12211a; --panel: #172b21; --rule: #24402f;
-      --ink: #ffffff; --ink-2: #c3d2c7; --ink-3: #93a89a;
-      --accent: #35c46f; --warn: #f0834f;
-    }
-  }
-  * { box-sizing: border-box; }
-  body {
-    margin: 0; background: var(--bg); color: var(--ink);
-    font: 16px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
-    padding: 28px 20px 72px;
-  }
-  main { max-width: 720px; margin: 0 auto; }
-  header { display: flex; align-items: center; gap: 12px; margin-bottom: 34px; }
-  /* An initial rendered locally, NOT the GitHub avatar.
-     Loading avatars.githubusercontent.com would make the browser connect to
-     GitHub on every page view, handing over the participant's IP address and
-     this origin as a Referer — for a 34px decoration. GitHub avatar URLs also
-     embed the numeric GitHub user ID, so holding one is holding an extra
-     identifier we have no use for. This keeps the workspace at zero
-     third-party requests, which is the same standard the marketing site holds. */
-  header .ava {
-    width: 34px; height: 34px; border-radius: 50%; flex: none;
-    display: grid; place-items: center;
-    background: var(--panel); border: 1px solid var(--rule);
-    font-weight: 650; font-size: 14px; color: var(--ink-2);
-  }
-  header .who { flex: 1; min-width: 0; }
-  header .name { font-weight: 600; }
-  header .login { font-size: 13px; color: var(--ink-3); }
-  a.plain { color: var(--ink-3); font-size: 13.5px; }
-  h1 { font-size: 27px; line-height: 1.15; margin: 0 0 6px; letter-spacing: -.01em; }
-  .sub { color: var(--ink-2); margin: 0 0 28px; }
-  .count {
-    display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;
-    margin: 0 0 10px;
-  }
-  .unit {
-    background: var(--panel); border: 1px solid var(--rule); border-radius: 8px;
-    padding: 14px 10px; text-align: center;
-  }
-  .unit .n {
-    font-size: 30px; font-weight: 650; line-height: 1;
-    font-variant-numeric: tabular-nums; letter-spacing: -.02em;
-  }
-  .unit .l {
-    font-size: 11px; letter-spacing: .1em; text-transform: uppercase;
-    color: var(--ink-3); margin-top: 6px;
-  }
-  .deadline { font-size: 13.5px; color: var(--ink-2); margin: 0 0 30px; }
-  .deadline strong { color: var(--ink); }
-  .card {
-    background: var(--panel); border: 1px solid var(--rule);
-    border-radius: 8px; padding: 18px 20px; margin-bottom: 14px;
-  }
-  .card h2 { font-size: 16px; margin: 0 0 4px; }
-  .card p { margin: 0 0 12px; font-size: 14px; color: var(--ink-2); }
-  .links { display: flex; flex-wrap: wrap; gap: 10px; }
-  .links a {
-    font-size: 14px; text-decoration: none; color: var(--ink);
-    border: 1px solid var(--rule); background: var(--bg);
-    padding: 8px 13px; border-radius: 6px;
-  }
-  .links a:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
-  .empty { border-left: 3px solid var(--warn); }
-  [hidden] { display: none !important; }
-  .skel { color: var(--ink-3); }
-</style>
+<meta name="theme-color" content="#04180f">
+<!--
+  CSS and JS are same-origin files rather than inline blocks. Both are covered by
+  `default-src 'self'` in ../_headers, so nothing in the CSP had to be widened to
+  allow them — and moving them out is what makes it possible to drop
+  'unsafe-inline' later, once the sign-in page has been moved the same way.
+
+  The markup below is a shell. Everything participant-specific is filled in by
+  app.js from /api/me, and every notebook is fetched through /api/notebook/:id,
+  which is a Function — so this page never contacts GitHub, and the participant's
+  browser makes no third-party request at all.
+-->
+<link rel="stylesheet" href="./app.css">
 </head>
 <body>
-<main>
-  <header hidden id="hdr">
-    <div class="ava" id="avatar" aria-hidden="true"></div>
-    <div class="who">
-      <div class="name" id="name"></div>
-      <div class="login" id="login"></div>
+
+<div class="shell">
+
+  <aside class="side">
+    <div class="side-brand">
+      <div class="side-mark" aria-hidden="true">IF</div>
+      <div class="side-name">Innovation Forum <span>× R1X</span></div>
     </div>
-    <a class="plain" href="/auth/logout">Sign out</a>
-  </header>
 
-  <div id="loading" class="skel">Loading your workspace…</div>
+    <nav class="side-nav" id="nav" aria-label="Workspace">
+      <a href="#/" data-view="home">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5V21H3z"/></svg>
+        Home
+      </a>
+      <a href="#/examples" data-view="examples">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M4 4h16v16H4z"/><path d="M4 9h16M9 9v11"/></svg>
+        Worked examples
+      </a>
+      <a href="#/team" data-view="team">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-5.5 6-5.5s6 2.2 6 5.5"/><path d="M16 5.2A3.2 3.2 0 0 1 16 11M17 14.8c2.4.5 4 2.5 4 5.2"/></svg>
+        Your team
+      </a>
+      <a href="#/data" data-view="data">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><ellipse cx="12" cy="6" rx="8" ry="3"/><path d="M4 6v12c0 1.7 3.6 3 8 3s8-1.3 8-3V6M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></svg>
+        Data &amp; tools
+      </a>
+      <a href="#/submit" data-view="submit">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M12 16V4M8 8l4-4 4 4"/><path d="M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/></svg>
+        Submitting
+      </a>
+    </nav>
 
-  <div id="app" hidden>
-    <h1 id="evtitle"></h1>
-    <p class="sub">Everything your team needs, in one place.</p>
-
-    <div class="count" id="count">
-      <div class="unit"><div class="n" id="d">–</div><div class="l">days</div></div>
-      <div class="unit"><div class="n" id="h">–</div><div class="l">hours</div></div>
-      <div class="unit"><div class="n" id="m">–</div><div class="l">minutes</div></div>
-      <div class="unit"><div class="n" id="s">–</div><div class="l">seconds</div></div>
+    <div class="side-foot">
+      <div class="side-ava" id="ava" aria-hidden="true"></div>
+      <div class="side-who">
+        <div class="n" id="who-name"></div>
+        <div class="l" id="who-login"></div>
+      </div>
+      <a href="/auth/logout">Sign out</a>
     </div>
-    <p class="deadline">
-      until submissions close — <strong id="deadline"></strong>.
-      What is on <code>main</code> at that moment is what gets judged.
-    </p>
+  </aside>
 
-    <div id="teams"></div>
-  </div>
-</main>
+  <main class="main" id="main">
 
-<script type="module">
-  const $ = (id) => document.getElementById(id);
+    <div class="topbar">
+      <div>
+        <div class="crumb" id="crumb">Workspace</div>
+        <h1 id="title">Home</h1>
+      </div>
+      <div class="search" id="search-wrap" hidden>
+        <label class="visually-hidden" for="q">Filter examples</label>
+        <input id="q" type="search" autocomplete="off" placeholder="Filter examples by challenge or technique">
+      </div>
+    </div>
 
-  const res = await fetch("/api/me", { credentials: "same-origin" });
+    <p class="loading" id="loading">Loading your workspace…</p>
 
-  // location.replace() does not halt the script — it schedules a navigation and
-  // execution carries straight on. Without this guard the next lines read
-  // `data.user` off a 401 body and throw, so the last thing the participant
-  // sees before the redirect is a broken page. Stop here instead.
-  if (res.status === 401) {
-    const why = await res.json().catch(() => ({}));
-    // access_ended means membership was withdrawn while the session was still
-    // valid. Send them somewhere that says so plainly rather than looping them
-    // back through sign-in, which would fail again and read as a bug.
-    const REDIRECTS = {
-      token_expired: "/?error=session_expired",
-      access_ended: "/?error=access_ended",
-    };
-    location.replace(REDIRECTS[why.error] || "/");
-    throw new Error("not signed in");
-  }
+    <div id="app" hidden>
 
-  if (!res.ok) {
-    $("loading").textContent =
-      "The workspace can't load right now. Please refresh in a moment — your work is safe on GitHub.";
-    throw new Error("workspace unavailable");
-  }
-
-  const data = await res.json();
-
-  $("loading").hidden = true;
-  $("app").hidden = false;
-  $("hdr").hidden = false;
-
-  // An initial derived locally from the name we already have — no image, and so
-  // no request to GitHub's avatar host from the participant's browser.
-  // textContent, never innerHTML: this string comes from a GitHub profile and is
-  // therefore attacker-controllable by whoever owns that account.
-  $("avatar").textContent = (data.user.name || data.user.login || "?")
-    .trim().charAt(0).toUpperCase();
-  $("name").textContent = data.user.name;
-  $("login").textContent = "@" + data.user.login;
-  $("evtitle").textContent = data.event.title;
-  $("deadline").textContent = data.event.submissionDeadlineLondon;
-
-  // Teams come from GitHub, so there is no roster to fall out of step with it.
-  // An empty list is a real state on day one, not an error — say what to do.
-  const teams = data.teams || [];
-  $("teams").innerHTML = teams.length
-    ? teams.map((t) => `
-        <div class="card">
-          <h2>${escapeHtml(t.name)}</h2>
-          <p>Your team's repository and board. Work lands here; this is what gets judged.</p>
-          <div class="links">
-            <a href="${t.repo}" rel="noopener">Repository</a>
-            <a href="${t.repo}/projects" rel="noopener">Board</a>
-            <a href="${t.repo}/blob/main/SUBMISSION.md" rel="noopener">SUBMISSION.md</a>
+      <!-- ── Home ────────────────────────────────────────────────────────── -->
+      <section id="view-home" class="view" hidden>
+        <div class="strip">
+          <div class="strip-what">
+            <div class="t" id="ev-title">Event</div>
+            <div class="d">
+              Submissions close <strong id="ev-deadline">—</strong>.
+              What is on <code>main</code> at that moment is what gets judged.
+            </div>
           </div>
-        </div>`).join("")
-    : `<div class="card empty">
-         <h2>No team yet</h2>
-         <p>You're signed in, but you haven't been added to a team. That happens at
-            kickoff — if the event has started and you still see this, find an organiser.</p>
-       </div>`;
+          <div class="clock" id="clock">
+            <div class="u"><div class="n" id="cd">–</div><div class="l">days</div></div>
+            <div class="u"><div class="n" id="ch">–</div><div class="l">hrs</div></div>
+            <div class="u"><div class="n" id="cm">–</div><div class="l">min</div></div>
+            <div class="u"><div class="n" id="cs">–</div><div class="l">sec</div></div>
+          </div>
+        </div>
 
-  // The deadline is a fixed UTC instant. The clocks go back the day before the
-  // event, so it is rendered server-side with the zone named and only the
-  // remaining time is computed here.
-  const target = Date.parse(data.event.submissionDeadlineUtc);
-  function tick() {
-    const left = target - Date.now();
-    if (left <= 0) {
-      $("count").innerHTML = '<div class="unit" style="grid-column:1/-1"><div class="n">Closed</div></div>';
-      return;
-    }
-    const s = Math.floor(left / 1000);
-    $("d").textContent = Math.floor(s / 86400);
-    $("h").textContent = String(Math.floor((s % 86400) / 3600)).padStart(2, "0");
-    $("m").textContent = String(Math.floor((s % 3600) / 60)).padStart(2, "0");
-    $("s").textContent = String(s % 60).padStart(2, "0");
-    setTimeout(tick, 1000);
-  }
-  tick();
+        <div class="grid">
+          <div class="card">
+            <div class="card-head">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M4 4h16v16H4z"/><path d="M4 9h16M9 9v11"/></svg>
+              <h2>Worked examples</h2>
+            </div>
+            <p class="lede">
+              One notebook per challenge. Not solutions — each one gets you past the
+              cold start and leaves you with a technique worth carrying into your entry.
+            </p>
+            <div class="actions">
+              <a class="btn btn-primary" href="#/examples">Read the examples</a>
+            </div>
+          </div>
 
-  function escapeHtml(s) {
-    return String(s).replace(/[&<>"']/g, (c) =>
-      ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
-  }
-</script>
+          <div class="card">
+            <div class="card-head">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-5.5 6-5.5s6 2.2 6 5.5"/></svg>
+              <h2>Your team</h2>
+            </div>
+            <p class="lede" id="home-team-lede">Your repository, your board, your submission.</p>
+            <div class="actions"><a class="btn" href="#/team">Open your team</a></div>
+          </div>
+
+          <div class="card">
+            <div class="card-head">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><ellipse cx="12" cy="6" rx="8" ry="3"/><path d="M4 6v12c0 1.7 3.6 3 8 3s8-1.3 8-3V6"/></svg>
+              <h2>Data &amp; tools</h2>
+            </div>
+            <p class="lede">
+              The corpora, what is in each one, and a starting point for whichever
+              tool you already know.
+            </p>
+            <div class="actions"><a class="btn" href="#/data">Get the data</a></div>
+          </div>
+
+          <div class="card">
+            <div class="card-head">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M12 16V4M8 8l4-4 4 4"/><path d="M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/></svg>
+              <h2>Submitting</h2>
+            </div>
+            <p class="lede">
+              There is no upload. Your repository is your submission — this is what
+              the judges open, and when.
+            </p>
+            <div class="actions"><a class="btn" href="#/submit">How it works</a></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── Examples list ───────────────────────────────────────────────── -->
+      <section id="view-examples" class="view" hidden>
+        <div class="note" style="margin-bottom:22px">
+          <h2>Read these first</h2>
+          <p>
+            Each notebook is a worked first hour on real data, written by the people who
+            built the corpus. They are deliberately not solutions. Open one in an editor
+            and change it — that is what they are for.
+          </p>
+        </div>
+        <div class="nbs" id="nb-list"></div>
+        <p class="loading" id="nb-empty" hidden>Nothing matches that.</p>
+      </section>
+
+      <!-- ── One notebook ────────────────────────────────────────────────── -->
+      <section id="view-notebook" class="view reader" hidden>
+        <div class="reader-head">
+          <div class="chip" id="nb-chip" hidden></div>
+          <h1 id="nb-title" style="margin-top:10px"></h1>
+          <p class="lede" id="nb-summary" style="color:var(--muted);max-width:74ch;margin-bottom:16px"></p>
+          <div class="actions" id="nb-actions"></div>
+        </div>
+        <p class="loading" id="nb-loading">Loading the notebook…</p>
+        <div id="nb-body"></div>
+      </section>
+
+      <!-- ── Team ────────────────────────────────────────────────────────── -->
+      <section id="view-team" class="view" hidden>
+        <div id="team-body"></div>
+      </section>
+
+      <!-- ── Data & tools ────────────────────────────────────────────────── -->
+      <section id="view-data" class="view" hidden>
+        <div class="grid">
+          <div class="card">
+            <h2>What is in each corpus</h2>
+            <p class="lede">
+              One catalogue entry per challenge: the tables, the columns, how it was
+              built and what it deliberately does not contain.
+            </p>
+            <ul>
+              <li><a data-repo-path="tree/catalogue">All five catalogue entries</a></li>
+              <li><a data-repo-path="blob/README.md">How the data platform works</a></li>
+            </ul>
+          </div>
+          <div class="card">
+            <h2>Start in your own tool</h2>
+            <p class="lede">
+              You do not have to use Python. Each of these loads the same corpus.
+            </p>
+            <ul>
+              <li><a data-repo-path="blob/consumers/python_starter.py">Python</a></li>
+              <li><a data-repo-path="blob/consumers/duckdb.sql">DuckDB / SQL</a></li>
+              <li><a data-repo-path="blob/consumers/r_starter.R">R</a></li>
+              <li><a data-repo-path="blob/consumers/excel.md">Excel</a></li>
+              <li><a data-repo-path="blob/consumers/power_bi.md">Power BI</a></li>
+              <li><a data-repo-path="blob/consumers/tableau.md">Tableau</a></li>
+            </ul>
+          </div>
+          <div class="card">
+            <h2>An editor, on a copy</h2>
+            <p class="lede">
+              Both of these open the data repository as your own working copy. Nothing
+              you do in them touches the original, and nothing runs on our servers.
+            </p>
+            <div class="actions">
+              <a class="btn" id="ide-link" href="#" rel="noopener">Open in github.dev</a>
+              <a class="btn" id="cs-link" href="#" rel="noopener">New Codespace</a>
+            </div>
+            <p class="lede" style="margin-top:4px">
+              github.dev is a full VS Code in the browser and is free. A Codespace also
+              runs the code, on your own GitHub account's free monthly hours.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── Submitting ──────────────────────────────────────────────────── -->
+      <section id="view-submit" class="view" hidden>
+        <div class="note" style="margin-bottom:22px">
+          <h2>There is nothing to upload</h2>
+          <p>
+            Your team's repository <em>is</em> your submission. At the deadline the judges
+            open whatever is on <code>main</code> — so the last thing you do is merge, not
+            send.
+          </p>
+        </div>
+        <div class="grid">
+          <div class="card">
+            <h2>The deadline</h2>
+            <p class="lede" id="sub-deadline">—</p>
+            <p class="lede">
+              Written with the zone on purpose. The clocks go back the day before the
+              event, so a time written without one is an hour wrong all week — in the
+              direction that closes submissions early.
+            </p>
+          </div>
+          <div class="card">
+            <h2>What the judges open</h2>
+            <ul>
+              <li><a id="sub-md" href="#" rel="noopener">Your SUBMISSION.md</a></li>
+              <li><a id="sub-repo" href="#" rel="noopener">Your repository on main</a></li>
+            </ul>
+            <p class="lede">
+              Five criteria, equal weight. Write SUBMISSION.md as you go — the team that
+              writes it at 15:50 always undersells what they built.
+            </p>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+</div>
+
+<script type="module" src="./app.js"></script>
 </body>
 </html>

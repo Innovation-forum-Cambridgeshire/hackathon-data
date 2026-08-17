@@ -1,0 +1,402 @@
+/* ============================================================================
+   Participant workspace — Innovation Forum × R1X.
+
+   The palette and the geometry are lifted from the marketing site's design
+   layer (`website_/src/styles/global.css`) so the workspace reads as the same
+   organisation rather than as a different product a participant has been handed
+   off to. Three things carry the brand:
+
+     * the green ramp, with the ink used as a ground rather than as a tint;
+     * square corners — radius 0 is the system's signature, not an oversight;
+     * Barlow Condensed, uppercase and letter-spaced, for anything that labels.
+
+   Fonts are self-hosted in /fonts. That is not a preference: the CSP is
+   `default-src 'self'`, and a webfont from a CDN would need it widened. The
+   workspace makes zero third-party requests and this is one of the places that
+   would quietly stop being true.
+
+   NOTE ON THE GREEN. Text-bearing surfaces use --accent-600 (#00863a), never
+   the brand --accent (#009540). White on #009540 measures 3.91:1 and fails
+   WCAG AA; #00863a measures 4.70:1. The brand green stays for everything that
+   is not carrying text. Same decision as the marketing site, same reason.
+   ========================================================================== */
+
+@font-face {
+  font-family: "Barlow"; font-style: normal; font-weight: 400; font-display: swap;
+  src: url("/fonts/barlow-latin-400-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Barlow"; font-style: normal; font-weight: 600; font-display: swap;
+  src: url("/fonts/barlow-latin-600-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Barlow Condensed"; font-style: normal; font-weight: 500; font-display: swap;
+  src: url("/fonts/barlow-condensed-latin-500-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Barlow Condensed"; font-style: normal; font-weight: 600; font-display: swap;
+  src: url("/fonts/barlow-condensed-latin-600-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "IBM Plex Mono"; font-style: normal; font-weight: 400; font-display: swap;
+  src: url("/fonts/ibm-plex-mono-latin-400-normal.woff2") format("woff2");
+}
+
+:root {
+  color-scheme: light;
+
+  --ink: #04180f;
+  --lime: #eceb85;
+
+  --accent: #009540;
+  --accent-100: #e9f7ee;
+  --accent-200: #cbebd8;
+  --accent-300: #97d9b4;
+  --accent-600: #00863a;
+  --accent-700: #00662b;
+  --aqua: #8fd6d8;
+  --aqua-700: #176d6d;
+
+  --bg: #f2f2f3;
+  --panel: #ffffff;
+  --panel-2: #e9e9ea;
+  --rule: color-mix(in srgb, #1d1f20 16%, transparent);
+  --text: #1d1f20;
+  --muted: color-mix(in srgb, #1d1f20 63%, transparent);
+  --warn: #b4471a;
+
+  --sidebar: 268px;
+  --gutter: 40px;
+
+  --font-heading: "Barlow Condensed", system-ui, sans-serif;
+  --font-body: "Barlow", system-ui, -apple-system, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, monospace;
+}
+
+/* The workspace is a place people sit in for five days, often late. Dark is a
+   real requirement here in a way it is not on a marketing page — which is why
+   this file has it and global.css does not. The ink ground stays; the greens
+   lift to keep contrast on it. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: #0a1a12;
+    --panel: #10251a;
+    --panel-2: #16311f;
+    --rule: color-mix(in srgb, #ffffff 14%, transparent);
+    --text: #f4f7f4;
+    --muted: color-mix(in srgb, #ffffff 66%, transparent);
+    --accent-100: #10321f;
+    --accent-200: #16412a;
+    --accent-600: #4fbe83;
+    --accent-700: #97d9b4;
+    --warn: #f0834f;
+  }
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  line-height: 1.12;
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+p { margin: 0; }
+a { color: var(--accent-700); text-decoration: none; text-underline-offset: 3px; }
+a:hover { text-decoration: underline; }
+img { display: block; max-width: 100%; }
+:focus { outline: none; }
+:focus-visible { outline: 2px solid var(--accent-600); outline-offset: 2px; }
+[hidden] { display: none !important; }
+
+/* Available to screen readers, invisible on screen. Used for the search field's
+   label — the placeholder is not a label, and disappears the moment you type. */
+.visually-hidden {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+/* Square corners everywhere. Restated rather than assumed, because a stray
+   border-radius is the single easiest way to make this stop looking like the
+   Innovation Forum. */
+button, input, .card, .tile, .btn, .chip { border-radius: 0; }
+
+/* ── Shell ───────────────────────────────────────────────────────────────── */
+
+.shell { display: grid; grid-template-columns: var(--sidebar) 1fr; min-height: 100vh; }
+
+.side {
+  background: var(--ink);
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+.side-brand {
+  display: flex; align-items: center; gap: 12px;
+  padding: 22px 20px;
+  border-bottom: 1px solid color-mix(in srgb, #ffffff 12%, transparent);
+}
+.side-mark {
+  width: 34px; height: 34px; flex: none;
+  display: grid; place-items: center;
+  background: var(--accent); color: #fff;
+  font-family: var(--font-heading); font-weight: 600; font-size: 17px;
+}
+.side-name {
+  font-family: var(--font-heading); font-weight: 600; font-size: 17px;
+  letter-spacing: 0.03em; text-transform: uppercase; line-height: 1.1;
+}
+.side-name span { color: var(--aqua); font-weight: 500; }
+
+.side-nav { padding: 14px 0; flex: 1; }
+.side-nav a {
+  display: flex; align-items: center; gap: 13px;
+  padding: 11px 20px;
+  color: color-mix(in srgb, #ffffff 78%, transparent);
+  font-size: 14.5px;
+  border-left: 3px solid transparent;
+}
+.side-nav a:hover {
+  background: color-mix(in srgb, #ffffff 7%, transparent);
+  color: #fff; text-decoration: none;
+}
+.side-nav a[aria-current="page"] {
+  background: color-mix(in srgb, #ffffff 9%, transparent);
+  border-left-color: var(--accent);
+  color: #fff;
+}
+/* Icons are inline SVG with currentColor, so they follow the link state and
+   need no separate hover rule. */
+.side-nav svg { width: 17px; height: 17px; flex: none; }
+
+.side-foot {
+  padding: 16px 20px;
+  border-top: 1px solid color-mix(in srgb, #ffffff 12%, transparent);
+  display: flex; align-items: center; gap: 11px;
+}
+/* An initial rendered locally, NOT the GitHub avatar. Loading
+   avatars.githubusercontent.com would hand GitHub the participant's IP address
+   and this origin as a Referer on every page view, and the URL embeds their
+   numeric GitHub id. This is a 32px decoration; it is not worth an identifier. */
+.side-ava {
+  width: 32px; height: 32px; flex: none; display: grid; place-items: center;
+  background: color-mix(in srgb, #ffffff 12%, transparent);
+  border: 1px solid color-mix(in srgb, #ffffff 20%, transparent);
+  font-family: var(--font-heading); font-weight: 600; font-size: 14px;
+}
+.side-who { flex: 1; min-width: 0; }
+.side-who .n { font-size: 14px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.side-who .l { font-size: 12px; color: color-mix(in srgb, #ffffff 60%, transparent); }
+.side-foot a { color: var(--aqua); font-size: 12.5px; }
+
+/* ── Main ────────────────────────────────────────────────────────────────── */
+
+.main { min-width: 0; padding: 0 var(--gutter) 80px; }
+
+.topbar {
+  display: flex; align-items: center; gap: 18px; flex-wrap: wrap;
+  padding: 26px 0 22px;
+}
+.topbar h1 { font-size: 30px; }
+.search {
+  flex: 1 1 320px; max-width: 460px; margin-left: auto; position: relative;
+}
+.search input {
+  width: 100%; padding: 10px 14px;
+  font-family: var(--font-body); font-size: 14.5px;
+  color: var(--text); background: var(--panel);
+  border: 1px solid var(--rule);
+}
+.search input::placeholder { color: var(--muted); }
+
+.crumb {
+  font-family: var(--font-heading); font-size: 13px; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--muted); margin-bottom: 6px;
+}
+
+/* ── Countdown strip ─────────────────────────────────────────────────────── */
+
+.strip {
+  background: var(--ink); color: #fff;
+  display: flex; align-items: center; gap: 26px; flex-wrap: wrap;
+  padding: 18px 24px; margin-bottom: 26px;
+}
+.strip-what { flex: 1 1 260px; min-width: 0; }
+.strip-what .t {
+  font-family: var(--font-heading); font-size: 12px; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--aqua);
+}
+.strip-what .d { font-size: 15px; color: color-mix(in srgb, #ffffff 82%, transparent); }
+.strip-what .d strong { color: #fff; }
+.clock { display: flex; gap: 10px; }
+.clock .u { text-align: center; min-width: 58px; }
+.clock .n {
+  font-family: var(--font-mono); font-size: 27px; line-height: 1;
+  font-variant-numeric: tabular-nums; letter-spacing: -0.02em;
+}
+.clock .l {
+  font-family: var(--font-heading); font-size: 10.5px; letter-spacing: 0.12em;
+  text-transform: uppercase; color: color-mix(in srgb, #ffffff 58%, transparent);
+  margin-top: 5px;
+}
+
+/* ── Cards ───────────────────────────────────────────────────────────────── */
+
+.grid {
+  display: grid; gap: 18px;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+}
+.card {
+  background: var(--panel); border: 1px solid var(--rule);
+  padding: 22px 24px 20px;
+  display: flex; flex-direction: column; gap: 12px;
+}
+.card-head { display: flex; align-items: center; gap: 10px; }
+.card-head svg { width: 18px; height: 18px; color: var(--accent-600); flex: none; }
+.card h2 { font-size: 18px; letter-spacing: 0.01em; }
+.card .lede { font-size: 14px; color: var(--muted); }
+.card ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 2px; }
+.card ul a {
+  display: block; padding: 6px 0; font-size: 14.5px; color: var(--text);
+  border-bottom: 1px solid transparent;
+}
+.card ul a::before { content: "→"; color: var(--accent-600); margin-right: 9px; }
+.card ul a:hover { color: var(--accent-700); text-decoration: none; }
+
+/* ── Buttons and chips ───────────────────────────────────────────────────── */
+
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  font-family: var(--font-heading); font-weight: 600; font-size: 14px;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  padding: 0 20px; height: 42px; cursor: pointer;
+  border: 1px solid var(--rule); background: transparent; color: var(--text);
+}
+.btn:hover { background: color-mix(in srgb, var(--text) 7%, transparent); text-decoration: none; }
+.btn-primary { background: var(--accent-600); border-color: var(--accent-600); color: #fff; }
+.btn-primary:hover { background: var(--accent-700); color: #fff; }
+.btn svg { width: 15px; height: 15px; }
+.actions { display: flex; flex-wrap: wrap; gap: 10px; }
+
+.chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-family: var(--font-heading); font-size: 11.5px; letter-spacing: 0.1em;
+  text-transform: uppercase; padding: 3px 10px;
+  border: 1px solid var(--accent-600); color: var(--accent-700);
+}
+.chip-solid { background: var(--accent-600); border-color: var(--accent-600); color: #fff; }
+
+/* ── Notebook list ───────────────────────────────────────────────────────── */
+
+.nbs { display: flex; flex-direction: column; gap: 14px; }
+.nb-item {
+  display: block; background: var(--panel); border: 1px solid var(--rule);
+  padding: 20px 24px; color: var(--text);
+  transition: background .15s ease, border-color .15s ease;
+}
+.nb-item:hover { background: var(--accent-100); border-color: var(--accent-300); text-decoration: none; }
+.nb-item .row { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.nb-item h3 { font-family: var(--font-heading); font-weight: 600; font-size: 19px; margin: 0; }
+.nb-item .tech {
+  font-family: var(--font-heading); font-size: 12px; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--accent-700); margin: 7px 0 5px;
+}
+.nb-item .sum { font-size: 14.5px; color: var(--muted); max-width: 74ch; }
+
+/* ── Notebook reader ─────────────────────────────────────────────────────── */
+
+.reader { max-width: 900px; }
+.reader-head { border-bottom: 1px solid var(--rule); padding-bottom: 20px; margin-bottom: 26px; }
+.reader-head h1 { font-size: 30px; margin-bottom: 8px; }
+
+/* Prose from the notebook's markdown cells. */
+.nb-md { max-width: 74ch; margin: 0 0 22px; }
+.nb-md h2 { font-size: 24px; margin: 30px 0 10px; }
+.nb-md h3 { font-size: 19px; margin: 24px 0 8px; }
+.nb-md h4, .nb-md h5, .nb-md h6 { font-size: 16px; margin: 20px 0 6px; }
+.nb-md p { margin: 0 0 12px; }
+.nb-md ul, .nb-md ol { margin: 0 0 12px; padding-left: 22px; }
+.nb-md li { margin-bottom: 4px; }
+.nb-md code {
+  font-family: var(--font-mono); font-size: 0.88em;
+  background: var(--panel-2); padding: 1px 5px;
+}
+.nb-md blockquote {
+  margin: 0 0 12px; padding: 2px 0 2px 16px;
+  border-left: 3px solid var(--accent-300); color: var(--muted);
+}
+.nb-md hr { border: 0; border-top: 1px solid var(--rule); margin: 26px 0; }
+
+/* A code cell and its outputs read as one object, hinged on the green rule. */
+.nb-cell { margin: 0 0 22px; border-left: 3px solid var(--accent-600); }
+.nb-src, .nb-pre {
+  margin: 0; padding: 14px 18px; overflow-x: auto;
+  background: var(--ink); color: #eaf3ec;
+  font-family: var(--font-mono); font-size: 13px; line-height: 1.6;
+}
+.nb-pre { border-left: 3px solid var(--accent-600); }
+.nb-out {
+  margin: 0; padding: 12px 18px; overflow-x: auto;
+  background: var(--panel-2); color: var(--text);
+  font-family: var(--font-mono); font-size: 12.5px; line-height: 1.55;
+  white-space: pre-wrap; word-break: break-word;
+}
+.nb-err { color: var(--warn); }
+.nb-out-img { padding: 16px 18px; background: var(--panel); }
+.nb-out-img img { max-width: 100%; height: auto; }
+.nb-omitted {
+  font-family: var(--font-body); font-size: 13.5px; font-style: italic;
+  color: var(--muted); background: var(--panel-2);
+  padding: 10px 18px; margin: 0;
+}
+
+/* ── States ──────────────────────────────────────────────────────────────── */
+
+.note { padding: 18px 22px; background: var(--panel); border-left: 3px solid var(--accent-600); }
+.note.warn { border-left-color: var(--warn); }
+.note h2 { font-size: 17px; margin-bottom: 4px; }
+.note p { font-size: 14.5px; color: var(--muted); }
+.loading { color: var(--muted); padding: 40px 0; }
+
+/* ── Responsive ──────────────────────────────────────────────────────────── */
+
+/* The sidebar becomes a horizontal scroller rather than a hamburger. There is
+   no menu to open, nothing to trap focus in, and no state that can be left
+   stuck open — which on a page people reach mid-task is worth more than the
+   tidier appearance of a drawer. */
+@media (max-width: 900px) {
+  :root { --gutter: 20px; }
+  .shell { grid-template-columns: 1fr; }
+  .side { position: static; height: auto; }
+  .side-nav { padding: 0; display: flex; overflow-x: auto; }
+  .side-nav a {
+    padding: 13px 16px; white-space: nowrap;
+    border-left: 0; border-bottom: 3px solid transparent;
+  }
+  .side-nav a[aria-current="page"] { border-left: 0; border-bottom-color: var(--accent); }
+  .side-nav svg { display: none; }
+  .topbar h1 { font-size: 25px; }
+  .search { margin-left: 0; }
+  .clock .u { min-width: 48px; }
+  .clock .n { font-size: 22px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; animation: none !important; }
+}

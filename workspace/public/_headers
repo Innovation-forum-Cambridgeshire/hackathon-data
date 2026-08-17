@@ -13,12 +13,22 @@
 # and `default-src 'self'` is a fact about tomorrow. The CSP is what stops the
 # next well-meaning edit from quietly reintroducing an external request.
 #
-# 'unsafe-inline' is present for style-src and script-src because both pages
-# deliberately inline all CSS and JS — that is what keeps them self-contained with
-# no CDN. It weakens the XSS protection a CSP would otherwise give, which is why
-# every insertion of GitHub-supplied text goes through textContent rather than
-# innerHTML, and the one innerHTML site escapes its input. Moving to hashes or a
-# nonce would be strictly better and needs a build step this project does not have.
+# 'unsafe-inline' is present for style-src and script-src because the SIGN-IN
+# page still inlines its CSS and JS — that is what keeps it self-contained with
+# no CDN. The workspace page no longer does: its CSS, its shell script and the
+# notebook renderer are same-origin files under /workspace/, already covered by
+# `default-src 'self'`, and nothing had to be widened to allow them.
+#
+# So 'unsafe-inline' now exists for exactly one page. Moving public/index.html
+# the same way would let it be dropped outright, which is the strictly better
+# end state and needs no build step — only that page rewriting. Until then the
+# protection comes from the code: every insertion of GitHub-supplied or
+# notebook-supplied text goes through textContent, and notebook-view.js builds
+# nodes rather than markup so there is no escaping step to get wrong.
+#
+# font-src is not listed and does not need to be: the webfonts are served from
+# /fonts on this origin and fall through to `default-src 'self'`. A font from a
+# CDN would need this file changed, which is the point.
 
 /*
   Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; form-action 'self'; frame-ancestors 'none'; base-uri 'none'; object-src 'none'

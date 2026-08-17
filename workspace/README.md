@@ -10,17 +10,26 @@ go live" — one of those items is a hard blocker, not a formality.
 
 ## What it is
 
-A static site plus four Cloudflare Pages Functions. **There is no database.**
+A static site plus six Cloudflare Pages Functions. **There is no database.**
 
 ```
-public/index.html            sign-in page
-public/workspace/index.html  your team, your links, the countdown
-functions/auth/login.ts      redirect to GitHub
-functions/auth/callback.ts   exchange code, check org membership, issue session
-functions/auth/logout.ts     clear session
-functions/api/me.ts          who am I, which team, when is the deadline
-src/lib/session.ts           HMAC-signed cookie
-src/lib/countdown.ts         event timing, UTC in and Europe/London out
+public/index.html               sign-in page
+public/workspace/index.html     the workspace shell
+public/workspace/app.css        design layer — IF palette, square corners, Barlow
+public/workspace/app.js         sign-in state, hash routing, the panels
+public/workspace/notebook-view.js  .ipynb -> DOM, builds nodes and never markup
+public/fonts/                   Barlow, Barlow Condensed, IBM Plex Mono (self-hosted)
+functions/auth/login.ts         redirect to GitHub
+functions/auth/callback.ts      exchange code, check org membership, issue session
+functions/auth/logout.ts        clear session
+functions/api/me.ts             who am I, which team, when is the deadline
+functions/api/notebooks.ts      the catalogue of worked examples
+functions/api/notebook/[id].ts  one notebook, fetched and stripped server-side
+src/lib/session.ts              HMAC-signed cookie
+src/lib/countdown.ts            event timing, UTC in and Europe/London out
+src/lib/notebooks.ts            the allowlist — the only paths that can be fetched
+src/lib/notebook-shape.ts       what the browser is allowed to be given
+src/lib/config.ts               fail closed on a misconfigured deploy
 ```
 
 Everything else is native GitHub: teams are **GitHub Teams**, the workspace is the
@@ -38,6 +47,49 @@ access.
 **Org membership is the access control.** There is no user table to consult and
 none to drift out of step with reality. Adding someone to the org and a team is
 the whole of onboarding; removing them is the whole of offboarding.
+
+---
+
+## The worked examples
+
+The reason a participant opens the workspace at all: the six notebooks in
+`sample/notebooks/`, readable in place, with the challenge running this week
+listed first.
+
+**The pages never contact GitHub.** `/api/notebook/:id` fetches the file
+server-side and hands over a normalised structure. The obvious build — fetching
+`raw.githubusercontent.com` from the page — would hand GitHub the participant's
+IP address and this origin as a Referer on every notebook opened, which is the
+same thing the avatar was removed for, and it would need `connect-src` widened
+in `public/_headers`. Fetching in the Function keeps the pages at zero
+third-party requests.
+
+**Three controls, and none of them relies on the next one working:**
+
+| | |
+|---|---|
+| `src/lib/notebooks.ts` | A fixed list of six ids. A request's id is *resolved against* it and never used to build a URL, so a bad id is a 404 with no outbound request — the difference between an allowlist and sanitising an SSRF |
+| `src/lib/notebook-shape.ts` | Drops `text/html`, `application/javascript` and SVG **server-side**, so the browser never receives them. Verified against all six notebooks: every HTML output has a `text/plain` alternative — the pandas ASCII table — so refusing HTML costs nothing |
+| `public/workspace/notebook-view.js` | Builds nodes with `createElement`/`textContent`. No `innerHTML`, no markup strings, so there is no escaping step to get wrong |
+
+Both halves are tested: `notebook-shape.test.mjs` asserts the dangerous payload
+does not appear *anywhere* in the wire output, and `notebook-markdown.test.mjs`
+asserts which URLs may become an `href` — including `java\tscript:`, which a
+`startsWith` check does not catch.
+
+### Editing, rather than reading
+
+The workspace does not run participant code, and should not start. The buttons
+open a copy elsewhere:
+
+* **github.dev** — a full VS Code in the browser, free, no quota.
+* **Codespaces** — also runs the code, on the participant's own free monthly
+  hours. Same principle as not requesting the `repo` scope: everyone carries
+  their own budget rather than sharing one of ours at 15:55 on the Friday.
+
+An in-browser kernel (JupyterLite/Pyodide) was considered and rejected: it needs
+`script-src 'unsafe-eval'` on an origin that holds a session cookie, and tens of
+megabytes of WASM, to do worse what github.dev does for free.
 
 ---
 
@@ -117,8 +169,9 @@ these under **Settings → Environment variables**:
 | `GITHUB_CLIENT_SECRET` | **encrypted** |
 | `SESSION_SECRET` | **encrypted** — `openssl rand -base64 48` |
 | `GITHUB_ORG` | plain — `Innovation-forum-Cambridgeshire` |
+| `NOTEBOOKS_REF` | plain, **optional** — which ref the worked examples are read from. Defaults to `main`. Set it to a tag before the event so what a participant reads on the Friday is what they read on the Monday, and so a push to `main` cannot change a document people are being judged against |
 
-The last two must be marked secret. Note the contrast with the marketing site,
+`GITHUB_CLIENT_SECRET` and `SESSION_SECRET` must be marked secret. Note the contrast with the marketing site,
 where every variable is `PUBLIC_` by design because those values genuinely are
 public identifiers. **Here two of them are real secrets.**
 
@@ -127,8 +180,7 @@ public identifiers. **Here two of them are real secrets.**
 ## Tests
 
 ```bash
-node --experimental-strip-types src/lib/session.test.mjs
-node src/lib/countdown.test.mjs
+npm test
 ```
 
 **`session.test.mjs`** is the security test. It asserts that a session signed with
