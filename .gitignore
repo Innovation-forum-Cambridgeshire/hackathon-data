@@ -11,5 +11,11 @@ node_modules/
 # committing them would put a stale snapshot in every clone.
 report/
 
-# Agent worktrees are local scratch, never shared history.
-.claude/worktrees/
+# Agent and editor working directories. Was .claude/worktrees/ only, which left
+# the rest of .claude — settings.local.json, session state — free to be committed
+# by a stray `git add .`. None of it is shared history: it is one machine's local
+# tool state, and it can carry local paths and machine-specific permissions.
+.claude/
+.omo/
+.vscode/
+.idea/
