@@ -3,8 +3,10 @@
 Sign in with GitHub · see your team, your repository, your board · countdown to the
 submission deadline.
 
-**Status: built, not deployed, and not open to participants.** See "Before this can
-go live" — one of those items is a hard blocker, not a formality.
+**Status: deployed at `if-hackathon-workspace.pages.dev`, not open to participants.**
+The notices were amended on 2026-08-17 to cover it, but the Workspace Privacy
+Notice is still 404 on the live site. See "Before this can go live" — two of
+those items are hard blockers, not formalities.
 
 ---
 
@@ -95,28 +97,42 @@ megabytes of WASM, to do worse what github.dev does for free.
 
 ## Before this can go live
 
-### Blocker — the workspace is outside every published notice
+### The wording is done. The publishing is not.
 
-The Cookie Policy says, in terms:
+**Amended 2026-08-17** in the Word masters, then regenerated with
+`scripts/legal-from-docx.py` — editing `legal.json` directly is overwritten:
 
-> "The Website is the hackathon microsite at `https://r1x.co.uk/public_hackathon/`
-> and its pages (including /apply, /challenges, /insights and /sponsorship)."
+| Document | What changed |
+|---|---|
+| **Cookie Policy** | Scope named only the microsite. It now names the workspace as a separate service with its own notice, and states it sets one strictly necessary session cookie and no analytics or advertising cookies |
+| **Privacy Policy** | "The only place on the Website where we deliberately collect personal data is the /apply form" was not false — but it was only true because of a scope the reader could not see. Section 3 is now explicitly about the Website, with the workspace signposted |
+| **Website Terms of Use** | The Site is defined to exclude the workspace, and the Workspace Privacy Notice joins the documents incorporated by reference |
+| **Workspace Privacy Notice** | Now names the origin it covers. A notice describing a service without identifying it asks the reader to guess |
 
-The Privacy Policy adds:
+### Blocker — the notice is written but not published
 
-> "The only place on the Website where we deliberately collect personal data is
-> the registration form on the /apply page."
+`https://r1x.co.uk/public_hackathon/legal/workspace-privacy/` returns **404**.
+The notice is in the repository and in the build; the marketing site deploys by
+`ftp/deploy.sh`, which has not run since. So right now the workspace is live and
+the notice describing it is not, which is the wrong way round.
 
-A workspace on a different origin, that sets a session cookie and sends a GitHub
-handle to a US processor, is covered by **none** of that. The register already
-tracks this as `PROG-DOC-04 — Subdomain privacy and cookie wording — Not started`.
+**No participant signs in until that page resolves.** Organiser testing is fine
+— that is staff processing their own data internally.
 
-**So: no participant signs in until the workspace has its own privacy notice and
-the Privacy Policy and Terms are amended.** Organiser testing is fine — that is
-staff processing their own data internally.
+### Blocker — three placeholders in a document that must be publishable
 
-Amend the **Word masters**, then re-run `scripts/legal-from-docx.py`. Editing
-`legal.json` is overwritten.
+The Workspace Privacy Notice still contains `[DATA PROTECTION CONTACT NAME]`,
+`[DATA PROTECTION EMAIL]` and `[RETENTION PERIOD]`.
+
+These are deliberately unfilled, per the standing decision recorded in
+`scripts/fill-doc-placeholders.py`: *a legal document with an invented contact is
+worse than one that plainly shows a gap*. They need a person, a mailbox and a
+retention decision. **Do not invent them to clear the gate** — that converts a
+visible gap into an invisible false statement.
+
+The notice does give `info@inno-forum.co.uk` as the primary route, so it is not
+contactless. Whether it is publishable with the other two showing is a judgement
+for whoever signs it off, not a code change.
 
 ### Also outstanding
 
