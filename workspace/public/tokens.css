@@ -1,0 +1,125 @@
+/* ============================================================================
+   Brand tokens — Innovation Forum × R1X.
+
+   Every page on this origin links this file FIRST. It exists because the
+   sign-in page and the workspace had drifted into two different products: one
+   in system fonts, rounded corners and a neutral grey; the other in Barlow,
+   square corners and the green ramp. A participant met the first, signed in,
+   and was handed the second.
+
+   Anything below is shared identity — fonts, palette, reset, the primitives
+   that carry the brand. Page layout does NOT belong here; it belongs in the
+   page's own stylesheet.
+   ========================================================================== */
+
+@font-face {
+  font-family: "Barlow"; font-style: normal; font-weight: 400; font-display: swap;
+  src: url("/fonts/barlow-latin-400-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Barlow"; font-style: normal; font-weight: 600; font-display: swap;
+  src: url("/fonts/barlow-latin-600-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Barlow Condensed"; font-style: normal; font-weight: 500; font-display: swap;
+  src: url("/fonts/barlow-condensed-latin-500-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Barlow Condensed"; font-style: normal; font-weight: 600; font-display: swap;
+  src: url("/fonts/barlow-condensed-latin-600-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "IBM Plex Mono"; font-style: normal; font-weight: 400; font-display: swap;
+  src: url("/fonts/ibm-plex-mono-latin-400-normal.woff2") format("woff2");
+}
+
+:root {
+  color-scheme: light;
+
+  --ink: #04180f;
+  --lime: #eceb85;
+
+  --accent: #009540;
+  --accent-100: #e9f7ee;
+  --accent-200: #cbebd8;
+  --accent-300: #97d9b4;
+  --accent-600: #00863a;
+  --accent-700: #00662b;
+  --aqua: #8fd6d8;
+  --aqua-700: #176d6d;
+
+  --bg: #f2f2f3;
+  --panel: #ffffff;
+  --panel-2: #e9e9ea;
+  --rule: color-mix(in srgb, #1d1f20 16%, transparent);
+  --text: #1d1f20;
+  --muted: color-mix(in srgb, #1d1f20 63%, transparent);
+  --warn: #b4471a;
+
+  --sidebar: 268px;
+  --gutter: 40px;
+
+  --font-heading: "Barlow Condensed", system-ui, sans-serif;
+  --font-body: "Barlow", system-ui, -apple-system, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, monospace;
+}
+
+/* The workspace is a place people sit in for five days, often late. Dark is a
+   real requirement here in a way it is not on a marketing page — which is why
+   this file has it and global.css does not. The ink ground stays; the greens
+   lift to keep contrast on it. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: #0a1a12;
+    --panel: #10251a;
+    --panel-2: #16311f;
+    --rule: color-mix(in srgb, #ffffff 14%, transparent);
+    --text: #f4f7f4;
+    --muted: color-mix(in srgb, #ffffff 66%, transparent);
+    --accent-100: #10321f;
+    --accent-200: #16412a;
+    --accent-600: #4fbe83;
+    --accent-700: #97d9b4;
+    --warn: #f0834f;
+  }
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  line-height: 1.12;
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+p { margin: 0; }
+a { color: var(--accent-700); text-decoration: none; text-underline-offset: 3px; }
+a:hover { text-decoration: underline; }
+img { display: block; max-width: 100%; }
+:focus { outline: none; }
+:focus-visible { outline: 2px solid var(--accent-600); outline-offset: 2px; }
+[hidden] { display: none !important; }
+
+/* Available to screen readers, invisible on screen. Used for the search field's
+   label — the placeholder is not a label, and disappears the moment you type. */
+.visually-hidden {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+/* Square corners everywhere. Restated rather than assumed, because a stray
+   border-radius is the single easiest way to make this stop looking like the
+   Innovation Forum. */
+button, input, .card, .tile, .btn, .chip { border-radius: 0; }

@@ -3,70 +3,78 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Workspace — Innovation Forum × R1X</title>
-<!-- Not indexed. This is a participant tool, not a public page, and it is not
-     covered by the published privacy notice, which scopes to the marketing site
-     only. Until that notice is amended this must not be discoverable. -->
+<title>Sign in — Innovation Forum × R1X workspace</title>
+<meta name="theme-color" content="#04180f">
+<!-- Not indexed. A participant tool is not a public page: there is nothing here
+     for a search visitor, and an indexed sign-in screen collects nothing but
+     confused traffic and credential-stuffing attempts. This is no longer about
+     the privacy notice — the notices were amended on 2026-08-17 to cover this
+     service, and it is linked below. -->
 <meta name="robots" content="noindex, nofollow">
-<style>
-  :root {
-    color-scheme: light;
-    --bg: #fcfcfb; --panel: #f4f4f2; --rule: #e3e3df;
-    --ink: #0b0b0b; --ink-2: #52514e; --ink-3: #6f6e6a;
-    --accent: #00863a;
-  }
-  @media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) {
-      color-scheme: dark;
-      --bg: #12211a; --panel: #172b21; --rule: #24402f;
-      --ink: #ffffff; --ink-2: #c3d2c7; --ink-3: #93a89a;
-      --accent: #35c46f;
-    }
-  }
-  * { box-sizing: border-box; }
-  body {
-    margin: 0; background: var(--bg); color: var(--ink);
-    font: 16px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
-    display: grid; place-items: center; min-height: 100vh; padding: 32px 20px;
-  }
-  main { width: 100%; max-width: 440px; }
-  .kicker {
-    font-size: 12px; letter-spacing: .16em; text-transform: uppercase;
-    color: var(--accent); margin-bottom: 12px;
-  }
-  h1 { font-size: 30px; line-height: 1.15; margin: 0 0 12px; letter-spacing: -.01em; }
-  p { color: var(--ink-2); margin: 0 0 22px; }
-  .btn {
-    display: inline-flex; align-items: center; gap: 10px;
-    background: var(--ink); color: var(--bg); text-decoration: none;
-    padding: 13px 20px; border-radius: 7px; font-weight: 600; font-size: 15px;
-  }
-  .btn:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
-  .note {
-    margin-top: 26px; padding: 15px 17px; background: var(--panel);
-    border: 1px solid var(--rule); border-radius: 7px;
-    font-size: 13.5px; color: var(--ink-2);
-  }
-  .err {
-    margin-bottom: 20px; padding: 13px 16px; border-radius: 7px;
-    background: color-mix(in srgb, #d03b3b 12%, transparent);
-    border-left: 3px solid #d03b3b; font-size: 14px;
-  }
-  [hidden] { display: none !important; }
-</style>
+<link rel="stylesheet" href="/tokens.css">
+<link rel="stylesheet" href="/signin.css">
 </head>
 <body>
+
+<!-- Decorative only, and marked so. The grid and the drifting polygons are the
+     marketing site's visual system (src/components/HeroBackground.astro),
+     reduced to what one static screen needs. -->
+<div class="bg" aria-hidden="true">
+  <div class="glow glow-a"></div>
+  <div class="glow glow-b"></div>
+  <svg viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <linearGradient id="ka" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="#009540" stop-opacity="0.55"/>
+        <stop offset="100%" stop-color="#8fd6d8" stop-opacity="0.12"/>
+      </linearGradient>
+      <linearGradient id="kb" x1="1" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#8fd6d8" stop-opacity="0.42"/>
+        <stop offset="100%" stop-color="#009540" stop-opacity="0.10"/>
+      </linearGradient>
+      <linearGradient id="kc" x1="0" y1="1" x2="1" y2="0">
+        <stop offset="0%" stop-color="#eceb85" stop-opacity="0.34"/>
+        <stop offset="100%" stop-color="#009540" stop-opacity="0.08"/>
+      </linearGradient>
+    </defs>
+
+    <!-- Hairline grid, 200 units. -->
+    <path d="M0 200H1200M0 400H1200M0 600H1200M200 0V800M400 0V800M600 0V800M800 0V800M1000 0V800"
+          stroke="#ffffff" stroke-width="0.5" opacity="0.07" fill="none"/>
+
+    <g style="transform-origin:300px 300px;animation:ifDriftA 26s ease-in-out infinite;">
+      <polygon points="180,140 420,300 180,420" fill="url(#ka)" opacity="0.75"/>
+      <polygon points="420,300 300,120 460,140" fill="url(#kc)" opacity="0.55"/>
+    </g>
+    <g style="transform-origin:900px 520px;animation:ifDriftB 32s ease-in-out infinite;">
+      <polygon points="1020,340 780,520 1020,660" fill="url(#kb)" opacity="0.6"/>
+      <polygon points="780,520 940,660 760,700" fill="url(#ka)" opacity="0.35"/>
+    </g>
+    <!-- The marketing site has a third group of outlined triangles at centre
+         (600,400). It is dropped here on purpose. On a hero it sits behind an
+         image; on this page the content column is centred over exactly that
+         point, and the outline drew a hairline straight through the body copy.
+         Decoration that crosses text is not decoration. -->
+  </svg>
+  <!-- Scrim. The polygons are wanted as texture, not as competition: this
+       darkens the middle third where the column sits, so the copy keeps its
+       contrast without having to dim the artwork everywhere. -->
+  <div class="scrim"></div>
+</div>
+
 <main>
   <div class="kicker">Innovation Forum × R1X</div>
   <h1>Team workspace</h1>
 
   <div class="err" id="err" hidden></div>
 
-  <p>Sign in with the GitHub account you registered with. Your team, your repository
-     and the countdown are all behind here.</p>
+  <p class="lede">
+    Sign in with the GitHub account you registered with. Your team, your repository,
+    the worked examples for your challenge and the countdown are all behind here.
+  </p>
 
-  <a class="btn" href="/auth/login">
-    <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+  <a class="btn-gh" href="/auth/login">
+    <svg width="20" height="20" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
       <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38
       0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01
       1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95
@@ -78,11 +86,89 @@
     Sign in with GitHub
   </a>
 
-  <div class="note">
-    <strong>Don't have an account?</strong> It's free and takes about two minutes at
-    <a href="https://github.com/signup" rel="noopener">github.com/signup</a>. GitHub
-    requires you to be 13 or over and is a separate company with its own terms.
-  </div>
+  <p class="after-btn">
+    No GitHub account? It is free and takes about two minutes at
+    <a href="https://github.com/signup" rel="noopener">github.com/signup</a>.
+    GitHub requires you to be 13 or over and is a separate company with its own terms.
+  </p>
+
+  <!-- WHAT SIGNING IN ASKS OF GITHUB.
+       Put in front of people BEFORE they click, not after. The consent screen
+       GitHub shows names the scopes in its own vocabulary; this says what they
+       mean here, and — more usefully — what is NOT being asked for. -->
+  <section class="panel">
+    <h2>What this asks GitHub for</h2>
+    <p>
+      Two read-only permissions: <strong>your public profile</strong>, and
+      <strong>which teams you are in</strong>. That is how the workspace knows who you
+      are and which repository is yours.
+    </p>
+    <p>
+      It does <strong>not</strong> ask for access to your code. The workspace never
+      writes to your repository — you push with your own git client, as you would on
+      any other project. You can withdraw access at any time in your GitHub settings,
+      under Applications, and it takes effect immediately.
+    </p>
+  </section>
+
+  <!-- THE DOCUMENTS.
+       Deliberately NOT a tick-box. Two reasons, and both would be errors to
+       "fix" later without reading them:
+
+       1. The lawful basis for this processing is CONTRACT, not consent — you
+          entered a hackathon and it cannot be run without putting you in a
+          team. A tick-box implies consent is the basis, which would misstate
+          our own position and invite someone to withdraw a consent that was
+          never what we relied on.
+       2. The Participant Terms and the Code of Conduct were accepted at
+          registration on /apply. Re-collecting acceptance here adds a click and
+          changes nothing legally; what it would do is train people to dismiss a
+          box, which is worse than not showing one.
+
+       A privacy notice is information, not an agreement, so it sits under its
+       own heading rather than in a list of things you are said to accept. -->
+  <section class="panel">
+    <h2>What applies while you are here</h2>
+    <p>
+      You accepted the first two when you registered. Signing in does not ask you to
+      agree to anything new — it confirms these still apply to what you do in the
+      workspace.
+    </p>
+    <ul class="docs">
+      <li>
+        <a href="https://r1x.co.uk/public_hackathon/legal/participant-terms/" rel="noopener">
+          <span class="what">Participant Terms &amp; Conditions
+            <span class="why">The rules of the event, and what happens to what you build</span>
+          </span>
+          <span class="arrow" aria-hidden="true">↗</span>
+        </a>
+      </li>
+      <li>
+        <a href="https://r1x.co.uk/public_hackathon/legal/code-of-conduct/" rel="noopener">
+          <span class="what">Code of Conduct
+            <span class="why">How we expect people to treat each other, and how to report a problem</span>
+          </span>
+          <span class="arrow" aria-hidden="true">↗</span>
+        </a>
+      </li>
+      <li>
+        <a href="/legal/workspace-privacy/">
+          <span class="what">Workspace Privacy Notice
+            <span class="why">What this service collects, who it goes to, and how long it is kept</span>
+          </span>
+          <span class="arrow" aria-hidden="true">→</span>
+        </a>
+      </li>
+    </ul>
+  </section>
+
+  <p class="foot">
+    Your work lives in your team's repository on GitHub, not here — team repositories
+    are public, so please read the
+    <a href="https://r1x.co.uk/public_hackathon/legal/participant-terms/" rel="noopener">Participant Terms</a>
+    before your first commit. Problems signing in? Find an organiser, or email
+    <a href="mailto:info@inno-forum.co.uk">info@inno-forum.co.uk</a>.
+  </p>
 </main>
 
 <script type="module">

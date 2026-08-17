@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Workspace Privacy Notice — Innovation Forum × R1X</title>
+<meta name="theme-color" content="#04180f">
+<meta name="robots" content="noindex, nofollow">
+<!-- GENERATED FILE — DO NOT EDIT.
+     Source: "01 Legal & Compliance/06 - Workspace Privacy Notice.docx"
+     Rebuild: python3 scripts/build-notice.py
+     Editing this file by hand puts it out of step with the marketing site's
+     copy of the same notice, which is generated from the same master. Two
+     versions of one legal document saying different things is the failure this
+     pipeline exists to prevent. -->
+<link rel="stylesheet" href="/tokens.css">
+<style>
+  body { background: var(--bg); color: var(--text); }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 40px 22px 80px; }
+  .kicker {
+    font-family: var(--font-heading); font-size: 12.5px; font-weight: 600;
+    letter-spacing: .18em; text-transform: uppercase; color: var(--accent-600);
+    margin-bottom: 12px;
+  }
+  h1 { font-size: clamp(30px, 5vw, 40px); margin-bottom: 10px; }
+  .standfirst { color: var(--muted); font-size: 17px; margin-bottom: 30px; }
+  h2 {
+    font-size: 21px; margin: 34px 0 10px;
+    padding-top: 18px; border-top: 1px solid var(--rule);
+  }
+  p { margin-bottom: 13px; }
+  ul { margin: 0 0 13px; padding-left: 22px; }
+  li { margin-bottom: 6px; }
+  .back {
+    display: inline-block; margin-bottom: 26px; font-family: var(--font-heading);
+    font-size: 14px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase;
+    color: var(--accent-600);
+  }
+  /* Placeholders are left visible on purpose — see the standing decision in the
+     marketing repo's scripts/fill-doc-placeholders.py. Marking them rather than
+     hiding them means nobody mistakes one for finished copy. */
+  .wrap p, .wrap li { overflow-wrap: break-word; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="/">← Back to sign-in</a>
+  <div class="kicker">Innovation Forum × R1X</div>
+  <h1>Workspace Privacy Notice</h1>
+  <p class="standfirst">
+    What the participant workspace collects about you, who it is shared with, and
+    what you can ask us to do about it.
+  </p>
+  <h2>1. What this notice covers</h2>
+  <p>This notice covers the participant workspace at https://if-hackathon-workspace.pages.dev — the separate, sign-in-only service used by people taking part in an Innovation Forum × R1X hackathon. It is a different service from the public website at https://r1x.co.uk/public_hackathon/, which has its own Privacy Policy and Cookie Policy. This notice does not replace those; it sits alongside them.</p>
+  <p>The workspace exists so that a participant can sign in, see which team they are in, reach their team&#x27;s code repository and task board, and see the deadline. It is deliberately small.</p>
+  <h2>2. Who is responsible</h2>
+  <p>Global Innovation Forum Limited (company number 10010132), registered at Future Business Centre, Kings Hedges Road, Cambridge CB4 2HY, is the data controller. R1X is our technology and hosting partner. Questions and requests go to info@inno-forum.co.uk, or to [DATA PROTECTION CONTACT NAME] at [DATA PROTECTION EMAIL].</p>
+  <h2>3. What we collect, and what we do not</h2>
+  <p>When you sign in with GitHub, we keep two things about you: your GitHub username and the display name on your GitHub profile. We also show which team you are in, which we read from GitHub each time you load the page rather than storing our own copy. We do not store your profile picture — the workspace draws a plain initial instead, so that your browser never has to fetch an image from GitHub while you are using it.</p>
+  <p>There is a difference between what we keep and what passes through, and it is fair to tell you about it. When we ask GitHub who you are, GitHub sends back your whole public profile in one response. Depending on what you have filled in, that can include a public email address, a biography, a company or a location. We read only the two fields above; the rest is not saved, not logged and not passed to anyone. Equally, when we check your team we ask GitHub for the teams you belong to, and GitHub&#x27;s answer covers every organisation you are in — including ones that have nothing to do with this event. We keep only the teams belonging to this event&#x27;s organisation and discard the rest immediately.</p>
+  <p>We do not collect, and the workspace has nowhere to put:</p>
+  <ul>
+    <li>your date of birth, or your age</li>
+    <li>your postal address or telephone number</li>
+    <li>any medical, dietary or accessibility information — that is handled separately by the event team and never reaches this service</li>
+    <li>any password — we never see one, because GitHub does the sign-in</li>
+  </ul>
+  <p>We deliberately do not record whether you are under 18 in this service. The event team holds that separately where it is needed for safeguarding.</p>
+  <h2>4. Where your work is stored</h2>
+  <p>Your work is not stored by us. When you build something during the event it goes into your team&#x27;s repository on GitHub, using your own GitHub account, exactly as it would on any other project. The workspace shows you a link to that repository; it does not hold a copy.</p>
+  <p>Team repositories are public by default, which means the code and the commit history — including the name and email address recorded against your commits — can be seen by anyone. Please read the participant guidance before you commit for the first time. Deleting a repository later does not reach copies other people have already taken.</p>
+  <h2>5. The cookie we set</h2>
+  <p>One cookie, named if_session. It holds your signed-in state and expires after eight hours. It is strictly necessary for the service to work — without it, the workspace cannot tell one signed-in person from another — so it does not require consent under PECR.</p>
+  <p>It is marked HttpOnly, so it cannot be read by scripts in your browser, and Secure, so it is only ever sent over an encrypted connection. We set no analytics, advertising or tracking cookies anywhere in the workspace.</p>
+  <p>What the cookie contains. Alongside your username it holds the access key GitHub issued when you signed in, which is what lets us ask GitHub which team you are in. It is kept in the cookie rather than in a database because we do not run one. Being HttpOnly, it is never visible to any script on the page, and it only ever grants the read-only permissions you approved when you signed in — it cannot be used to change anything in your account or your code.</p>
+  <p>One honest limit on signing out. Because there is no database, there is nothing on our side to switch off when you sign out. Signing out removes the cookie from your browser, which is what matters on a shared computer, but a copy taken beforehand would keep working until the eight hours run out. This is why the eight hours are short. If you want to end access immediately and everywhere, revoke this application in your GitHub settings under Applications — that works at once, because it stops GitHub honouring the key rather than asking us to forget it.</p>
+  <p>A short-lived second cookie, if_oauth_state, exists only during sign-in to protect against a cross-site request forgery attack, and is deleted immediately afterwards.</p>
+  <h2>6. Who we share it with</h2>
+  <p>Two providers, and nobody else:</p>
+  <ul>
+    <li>GitHub — provides the sign-in, and hosts the team repositories and task boards. GitHub is a US company. It is certified under the UK Extension to the EU–US Data Privacy Framework, which the UK Government has assessed as providing an adequate level of protection.</li>
+    <li>Cloudflare — hosts the workspace itself. Also a US company, and also certified under the UK Extension to the EU–US Data Privacy Framework.</li>
+  </ul>
+  <p>We do not sell your data, we do not use it for marketing, and we do not share it with sponsors.</p>
+  <h2>7. Why we are allowed to do this</h2>
+  <p>Our lawful basis is contract: you have entered a hackathon, and we cannot run it — put you in a team, give you somewhere to work, judge what you built — without processing this. Where you are under 18 we take additional care in line with the ICO&#x27;s Age Appropriate Design Code.</p>
+  <h2>8. How long we keep it</h2>
+  <p>Your signed-in session lasts eight hours and then ends. We hold the record of which team you were in for [RETENTION PERIOD] after the event so that results can be checked and disputes resolved.</p>
+  <p>Your GitHub account, and anything you put in a repository, belong to you and are governed by GitHub&#x27;s own terms. Closing your GitHub account is done with GitHub, not with us.</p>
+  <h2>9. Your rights</h2>
+  <p>You can ask us for a copy of what we hold, ask us to correct it, ask us to delete it, or object to how we use it. Write to info@inno-forum.co.uk and we will respond within one month.</p>
+  <p>One honest limitation. Once you have pushed work to a public repository, other people may have copied, forked or archived it. We can remove our own copies and links, and we can help you ask GitHub, but neither we nor GitHub can reach copies other people already hold. This is why the guidance asks you to think before the first commit rather than after.</p>
+  <p>If you are not happy with how we have handled your data you can complain to the Information Commissioner&#x27;s Office at ico.org.uk.</p>
+  <h2>10. If you are under 18</h2>
+  <p>Please make sure a parent or guardian knows you are taking part. We take extra care with your information, we do not profile you, and we do not use your data for marketing. If a parent or guardian wants to exercise your rights on your behalf, they can write to info@inno-forum.co.uk.</p>
+  <p>Note that GitHub requires its users to be 13 or over, and is a separate company with its own terms and privacy policy.</p>
+  <h2>11. Changes</h2>
+  <p>If the workspace changes what it collects, this notice is updated before the change goes live, not after.</p>
+</div>
+</body>
+</html>

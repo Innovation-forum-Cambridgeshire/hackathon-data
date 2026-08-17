@@ -19,3 +19,6 @@ report/
 .omo/
 .vscode/
 .idea/
+
+# Wrangler's local state, and the lockfile for a dev-only dependency tree.
+workspace/.wrangler/
