@@ -132,7 +132,7 @@ export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
   return new Response(
     JSON.stringify({
       signedIn: true,
-      user: { login: session.login, name: session.name, avatar: session.avatar },
+      user: { login: session.login, name: session.name },
       teams,
       event: {
         title: EVENT.title,

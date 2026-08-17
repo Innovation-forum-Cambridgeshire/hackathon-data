@@ -87,7 +87,13 @@ export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
 
   const userRes = await fetch("https://api.github.com/user", { headers: ghHeaders });
   if (!userRes.ok) return fail(url.origin, "user_lookup_failed");
-  const user = (await userRes.json()) as { login: string; name?: string; avatar_url?: string };
+  // Only two fields are taken from this response, but be clear about what
+  // ARRIVES: .json() parses the entire GitHub profile body into memory, and the
+  // TypeScript annotation below constrains nothing at runtime. With read:user
+  // scope that body can also carry a public email, bio, company and location.
+  // We read two fields and let the rest fall out of scope unstored — but the
+  // privacy notice must describe what is received, not merely what is kept.
+  const user = (await userRes.json()) as { login: string; name?: string };
 
   // 204 = member, 302/404 = not. Checked with the USER's token so it reflects
   // their own visibility rather than an elevated one.
@@ -103,7 +109,6 @@ export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
     {
       login: user.login,
       name: user.name || user.login,
-      avatar: user.avatar_url || "",
       token,
     },
     cfg.SESSION_SECRET,

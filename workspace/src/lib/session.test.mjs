@@ -10,7 +10,7 @@ const OTHER = "a-different-secret";
 const fails = [];
 const check = (label, cond) => { if (!cond) fails.push(label); };
 
-const base = { login: "octocat", name: "The Octocat", avatar: "https://x/y.png", token: "gho_TESTTOKEN" };
+const base = { login: "octocat", name: "The Octocat", token: "gho_TESTTOKEN" };
 
 // 1. Round trip
 const good = await sign(base, SECRET);

@@ -38,7 +38,12 @@ const MAX_AGE_SECONDS = 8 * 60 * 60;
 export interface Session {
   login: string; // GitHub login
   name: string;
-  avatar: string;
+  // No avatar. It was carried here until a privacy review pointed out that a
+  // GitHub avatar URL embeds the numeric GitHub user ID, so storing one meant
+  // holding a second stable identifier for a 34px decoration — and rendering it
+  // made the participant's browser call GitHub on every page view. The workspace
+  // now draws an initial locally instead. Data minimisation is not only about
+  // what you collect; it is about what you keep once you have stopped using it.
   token: string; // GitHub access token — never sent to the browser
   iat: number;
   exp: number;

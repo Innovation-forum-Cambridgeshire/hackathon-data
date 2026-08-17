@@ -28,7 +28,19 @@
   }
   main { max-width: 720px; margin: 0 auto; }
   header { display: flex; align-items: center; gap: 12px; margin-bottom: 34px; }
-  header img { width: 34px; height: 34px; border-radius: 50%; }
+  /* An initial rendered locally, NOT the GitHub avatar.
+     Loading avatars.githubusercontent.com would make the browser connect to
+     GitHub on every page view, handing over the participant's IP address and
+     this origin as a Referer — for a 34px decoration. GitHub avatar URLs also
+     embed the numeric GitHub user ID, so holding one is holding an extra
+     identifier we have no use for. This keeps the workspace at zero
+     third-party requests, which is the same standard the marketing site holds. */
+  header .ava {
+    width: 34px; height: 34px; border-radius: 50%; flex: none;
+    display: grid; place-items: center;
+    background: var(--panel); border: 1px solid var(--rule);
+    font-weight: 650; font-size: 14px; color: var(--ink-2);
+  }
   header .who { flex: 1; min-width: 0; }
   header .name { font-weight: 600; }
   header .login { font-size: 13px; color: var(--ink-3); }
@@ -74,7 +86,7 @@
 <body>
 <main>
   <header hidden id="hdr">
-    <img id="avatar" alt="" width="34" height="34">
+    <div class="ava" id="avatar" aria-hidden="true"></div>
     <div class="who">
       <div class="name" id="name"></div>
       <div class="login" id="login"></div>
@@ -130,7 +142,12 @@
   $("app").hidden = false;
   $("hdr").hidden = false;
 
-  $("avatar").src = data.user.avatar;
+  // An initial derived locally from the name we already have — no image, and so
+  // no request to GitHub's avatar host from the participant's browser.
+  // textContent, never innerHTML: this string comes from a GitHub profile and is
+  // therefore attacker-controllable by whoever owns that account.
+  $("avatar").textContent = (data.user.name || data.user.login || "?")
+    .trim().charAt(0).toUpperCase();
   $("name").textContent = data.user.name;
   $("login").textContent = "@" + data.user.login;
   $("evtitle").textContent = data.event.title;

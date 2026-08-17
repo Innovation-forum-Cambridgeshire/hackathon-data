@@ -67,7 +67,7 @@ test("a weak-but-present secret is the real risk, and is rejected", async () => 
   // So an unset variable already failed closed — just opaquely, as a bare 500
   // with nothing in it for the participant or the operator.
   await assert.rejects(
-    () => sign({ login: "a", name: "A", avatar: "", token: "x" }, undefined),
+    () => sign({ login: "a", name: "A", token: "x" }, undefined),
     /zero-length key/i,
     "an absent secret throws; it does not silently sign",
   );
@@ -76,7 +76,7 @@ test("a weak-but-present secret is the real risk, and is rejected", async () => 
   // but guessable. A shell interpolating an unset variable writes the literal
   // text "undefined", and that is a perfectly valid 9-byte HMAC key — it signs,
   // it verifies, and nothing anywhere looks wrong.
-  const forged = await sign({ login: "attacker", name: "A", avatar: "", token: "x" }, "undefined");
+  const forged = await sign({ login: "attacker", name: "A", token: "x" }, "undefined");
   const accepted = await verify(forged, "undefined");
   assert.equal(accepted?.login, "attacker", "a placeholder secret produces real, valid sessions");
 
@@ -85,6 +85,6 @@ test("a weak-but-present secret is the real risk, and is rejected", async () => 
   assert.throws(() => requireEnv({ SESSION_SECRET: "hunter2" }, ["SESSION_SECRET"]), ConfigError);
 
   // And a session signed with the real secret must not verify under the weak one.
-  const real = await sign({ login: "someone", name: "S", avatar: "", token: "t" }, GOOD_SECRET);
+  const real = await sign({ login: "someone", name: "S", token: "t" }, GOOD_SECRET);
   assert.equal(await verify(real, "undefined"), null, "keys must not be interchangeable");
 });
