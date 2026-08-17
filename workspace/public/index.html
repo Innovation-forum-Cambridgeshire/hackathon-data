@@ -100,6 +100,12 @@
     // is the normal state on day two of a five-day event. Worded so it does not
     // read as something going wrong.
     session_expired:    "You've been signed out after eight hours. Sign in again to pick up where you left off — nothing has been lost.",
+    // Deliberately neutral, and it has to stay that way. This is shown both to
+    // someone removed for a conduct breach and to someone caught by an
+    // administrative slip, and the page cannot tell which. Naming a reason here
+    // would either accuse an innocent person or discuss a safeguarding matter on
+    // a public sign-in screen that anyone can reach.
+    access_ended:       "Your access to the workspace has ended. If you think that's a mistake, please contact an organiser.",
   };
   const err = new URLSearchParams(location.search).get("error");
   if (err) {

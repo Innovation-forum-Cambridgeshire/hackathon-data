@@ -17,7 +17,7 @@
  * endpoint is a convenience, not a privilege boundary — the boundary is GitHub's
  * own permissions, which is the point of the design.
  */
-import { currentSession, NO_STORE_HEADERS } from "../../src/lib/session";
+import { currentSession, clearCookieHeader, NO_STORE_HEADERS } from "../../src/lib/session";
 import { EVENT, remainingUntil, inLondon } from "../../src/lib/countdown";
 import { ConfigError, configErrorResponse, requireEnv } from "../../src/lib/config";
 
@@ -56,6 +56,51 @@ export const onRequestGet: PagesFunction<Env> = async ({ request, env }) => {
     Accept: "application/vnd.github+json",
     "User-Agent": UA,
   };
+
+  // RE-CHECK ORGANISATION MEMBERSHIP ON EVERY REQUEST. THIS IS A SAFEGUARDING
+  // CONTROL, NOT A TIDINESS ONE.
+  //
+  // Sessions are signed cookies with no server-side store, so there is nothing
+  // to delete to end one early. Checking membership only at login therefore made
+  // "remove them from the organisation" — the sanction the Code of Conduct
+  // actually relies on — take effect up to EIGHT HOURS later. If someone is
+  // removed at 10:00 for harassing a young person, they keep the workspace until
+  // their cookie expires. A legal review flagged that publishing the word
+  // "immediately" would put a false statement about a child-protection control
+  // into a participant-facing document.
+  //
+  // Asking GitHub each time costs one API call against the participant's own
+  // 5,000/hour budget and closes the window to a single page load.
+  //
+  // The three-way split below matters. A definitive "not a member" evicts. A
+  // GitHub OUTAGE must not evict, because logging every participant out mid-event
+  // because api.github.com is having a bad afternoon is its own incident — and an
+  // attacker cannot manufacture a 500 from GitHub to hold a session open.
+  const memberRes = await fetch(
+    `https://api.github.com/user/memberships/orgs/${encodeURIComponent(cfg.GITHUB_ORG)}`,
+    { headers: ghHeaders },
+  );
+
+  if (memberRes.status === 401 || memberRes.status === 403 || memberRes.status === 404) {
+    // Removed from the organisation, or the token was revoked on GitHub's side.
+    // Clear the cookie on the way out so the browser stops presenting it.
+    return new Response(JSON.stringify({ signedIn: false, error: "access_ended" }), {
+      status: 401,
+      headers: { ...NO_STORE_HEADERS, "Set-Cookie": clearCookieHeader() },
+    });
+  }
+
+  if (memberRes.ok) {
+    const membership = (await memberRes.json()) as { state?: string };
+    if (membership.state !== "active") {
+      return new Response(JSON.stringify({ signedIn: false, error: "access_ended" }), {
+        status: 401,
+        headers: { ...NO_STORE_HEADERS, "Set-Cookie": clearCookieHeader() },
+      });
+    }
+  }
+  // Any other status (5xx, or a network failure that threw before this point) is
+  // treated as "GitHub is unwell", and the session is allowed to continue.
 
   let teams: Array<{ name: string; slug: string; repo: string | null }> = [];
   try {

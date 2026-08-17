@@ -126,7 +126,14 @@
   // sees before the redirect is a broken page. Stop here instead.
   if (res.status === 401) {
     const why = await res.json().catch(() => ({}));
-    location.replace(why.error === "token_expired" ? "/?error=session_expired" : "/");
+    // access_ended means membership was withdrawn while the session was still
+    // valid. Send them somewhere that says so plainly rather than looping them
+    // back through sign-in, which would fail again and read as a bug.
+    const REDIRECTS = {
+      token_expired: "/?error=session_expired",
+      access_ended: "/?error=access_ended",
+    };
+    location.replace(REDIRECTS[why.error] || "/");
     throw new Error("not signed in");
   }
 
