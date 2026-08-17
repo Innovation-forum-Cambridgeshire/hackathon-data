@@ -30,11 +30,10 @@
   padding: 22px 20px;
   border-bottom: 1px solid color-mix(in srgb, #ffffff 12%, transparent);
 }
+/* Sized by height and left to find its own width — the mark is taller than it
+   is wide, and forcing it square would either letterbox or distort it. */
 .side-mark {
-  width: 34px; height: 34px; flex: none;
-  display: grid; place-items: center;
-  background: var(--accent); color: #fff;
-  font-family: var(--font-heading); font-weight: 600; font-size: 17px;
+  height: 34px; width: auto; flex: none;
 }
 .side-name {
   font-family: var(--font-heading); font-weight: 600; font-size: 17px;

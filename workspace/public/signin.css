@@ -94,6 +94,16 @@ main {
   max-width: 560px;
 }
 
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  margin-bottom: 18px;
+}
+/* Sized by height: the mark is taller than it is wide, so a square box would
+   letterbox it. */
+.brand img { height: 40px; width: auto; }
+
 .kicker {
   font-family: var(--font-heading);
   font-size: 13px;
@@ -101,7 +111,6 @@ main {
   letter-spacing: 0.18em;
   text-transform: uppercase;
   color: var(--aqua);
-  margin-bottom: 14px;
 }
 
 h1 {

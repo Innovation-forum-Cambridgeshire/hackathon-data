@@ -111,6 +111,7 @@ TEMPLATE = """<!doctype html>
      copy of the same notice, which is generated from the same master. Two
      versions of one legal document saying different things is the failure this
      pipeline exists to prevent. -->
+<link rel="icon" href="/brand/if-mark.png">
 <link rel="stylesheet" href="/tokens.css">
 <style>
   body {{ background: var(--bg); color: var(--text); }}
