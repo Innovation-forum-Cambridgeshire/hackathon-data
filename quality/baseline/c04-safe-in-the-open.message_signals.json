@@ -1,0 +1,213 @@
+{
+  "columns": {
+    "category": {
+      "distinct": 7,
+      "domain": {
+        "Persistent contact": 630,
+        "Personal abuse": 606,
+        "Robust criticism": 5707,
+        "Routine correspondence": 9660,
+        "Service request": 6736,
+        "Targeted campaign": 323,
+        "Threatening language": 338
+      },
+      "dtype": "string",
+      "kind": "O",
+      "length_max": 22,
+      "length_min": 14,
+      "null_count": 0,
+      "null_rate": 0.0,
+      "present": true
+    },
+    "channel": {
+      "distinct": 5,
+      "domain": {
+        "Contact form": 2404,
+        "Direct message": 4217,
+        "Email": 5781,
+        "Forum post": 3406,
+        "Public comment": 8192
+      },
+      "dtype": "string",
+      "kind": "O",
+      "length_max": 14,
+      "length_min": 5,
+      "null_count": 0,
+      "null_rate": 0.0,
+      "present": true
+    },
+    "is_flagged": {
+      "distinct": 2,
+      "dtype": "boolean",
+      "kind": "b",
+      "null_count": 0,
+      "null_rate": 0.0,
+      "present": true,
+      "true_rate": 0.079042
+    },
+    "message_id": {
+      "distinct": 24000,
+      "dtype": "string",
+      "kind": "O",
+      "length_max": 10,
+      "length_min": 10,
+      "null_count": 0,
+      "null_rate": 0.0,
+      "present": true,
+      "top_values": {
+        "MSG-000001": 1,
+        "MSG-015998": 1,
+        "MSG-016005": 1,
+        "MSG-016006": 1,
+        "MSG-016007": 1
+      }
+    },
+    "received_at": {
+      "distinct": 23981,
+      "dtype": "datetime64[ns]",
+      "kind": "M",
+      "length_max": 19,
+      "length_min": 19,
+      "null_count": 0,
+      "null_rate": 0.0,
+      "present": true,
+      "top_values": {
+        "2026-05-04 02:23:38": 2,
+        "2026-05-19 21:42:08": 2,
+        "2026-06-02 07:33:31": 2,
+        "2026-07-15 10:18:44": 2,
+        "2026-08-03 07:36:42": 2
+      }
+    },
+    "references_named_individual": {
+      "distinct": 2,
+      "dtype": "boolean",
+      "kind": "b",
+      "null_count": 0,
+      "null_rate": 0.0,
+      "present": true,
+      "true_rate": 0.200375
+    },
+    "repeat_sender_count": {
+      "distinct": 39,
+      "dtype": "Int64",
+      "kind": "i",
+      "mean": 4.035083,
+      "null_count": 0,
+      "null_rate": 0.0,
+      "present": true,
+      "quantiles": {
+        "0.0": 1.0,
+        "0.01": 1.0,
+        "0.05": 1.0,
+        "0.25": 1.0,
+        "0.5": 2.0,
+        "0.75": 3.0,
+        "0.95": 18.0,
+        "0.99": 33.0,
+        "1.0": 39.0
+      },
+      "skew": 3.05392,
+      "stdev": 6.20966,
+      "zero_rate": 0.0
+    },
+    "sentiment_score": {
+      "distinct": 1729,
+      "dtype": "float64",
+      "kind": "f",
+      "mean": -0.024248,
+      "null_count": 0,
+      "null_rate": 0.0,
+      "present": true,
+      "quantiles": {
+        "0.0": -0.999,
+        "0.01": -0.908,
+        "0.05": -0.685,
+        "0.25": -0.336,
+        "0.5": -0.066,
+        "0.75": 0.321,
+        "0.95": 0.661,
+        "0.99": 0.733,
+        "1.0": 0.75
+      },
+      "skew": 0.064452,
+      "stdev": 0.414615,
+      "zero_rate": 0.00075
+    },
+    "target_role": {
+      "distinct": 6,
+      "domain": {
+        "Cabinet Member": 4054,
+        "Chair": 3941,
+        "Committee Member": 4024,
+        "Councillor": 3906,
+        "Mayor": 3970,
+        "Officer": 4105
+      },
+      "dtype": "string",
+      "kind": "O",
+      "length_max": 16,
+      "length_min": 5,
+      "null_count": 0,
+      "null_rate": 0.0,
+      "present": true
+    },
+    "text": {
+      "distinct": 84,
+      "dtype": "string",
+      "kind": "O",
+      "length_max": 95,
+      "length_min": 68,
+      "null_count": 0,
+      "null_rate": 0.0,
+      "present": true,
+      "top_values": {
+        "Concerning the budget proposal. Could you clarify the timeline please.": 479,
+        "Concerning the budget proposal. Please can you point me to the evidence.": 481,
+        "In response to the consultation. Please can you point me to the evidence.": 490,
+        "Regarding the recent decision. I disagree with this and here is why.": 503,
+        "Regarding the recent decision. This does not reflect what was consulted on.": 505
+      }
+    },
+    "urgency": {
+      "distinct": 4,
+      "domain": {
+        "critical": 199,
+        "high": 1916,
+        "low": 16898,
+        "medium": 4987
+      },
+      "dtype": "string",
+      "kind": "O",
+      "length_max": 8,
+      "length_min": 3,
+      "null_count": 0,
+      "null_rate": 0.0,
+      "present": true
+    },
+    "word_count": {
+      "distinct": 8,
+      "dtype": "Int64",
+      "kind": "i",
+      "mean": 12.081875,
+      "null_count": 0,
+      "null_rate": 0.0,
+      "present": true,
+      "quantiles": {
+        "0.0": 10.0,
+        "0.01": 10.0,
+        "0.05": 10.0,
+        "0.25": 11.0,
+        "0.5": 12.0,
+        "0.75": 13.0,
+        "0.95": 16.0,
+        "0.99": 17.0,
+        "1.0": 17.0
+      },
+      "skew": 0.820743,
+      "stdev": 1.668793,
+      "zero_rate": 0.0
+    }
+  },
+  "row_count": 24000
+}

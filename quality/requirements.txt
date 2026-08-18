@@ -1,0 +1,14 @@
+# Assurance run. Kept separate from build/requirements.txt on purpose: Great
+# Expectations pulls a large dependency tree (marshmallow, altair, jinja2, sqlalchemy
+# and more), and the build job must stay able to cut a release without any of it.
+#
+# Pinned to a minor line rather than exactly, because the Data Docs customisation
+# this depends on — the data_docs_custom_styles.css include, and SiteBuilder
+# reading plugins/custom_data_docs/styles — is stable across 1.x but is an
+# extension point rather than a documented API surface. A major bump needs a look.
+great_expectations>=1.8,<2.0
+
+# Also in build/requirements.txt; repeated so this file installs on its own.
+PyYAML>=6.0
+pandas>=2.2
+pyarrow>=16.0

@@ -1,0 +1,87 @@
+{
+  "columns": {
+    "crime_category": {
+      "distinct": 6,
+      "domain": {
+        "Anti-social behaviour": 405060,
+        "Burglary": 405060,
+        "Criminal damage and arson": 405060,
+        "Shoplifting": 405060,
+        "Vehicle crime": 405060,
+        "Violence and sexual offences": 405060
+      },
+      "dtype": "string",
+      "kind": "O",
+      "length_max": 28,
+      "length_min": 8,
+      "null_count": 0,
+      "null_rate": 0.0,
+      "present": true
+    },
+    "lsoa_code": {
+      "distinct": 33755,
+      "dtype": "string",
+      "kind": "O",
+      "length_max": 9,
+      "length_min": 9,
+      "null_count": 0,
+      "null_rate": 0.0,
+      "present": true,
+      "top_values": {
+        "E01000000": 72,
+        "E01022510": 72,
+        "E01022511": 72,
+        "E01022512": 72,
+        "E01022514": 72
+      }
+    },
+    "month": {
+      "distinct": 12,
+      "domain": {
+        "2026-01-01": 202530,
+        "2026-02-01": 202530,
+        "2026-03-01": 202530,
+        "2026-04-01": 202530,
+        "2026-05-01": 202530,
+        "2026-06-01": 202530,
+        "2026-07-01": 202530,
+        "2026-08-01": 202530,
+        "2026-09-01": 202530,
+        "2026-10-01": 202530,
+        "2026-11-01": 202530,
+        "2026-12-01": 202530
+      },
+      "dtype": "object",
+      "kind": "O",
+      "length_max": 10,
+      "length_min": 10,
+      "null_count": 0,
+      "null_rate": 0.0,
+      "present": true
+    },
+    "recorded_count": {
+      "distinct": 23,
+      "dtype": "Int64",
+      "kind": "i",
+      "mean": 1.708158,
+      "null_count": 0,
+      "null_rate": 0.0,
+      "present": true,
+      "quantiles": {
+        "0.0": 0.0,
+        "0.01": 0.0,
+        "0.05": 0.0,
+        "0.25": 0.0,
+        "0.5": 1.0,
+        "0.75": 2.0,
+        "0.95": 5.0,
+        "0.99": 8.0,
+        "1.0": 23.0
+      },
+      "skew": 1.763992,
+      "stdev": 1.887528,
+      "zero_rate": 0.302026
+    }
+  },
+  "row_count": 2430360
+}

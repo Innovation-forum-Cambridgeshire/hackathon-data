@@ -1,0 +1,261 @@
+# The invariants that MUST hold. Failures here are real defects.
+#
+# This is the other half of defects.yml. That file says what must be WRONG; this
+# one says what must be RIGHT. Keeping them apart is the whole design: it is the
+# only way a reader of the report can tell "this data is broken on purpose" from
+# "this data is broken".
+#
+# WHAT BELONGS HERE
+#   * keys that must be unique (and, pointedly, the one that must not be)
+#   * value domains that are closed sets — a new value is a change, not a datum
+#   * numeric ranges the catalogue itself declares in prose
+#   * cross-column arithmetic and ordering that must hold by definition
+#
+# WHAT DOES NOT BELONG HERE
+#   Anything derived only from looking at the data. A range observed in one build
+#   is not an invariant, it is a measurement — those live in the profile baseline
+#   (quality/baseline/*.json) where they are compared, not asserted. Every entry
+#   below traces to a statement in catalogue/*.yml or to arithmetic that is true
+#   by construction. Where an entry came from measurement, it says so and it is
+#   marked `source: measured`, which downgrades it to a warning rather than a
+#   failure.
+#
+# Column value domains were read off the built corpus and then checked against
+# the catalogue description for that column. They are asserted as closed sets
+# because a silently added category is a schema change that no column contract
+# would catch: every downstream group-by keeps working and quietly grows a row.
+
+version: 1
+
+challenges:
+
+  c01-one-farm-one-picture:
+    field_daily:
+      unique_key: [field_id, observation_date]
+      not_null: [field_id, observation_date, farm_id, crop, soil_type, area_ha,
+                 nearest_station_id, distance_to_station_km, soil_moisture_pct]
+      # ndvi is deliberately null ~21% of the time — declared in defects.yml.
+      domains:
+        crop: [Winter wheat, Spring barley, Oilseed rape, Sugar beet, Potatoes, Field beans]
+        soil_type: [Clay, Sandy loam, Silty clay loam, Chalk, Peat, Sandy clay loam]
+      ranges:
+        ndvi: {min: 0.0, max: 1.0, reason: "catalogue: 'Vegetation index, 0-1'"}
+        soil_moisture_pct: {min: 0.0, max: 100.0, reason: "a percentage"}
+        area_ha: {min: 0.0, reason: "an area cannot be negative"}
+        distance_to_station_km: {min: 0.0, reason: "a distance cannot be negative"}
+
+    station_weather:
+      # DELIBERATELY NOT UNIQUE. Asserted as a non-uniqueness in defects.yml
+      # rather than as a key here. Stating it in both files, in opposite
+      # directions, is how the two suites stay honest about the same fact.
+      unique_key: null
+      not_null: [station_id, observation_date, county, latitude, longitude,
+                 temp_max_c, temp_min_c, rainfall_mm, quality_flag]
+      domains:
+        quality_flag: [ok, suspect]
+        county: [Bedfordshire, Cambridgeshire, Essex, Hertfordshire, Leicestershire,
+                 Lincolnshire, Norfolk, Northamptonshire, Rutland, Suffolk]
+      ranges:
+        latitude: {min: 49.8, max: 60.9, reason: "within the United Kingdom"}
+        longitude: {min: -8.7, max: 1.8, reason: "within the United Kingdom"}
+        rainfall_mm: {min: 0.0, reason: "rainfall cannot be negative"}
+      pairs:
+        # NOTE: this is expected to hold even on the rows carrying the deliberate
+        # absurd maxima, because those inflate the MAX. If it ever fails, that is
+        # a genuine defect and not the planted one.
+        - left: temp_min_c
+          right: temp_max_c
+          relation: lte
+          reason: a daily minimum cannot exceed the daily maximum
+
+  c02-mapping-the-gaps:
+    lsoa_deprivation:
+      unique_key: [lsoa_code]
+      not_null: all
+      domains:
+        region: [East Midlands, East of England, London, North East, North West,
+                 South East, South West, West Midlands, Yorkshire and the Humber]
+      ranges:
+        imd_decile: {min: 1, max: 10, reason: "catalogue: 'Decile, 1 = most deprived tenth'"}
+        imd_rank: {min: 1, reason: "catalogue: 'Deprivation rank, 1 = MOST deprived'"}
+        resident_population: {min: 1, reason: "an LSOA with no residents is not an LSOA"}
+        households: {min: 1}
+        income_score: {min: 0.0, max: 1.0}
+        employment_score: {min: 0.0, max: 1.0}
+        education_score: {min: 0.0, max: 1.0}
+        health_score: {min: 0.0, max: 1.0}
+        crime_score: {min: 0.0, max: 1.0}
+        barriers_score: {min: 0.0, max: 1.0}
+        living_environment_score: {min: 0.0, max: 1.0}
+      rank_permutation:
+        # imd_rank must be exactly 1..N with no gaps and no ties. Checked: it is.
+        # This matters because the decile is derived from it — a tie or a gap
+        # would put two LSOAs in one decile slot and silently unbalance every
+        # decile-based comparison in the challenge.
+        column: imd_rank
+        derived_decile: imd_decile
+        reason: "a rank over N areas is a permutation of 1..N by definition"
+      pairs:
+        - {left: households, right: resident_population, relation: lte,
+           reason: "there cannot be more households than residents"}
+
+    lsoa_crime_monthly:
+      unique_key: [lsoa_code, month, crime_category]
+      not_null: all
+      domains:
+        crime_category: [Anti-social behaviour, Burglary, Criminal damage and arson,
+                         Shoplifting, Vehicle crime, Violence and sexual offences]
+      ranges:
+        recorded_count: {min: 0, reason: "a count of offences cannot be negative"}
+
+  c03-beyond-the-mainframe:
+    workload_cost_daily:
+      unique_key: [workload_id, usage_date]
+      not_null: all
+      domains:
+        platform: [mainframe, distributed, cloud]
+        environment: [production, staging, development, test]
+      ranges:
+        utilisation_pct: {min: 0.0, max: 100.0, reason: "catalogue: 'Mean utilisation that day, 0-100'"}
+        cost_gbp: {min: 0.0, reason: "a billed cost cannot be negative"}
+        vcpu_hours: {min: 0.0}
+        memory_gb_hours: {min: 0.0}
+        storage_gb: {min: 0.0}
+      patterns:
+        workload_id: {regex: "^WL-[0-9]{5}$", reason: "catalogue: 'Stable workload identifier, WL-nnnnn'"}
+
+    chargeback_allocation:
+      unique_key: [business_unit, month, service]
+      not_null: [business_unit, month, service, workload_count, allocated_cost_gbp, share_of_bu_pct]
+      # variance_vs_prior_month_pct is deliberately null in a first month.
+      ranges:
+        allocated_cost_gbp: {min: 0.0}
+        workload_count: {min: 1, reason: "an allocation row with no workloads has nothing to allocate"}
+        share_of_bu_pct: {min: 0.0, max: 100.0, reason: "a share of a total is a percentage of it"}
+
+    carbon_by_workload:
+      unique_key: [workload_id, usage_date]
+      not_null: all
+      domains:
+        platform: [mainframe, distributed, cloud]
+      ranges:
+        energy_kwh: {min: 0.0}
+        grid_intensity_gco2_per_kwh: {min: 0.0}
+        carbon_kg: {min: 0.0}
+      computed:
+        # carbon_kg = energy_kwh * intensity / 1000, stated as a definition in the
+        # catalogue. Asserted because a units slip here (g vs kg) is a factor of a
+        # thousand that looks entirely plausible in a chart.
+        #
+        # round_to: 5 because the column is STORED to 5 decimal places. Measured:
+        # 99.85% of rows equal round(expected, 5) exactly, and the largest
+        # residual across all 419,750 rows is 5e-06 — exactly half a unit in the
+        # last place, i.e. rounding and nothing else. A relative tolerance alone
+        # flagged 36 rows, all of them simply small numbers, which is a false
+        # positive and the most damaging kind: it teaches the reader to skim.
+        - column: carbon_kg
+          expression: energy_kwh * grid_intensity_gco2_per_kwh / 1000
+          round_to: 5
+          reason: catalogue defines carbon_kg as exactly this
+
+  c04-safe-in-the-open:
+    synthetic_councillor_register:
+      unique_key: [declaration_id]
+      not_null: [declaration_id, member_id, authority, register_held_by, ward, role,
+                 committee, declaration_category, withheld, registered_date, last_updated_date]
+      # declaration_detail is null exactly where withheld is true — defects.yml.
+      domains:
+        role: [Councillor, Chair, Vice-Chair, Cabinet Member, Committee Member, Mayor]
+        register_held_by: [Cambridgeshire County Council, Huntingdonshire District Council,
+                           South Cambridgeshire District Council]
+      pairs:
+        - {left: registered_date, right: last_updated_date, relation: lte,
+           reason: "a register entry cannot be amended before it was entered"}
+
+    support_directory:
+      unique_key: [route_id]
+      not_null: all
+      domains:
+        contact_type: [Telephone, Online form, Email, In person, 24/7 helpline]
+        coverage: [National, Regional, Local authority, Force area]
+      safety:
+        # These two are the reason this table gets a suite at all. A real phone
+        # number or a real domain reaching a demo would put live traffic onto a
+        # support line, and that is the one failure in this repository with a
+        # consequence outside it.
+        - {column: contact_value, must_not_match: "^(?!0808)0[0-9]{2,4}[ -]?[0-9]{6,8}$",
+           reason: "telephone routes must stay inside the Ofcom 0808 drama range"}
+        # Non-capturing group: pandas str.contains warns on a pattern with match
+        # groups, and the groups are not wanted here.
+        - {column: contact_value, must_not_match: "@(?!.*\\.invalid$).*\\.(?:com|org|uk|net|gov)$",
+           reason: "email routes must use a .invalid domain"}
+
+    message_signals:
+      unique_key: [message_id]
+      not_null: all
+      domains:
+        channel: [Public comment, Direct message, Email, Forum post, Contact form]
+        urgency: [low, medium, high, critical]
+        category: [Personal abuse, Persistent contact, Robust criticism, Routine correspondence,
+                   Service request, Targeted campaign, Threatening language]
+      ranges:
+        sentiment_score: {min: -1.0, max: 1.0, reason: "catalogue: '-1 to 1'"}
+        word_count: {min: 1, reason: "a message with no words is not a message"}
+        repeat_sender_count: {min: 1, reason: "the message itself counts, so the floor is 1"}
+
+  c05-ahead-of-the-heat:
+    alert_history:
+      unique_key: [region, alert_date]
+      not_null: all
+      domains:
+        alert_level: [Green, Yellow, Amber, Red]
+        region: [East Midlands, East of England, London, North East, North West,
+                 South East, South West, West Midlands, Yorkshire and the Humber]
+      ranges:
+        consecutive_days_at_level: {min: 1, reason: "a run length starts at 1"}
+
+    synthetic_cohort:
+      unique_key: [person_id]
+      not_null: all
+      domains:
+        age_band: ["65-69", "70-74", "75-79", "80-84", "85+"]
+        care_setting: [Own home, Sheltered housing, Residential care, Nursing care]
+        mobility: [Independent, Walks with aid, Limited mobility, Immobile]
+        risk_band: [Low, Medium, High]
+        region: [East Midlands, East of England, London, North East, North West,
+                 South East, South West, West Midlands, Yorkshire and the Humber]
+      ranges:
+        # THIS ONE CURRENTLY FAILS, and it is meant to be left failing until the
+        # generator is fixed. 11 of 5,000 rows carry a NEGATIVE predicted_risk
+        # (minimum -0.0254) while the catalogue declares the column as "Model
+        # score, 0-1". That is not one of the planted defects: the planted defect
+        # is miscalibration (the score runs ~2.7x too high), which is a different
+        # claim and is declared in defects.yml. A negative probability is simply
+        # out of domain. Left asserted so the finding stays visible in the report
+        # rather than being absorbed into the corpus as normal. See
+        # quality/FINDINGS.md, finding F-001.
+        predicted_risk: {min: 0.0, max: 1.0, reason: "catalogue: 'Model score, 0-1'"}
+        care_visits_per_week: {min: 0, max: 84, reason: "0 to twelve a day"}
+
+    region_weather_daily:
+      unique_key: [area, observation_date]
+      not_null: all
+      ranges:
+        relative_humidity_pct: {min: 0.0, max: 100.0, reason: "a percentage"}
+        temp_max_c: {min: -30.0, max: 50.0, reason: "plausible for England"}
+        temp_min_c: {min: -30.0, max: 50.0, reason: "plausible for England"}
+      pairs:
+        - left: temp_min_c
+          right: temp_max_c
+          relation: lte
+          reason: a daily minimum cannot exceed the daily maximum
+        - left: temp_max_c
+          right: heat_index_c
+          relation: lte
+          reason: >-
+            catalogue: heat_index "diverges from temp_max_c only when both are
+            high", i.e. humidity makes it feel hotter, never cooler
+      constant:
+        # Always true, and it is in the data precisely so the caveat survives a
+        # join, a filter and an export into someone's slide deck.
+        is_synthetic: true

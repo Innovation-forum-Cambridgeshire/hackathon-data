@@ -1,0 +1,160 @@
+{
+  "columns": {
+    "business_unit": {
+      "distinct": 25,
+      "domain": {
+        "Cards": 13870,
+        "Collections": 18980,
+        "Commercial Banking": 17520,
+        "Compliance": 16425,
+        "Customer Operations": 23360,
+        "Cyber Security": 18250,
+        "Data and Analytics": 15330,
+        "Digital Channels": 13870,
+        "Finance": 14600,
+        "Fraud Operations": 22630,
+        "Group Technology": 13140,
+        "Human Resources": 16790,
+        "Infrastructure": 13140,
+        "Insurance": 19345,
+        "Internal Audit": 17885,
+        "Legal": 14600,
+        "Marketing": 14600,
+        "Mortgages": 14600,
+        "Payments": 17155,
+        "Procurement": 11315,
+        "Retail Banking": 14965,
+        "Risk": 18615,
+        "Treasury": 14965,
+        "UNALLOCATED": 25185,
+        "Wealth Management": 18615
+      },
+      "dtype": "string",
+      "kind": "O",
+      "length_max": 19,
+      "length_min": 4,
+      "null_count": 0,
+      "null_rate": 0.0,
+      "present": true
+    },
+    "carbon_kg": {
+      "distinct": 98902,
+      "dtype": "float64",
+      "kind": "f",
+      "mean": 0.314624,
+      "null_count": 0,
+      "null_rate": 0.0,
+      "present": true,
+      "quantiles": {
+        "0.0": 0.00568,
+        "0.01": 0.01648,
+        "0.05": 0.02657,
+        "0.25": 0.06352,
+        "0.5": 0.13946,
+        "0.75": 0.33355,
+        "0.95": 1.209632,
+        "0.99": 2.547933,
+        "1.0": 30.37819
+      },
+      "skew": 6.948981,
+      "stdev": 0.542347,
+      "zero_rate": 0.0
+    },
+    "energy_kwh": {
+      "distinct": 66104,
+      "dtype": "float64",
+      "kind": "f",
+      "mean": 1.876268,
+      "null_count": 0,
+      "null_rate": 0.0,
+      "present": true,
+      "quantiles": {
+        "0.0": 0.0602,
+        "0.01": 0.1153,
+        "0.05": 0.1788,
+        "0.25": 0.3958,
+        "0.5": 0.8663,
+        "0.75": 2.0077,
+        "0.95": 7.182965,
+        "0.99": 14.449406,
+        "1.0": 149.987
+      },
+      "skew": 6.555016,
+      "stdev": 3.096169,
+      "zero_rate": 0.0
+    },
+    "grid_intensity_gco2_per_kwh": {
+      "distinct": 331,
+      "dtype": "float64",
+      "kind": "f",
+      "mean": 168.108493,
+      "null_count": 0,
+      "null_rate": 0.0,
+      "present": true,
+      "quantiles": {
+        "0.0": 48.7,
+        "0.01": 74.1,
+        "0.05": 91.6,
+        "0.25": 132.3,
+        "0.5": 170.6,
+        "0.75": 204.5,
+        "0.95": 241.8,
+        "0.99": 261.6,
+        "1.0": 278.7
+      },
+      "skew": -0.023302,
+      "stdev": 46.685961,
+      "zero_rate": 0.0
+    },
+    "platform": {
+      "distinct": 3,
+      "domain": {
+        "cloud": 166805,
+        "distributed": 126290,
+        "mainframe": 126655
+      },
+      "dtype": "string",
+      "kind": "O",
+      "length_max": 11,
+      "length_min": 5,
+      "null_count": 0,
+      "null_rate": 0.0,
+      "present": true
+    },
+    "usage_date": {
+      "distinct": 365,
+      "dtype": "object",
+      "kind": "O",
+      "length_max": 10,
+      "length_min": 10,
+      "null_count": 0,
+      "null_rate": 0.0,
+      "present": true,
+      "top_values": {
+        "2025-10-01": 1150,
+        "2026-06-05": 1150,
+        "2026-06-06": 1150,
+        "2026-06-07": 1150,
+        "2026-06-09": 1150
+      }
+    },
+    "workload_id": {
+      "distinct": 1150,
+      "dtype": "string",
+      "kind": "O",
+      "length_max": 8,
+      "length_min": 8,
+      "null_count": 0,
+      "null_rate": 0.0,
+      "present": true,
+      "top_values": {
+        "WL-00001": 365,
+        "WL-00765": 365,
+        "WL-00769": 365,
+        "WL-00770": 365,
+        "WL-00771": 365
+      }
+    }
+  },
+  "row_count": 419750
+}

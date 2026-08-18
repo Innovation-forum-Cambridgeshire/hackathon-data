@@ -27,8 +27,6 @@ sys.path.insert(0, str(Path(__file__).resolve().parent / "generators"))
 
 import yaml  # noqa: E402
 
-from determinism import fingerprint_tables  # noqa: E402
-
 import synthetic_farm as gen  # noqa: E402
 
 CATALOGUE = Path(__file__).resolve().parent.parent / "catalogue" / "c01-one-farm-one-picture.yml"
@@ -64,7 +62,7 @@ def main() -> int:
             if drift > ROW_TOLERANCE:
                 failures.append(f"{name}: {len(rows):,} rows vs declared ~{approx:,} ({drift:.0%})")
 
-    if fingerprint_tables(gen.generate(gen.DEFAULT_SEED)) != fingerprint_tables(gen.generate(gen.DEFAULT_SEED)):
+    if gen.generate(gen.DEFAULT_SEED) != gen.generate(gen.DEFAULT_SEED):
         failures.append("generator is not deterministic for a fixed seed")
 
     wh, wr = tables["station_weather"]

@@ -1,0 +1,403 @@
+# The deliberate defects, declared with bounds.
+#
+# READ THIS BEFORE CHANGING ANYTHING IN HERE.
+# --------------------------------------------
+# Every challenge corpus in this repository is deliberately imperfect. c01 says it
+# outright: "Sensor data is often miscalibrated, duplicated or missing. Strong
+# entries surface data quality rather than hiding it behind a clean-looking chart."
+# A clean corpus makes that instruction meaningless.
+#
+# So this file is the opposite of a normal data-quality config. It does not list
+# things that must not happen. It lists things that MUST happen, and the range
+# they must happen within. Each entry fails in two directions:
+#
+#   * TIDY-UP     — someone "fixes" the data and the defect disappears. The
+#                   challenge quietly loses its point and nobody notices until
+#                   the event.
+#   * DRIFT       — a generator change moves a rate far enough that the lesson
+#                   stops working, or the data stops being usable at all.
+#
+# The bounds are therefore not tolerances around a target. They are the range
+# outside which the EXERCISE breaks. They were set by measuring the built corpus
+# (the `observed` field on each entry, recorded 2026-08-16) and then widening to
+# the point where the teaching value would genuinely be lost. Where the exact rate
+# does not matter and only the existence does, the entry asserts existence.
+#
+# `observed` is evidence, not a target. Do not narrow the bounds to hug it — that
+# turns a legitimate reseed into a red build.
+#
+# WHERE THESE CAME FROM
+# ---------------------
+# The rates were measured; the REASONS were not invented here. They are taken from
+# the column descriptions in catalogue/*.yml and from the existing contract tests
+# in build/test_*.py, which already assert several of these in Python. This file
+# does not replace those tests — it puts the same facts in front of a reader in
+# the Data Docs, with the affected rows indexed, which a passing pytest run cannot.
+
+version: 1
+measured_against: sample/data (built corpus, seed default)
+measured_on: 2026-08-16
+
+challenges:
+
+  # ==========================================================================
+  c01-one-farm-one-picture:
+
+    station_weather:
+      index_columns: [station_id, observation_date]
+
+      defects:
+        - id: duplicate_station_days
+          title: Station-days are duplicated
+          kind: compound_key_not_unique
+          columns: [station_id, observation_date]
+          observed: {duplicate_rows: 13500, rate: 0.0148}
+          bounds: {min_rate: 0.005, max_rate: 0.040}
+          severity: by-design
+          lesson: >-
+            The declared grain is one row per station per day. It is not. A join
+            from field_daily fans out on the duplicates and silently inflates
+            every sum built on top of it. Double ingest is the most common real
+            defect in sensor pipelines and it is invisible in a chart.
+          if_it_disappears: >-
+            The headline defect of c01 is gone and a naive mean over the table
+            becomes correct, which is the opposite of the intended exercise.
+
+        - id: duplicates_are_not_flagged
+          title: quality_flag does not catch the duplicates
+          kind: flag_asymmetry
+          # THE LOAD-BEARING ASSERTION of the whole corpus. Mirrors the assertion
+          # in build/test_c01_corpus.py, which calls it exactly that.
+          flag_column: quality_flag
+          clean_value: ok
+          key_columns: [station_id, observation_date]
+          observed: {duplicate_groups: 13500, groups_with_no_flag: 13500}
+          bounds: {min_unflagged_groups: 1}
+          severity: by-design
+          lesson: >-
+            quality_flag carries ONLY the defects a real ingest pipeline would
+            have caught — here, the 140 physically absurd temperatures. It does
+            not carry the duplicates. So `WHERE quality_flag = 'ok'`, which is
+            every team's first instinct, does not clean the data.
+          if_it_disappears: >-
+            Filtering on the flag starts working, teams stop looking, and the
+            exercise collapses into a one-line filter.
+
+        - id: absurd_temperatures
+          title: Physically impossible maximum temperatures
+          kind: out_of_range
+          column: temp_max_c
+          plausible_range: {min: -20.0, max: 45.0}
+          observed: {rows_outside: 140, max_seen: 70.9}
+          bounds: {min_rows: 1}
+          severity: by-design
+          lesson: >-
+            70.9C has never been recorded anywhere on earth, let alone in a
+            English county. These are the rows quality_flag DOES mark, so the
+            flag is genuinely useful — just not sufficient.
+
+        - id: stuck_sensors
+          title: Sensors reporting a frozen value for days
+          kind: flat_run
+          column: temp_max_c
+          partition_by: station_id
+          order_by: observation_date
+          observed: {longest_run_days: 21, stations_with_run_ge_15: 4, stations_total: 250}
+          bounds: {min_longest_run: 10, min_stations_affected: 1}
+          severity: by-design
+          lesson: >-
+            A frozen reading is neither null nor absurd, so it survives every
+            naive check while dragging any average toward itself. Only visible by
+            looking along time within a station.
+
+        - id: station_calibration_spread
+          title: Station mean temperatures spread wide enough to hide an offset
+          kind: group_mean_spread
+          column: temp_max_c
+          partition_by: station_id
+          observed: {note: "three stations carry a systematic ~2.8C offset"}
+          bounds: {min_spread_c: 2.0}
+          severity: by-design
+          lesson: >-
+            Miscalibration is only findable by comparing a station against its
+            neighbours. If the natural spread were tight, the offset station
+            would be obvious from a single column and the comparison would not
+            need to be made.
+
+    field_daily:
+      index_columns: [field_id, observation_date]
+
+      defects:
+        - id: ndvi_missing
+          title: NDVI is missing on about a fifth of field-days
+          kind: null_rate
+          column: ndvi
+          observed: {null_rate: 0.2090}
+          bounds: {min_rate: 0.12, max_rate: 0.30}
+          severity: by-design
+          lesson: >-
+            Cloud blocks optical satellite readings. Too little missingness and
+            the bias lesson does not bite; too much and there is nothing left to
+            model. The bounds are the range where both hold.
+
+        - id: ndvi_gaps_are_clustered
+          title: The NDVI gaps run in blocks, not at random
+          kind: null_clustering
+          column: ndvi
+          partition_by: field_id
+          order_by: observation_date
+          observed: {max_run_days: "2-18"}
+          bounds: {min_max_run: 2}
+          severity: by-design
+          lesson: >-
+            Scattered nulls would be missing-at-random and dropping them would be
+            harmless — the opposite of the lesson. Cloud sits over a field for
+            days at a time.
+
+        - id: ndvi_gaps_are_informative
+          title: Dropping the NDVI nulls shifts the temperature of what survives
+          kind: missingness_bias
+          # Clustering alone is NOT enough. The gaps have to be clustered on
+          # something that matters, or dropna() is unbiased in practice and the
+          # claim in the catalogue is one the data does not support. This bound
+          # mirrors build/test_c01_corpus.py, which records that the first version
+          # of the generator got exactly this wrong.
+          null_column: ndvi
+          compare_column: temp_max_c
+          via:
+            table: station_weather
+            # NOT `on:` — YAML 1.1 resolves a bare `on` to boolean true, so the
+            # key silently becomes True and the lookup raises KeyError('on').
+            join_on: {nearest_station_id: station_id, observation_date: observation_date}
+          bounds: {min_bias_c: 1.0}
+          severity: by-design
+          lesson: >-
+            Cloud depresses daytime temperature, so the days lost to cloud are
+            the colder days. dropna() therefore returns a warmer, drier sample
+            and every conclusion drawn from it is biased.
+
+  # ==========================================================================
+  c02-mapping-the-gaps:
+
+    lsoa_crime_monthly:
+      index_columns: [lsoa_code, month, crime_category]
+      defects:
+        - id: counts_not_rates
+          title: recorded_count is a count, and populations vary about fourfold
+          kind: denominator_trap
+          column: recorded_count
+          denominator: {table: lsoa_deprivation, column: resident_population, on: lsoa_code}
+          observed: {population_min: 1000, population_max: 3999, zero_count_share: 0.302}
+          bounds: {min_population_ratio: 2.0}
+          severity: by-design
+          lesson: >-
+            Mapping raw counts across LSOAs draws a population map and labels it
+            a crime map. The spread has to be wide enough that the error is
+            large, or normalising looks like pedantry.
+
+        - id: recorded_not_committed
+          title: Recorded crime is not committed crime
+          kind: semantic
+          column: recorded_count
+          observed: {note: "deprivation gradient differs by category; for violence the recording rate tracks deprivation"}
+          severity: by-design
+          # No numeric bound: this is a naming and interpretation guarantee,
+          # asserted as the column being named recorded_count and nothing in the
+          # corpus being named to imply otherwise. build/test_c02_corpus.py holds
+          # the statistical form of it.
+          lesson: >-
+            Reporting and recording rates are themselves correlated with
+            deprivation, so the measured gradient is partly a measurement
+            artefact. The column name is the warning.
+
+    lsoa_deprivation:
+      index_columns: [lsoa_code]
+      defects:
+        - id: crime_score_inside_rank
+          title: crime_score is a component of the rank it would be correlated against
+          kind: circularity
+          columns: [crime_score, imd_rank]
+          severity: by-design
+          lesson: >-
+            Correlating recorded crime against imd_rank is partly correlating
+            crime with itself. The domain scores are provided so the circularity
+            can be avoided deliberately rather than discovered late.
+
+        - id: ranks_are_ordinal
+          title: imd_rank is ordinal and is not a distance
+          kind: semantic
+          column: imd_rank
+          observed: {decile_min: 1, decile_max: 10}
+          severity: by-design
+          lesson: >-
+            The gap between rank 1 and rank 2 is not the same quantity as the gap
+            between 3000 and 3001. Averaging ranks, or treating them as a linear
+            variable, is not supported by the data.
+
+  # ==========================================================================
+  c03-beyond-the-mainframe:
+
+    workload_cost_daily:
+      index_columns: [workload_id, usage_date]
+      defects:
+        - id: unallocated_spend
+          title: A real share of spend has no owning business unit
+          kind: sentinel_category
+          column: business_unit
+          sentinel: UNALLOCATED
+          observed: {row_share: 0.0600, cost_share: 0.0757}
+          bounds: {min_cost_share: 0.02, max_cost_share: 0.20}
+          severity: by-design
+          lesson: >-
+            UNALLOCATED is untagged ownership, and it is a finding in its own
+            right — it is the first thing a FinOps review reports. Filtering it
+            out to tidy the chart drops real money and breaks the reconciliation
+            against chargeback_allocation.
+
+    carbon_by_workload:
+      # No deliberate defect of its own. It is listed anyway so that its business
+      # key is declared: without index_columns a failure can only report "142 rows
+      # were unexpected", and the whole value of this report is that it reports
+      # WHICH rows. Every table gets a key for that reason, defects or not.
+      index_columns: [workload_id, usage_date]
+      defects: []
+
+    chargeback_allocation:
+      index_columns: [business_unit, month, service]
+      defects:
+        - id: first_month_variance_absent
+          title: Month-on-month variance is absent, not zero, in a first month
+          kind: null_rate
+          column: variance_vs_prior_month_pct
+          observed: {null_rate: 0.0833, null_rows: 678}
+          bounds: {min_rate: 0.02, max_rate: 0.25}
+          severity: by-design
+          lesson: >-
+            NULL here means "there was no prior month", which is not the same
+            claim as "nothing changed". Filling with zero fabricates a flat trend
+            for every newly appearing combination.
+
+  # ==========================================================================
+  c04-safe-in-the-open:
+
+    synthetic_councillor_register:
+      index_columns: [declaration_id]
+      defects:
+        - id: withheld_detail_absent
+          title: Withheld interests have no detail, lawfully
+          kind: conditional_null
+          null_column: declaration_detail
+          condition_column: withheld
+          observed: {withheld_rate: 0.0353, alignment: exact}
+          bounds: {min_rate: 0.01, max_rate: 0.12, require_exact_alignment: true}
+          severity: by-design
+          lesson: >-
+            Localism Act 2011 s.32 permits an interest to be withheld. The row
+            records THAT an interest exists without disclosing what it is. The
+            null is the lawful position, so imputing it or dropping the row as
+            incomplete both misstate the register. Alignment must be exact:
+            detail is null if and only if withheld is true.
+
+    support_directory:
+      index_columns: [route_id]
+      defects: []
+
+    message_signals:
+      index_columns: [message_id]
+      defects:
+        - id: class_imbalance
+          title: Only about one message in twelve is flagged
+          kind: class_balance
+          column: is_flagged
+          observed: {positive_rate: 0.0790}
+          bounds: {min_rate: 0.03, max_rate: 0.15}
+          severity: by-design
+          lesson: >-
+            A classifier that predicts "not flagged" for everything scores about
+            92% accuracy and is useless. The imbalance forces the right metric to
+            be chosen before any model is judged.
+
+        - id: sentiment_overlap
+          title: Sentiment alone cannot separate abuse from robust criticism
+          kind: distribution_overlap
+          column: sentiment_score
+          class_column: is_flagged
+          hard_negative: {column: category, value: Robust criticism}
+          observed: {flagged_mean: -0.603, robust_criticism_mean: -0.346}
+          bounds: {max_mean_separation: 0.60}
+          severity: by-design
+          lesson: >-
+            Robust criticism of a public figure is negative in sentiment and must
+            NOT be flagged. If the two distributions separated cleanly, a
+            sentiment threshold would work and the model would suppress
+            legitimate criticism of people in public office. The overlap is the
+            entire ethical content of the challenge.
+
+  # ==========================================================================
+  c05-ahead-of-the-heat:
+
+    synthetic_cohort:
+      index_columns: [person_id]
+      defects:
+        - id: miscalibrated_risk
+          title: predicted_risk ranks correctly but is far too high in absolute terms
+          kind: calibration
+          score_column: predicted_risk
+          outcome_column: heat_event_last_summer
+          observed: {mean_predicted: 0.3031, mean_actual: 0.1138, ratio: 2.66}
+          bounds: {min_ratio: 1.8, max_ratio: 4.0, min_rank_auc: 0.60}
+          severity: by-design
+          lesson: >-
+            The score is usable for prioritising who to contact first and is not
+            usable as a probability. Reading 0.30 as "a 30% chance" overstates
+            the risk by roughly a factor of three. Ranking must still work, or
+            the score is simply broken rather than miscalibrated — hence the
+            floor on rank AUC alongside the ratio.
+
+        - id: all_risk_bands_populated
+          title: Every risk band has members
+          kind: category_coverage
+          column: risk_band
+          required_values: [Low, Medium, High]
+          observed: {Low: 2279, Medium: 2475, High: 246}
+          bounds: {min_per_band: 1}
+          severity: contract
+          lesson: >-
+            The stratification exercise needs all three bands to exist. This one
+            is a contract, not a defect — it is here because it sits alongside
+            the calibration defect and is easy to break by retuning it.
+
+    region_weather_daily:
+      # Keyed on `area`, which is the finer grain that does NOT join to
+      # alert_history.region. See the no_join_key_between_weather_and_alerts
+      # hazard in relationships.yml — that gap is the point of the challenge.
+      index_columns: [area, observation_date]
+      defects: []
+
+    alert_history:
+      index_columns: [region, alert_date]
+      defects:
+        - id: out_of_season_always_green
+          title: Outside the alert season the level is always Green
+          kind: conditional_domain
+          column: alert_level
+          condition_column: in_alert_season
+          condition_false_allowed: [Green]
+          observed: {out_of_season_levels: [Green]}
+          severity: contract
+          lesson: >-
+            UKHSA alerts run 1 June to 30 September. A non-Green level outside
+            that window would be a modelling artefact, and any seasonal analysis
+            built on it would be wrong.
+
+        - id: rare_severe_alerts
+          title: Amber and Red alerts are rare
+          kind: category_rarity
+          column: alert_level
+          observed: {Green: 25070, Yellow: 955, Amber: 236, Red: 37}
+          bounds: {min_rows: {Amber: 1, Red: 1}, max_rate: {Red: 0.02}}
+          severity: by-design
+          lesson: >-
+            Severe alerts have to exist for there to be anything to act on, and
+            have to stay rare or the cost of action becomes trivial to justify.
+            Both failure directions matter here.

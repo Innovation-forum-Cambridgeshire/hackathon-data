@@ -1,0 +1,190 @@
+{
+  "columns": {
+    "county": {
+      "distinct": 10,
+      "domain": {
+        "Bedfordshire": 87694,
+        "Cambridgeshire": 84068,
+        "Essex": 124297,
+        "Hertfordshire": 98626,
+        "Leicestershire": 54826,
+        "Lincolnshire": 84002,
+        "Norfolk": 106056,
+        "Northamptonshire": 105897,
+        "Rutland": 80387,
+        "Suffolk": 87647
+      },
+      "dtype": "string",
+      "kind": "O",
+      "length_max": 16,
+      "length_min": 5,
+      "null_count": 0,
+      "null_rate": 0.0,
+      "present": true
+    },
+    "latitude": {
+      "distinct": 250,
+      "dtype": "float64",
+      "kind": "f",
+      "mean": 52.600895,
+      "null_count": 0,
+      "null_rate": 0.0,
+      "present": true,
+      "quantiles": {
+        "0.0": 51.90331,
+        "0.01": 51.90647,
+        "0.05": 51.95181,
+        "0.25": 52.21066,
+        "0.5": 52.59357,
+        "0.75": 52.96493,
+        "0.95": 53.31826,
+        "0.99": 53.3865,
+        "1.0": 53.39643
+      },
+      "skew": 0.124078,
+      "stdev": 0.432773,
+      "zero_rate": 0.0
+    },
+    "longitude": {
+      "distinct": 250,
+      "dtype": "float64",
+      "kind": "f",
+      "mean": 0.418423,
+      "null_count": 0,
+      "null_rate": 0.0,
+      "present": true,
+      "quantiles": {
+        "0.0": -0.89972,
+        "0.01": -0.87356,
+        "0.05": -0.74871,
+        "0.25": -0.34646,
+        "0.5": 0.47861,
+        "0.75": 1.12497,
+        "0.95": 1.5754,
+        "0.99": 1.64522,
+        "1.0": 1.69773
+      },
+      "skew": -0.079779,
+      "stdev": 0.788425,
+      "zero_rate": 0.0
+    },
+    "observation_date": {
+      "distinct": 3600,
+      "dtype": "object",
+      "kind": "O",
+      "length_max": 10,
+      "length_min": 10,
+      "null_count": 0,
+      "null_rate": 0.0,
+      "present": true,
+      "top_values": {
+        "2021-04-05": 262,
+        "2024-02-01": 262,
+        "2024-02-11": 262,
+        "2024-05-01": 261,
+        "2026-03-01": 261
+      }
+    },
+    "quality_flag": {
+      "distinct": 2,
+      "domain": {
+        "ok": 913360,
+        "suspect": 140
+      },
+      "dtype": "string",
+      "kind": "O",
+      "length_max": 7,
+      "length_min": 2,
+      "null_count": 0,
+      "null_rate": 0.0,
+      "present": true
+    },
+    "rainfall_mm": {
+      "distinct": 332,
+      "dtype": "float64",
+      "kind": "f",
+      "mean": 1.427937,
+      "null_count": 0,
+      "null_rate": 0.0,
+      "present": true,
+      "quantiles": {
+        "0.0": 0.0,
+        "0.01": 0.0,
+        "0.05": 0.0,
+        "0.25": 0.0,
+        "0.5": 0.0,
+        "0.75": 1.8,
+        "0.95": 7.3,
+        "0.99": 12.8,
+        "1.0": 51.2
+      },
+      "skew": 2.967789,
+      "stdev": 2.76931,
+      "zero_rate": 0.586165
+    },
+    "station_id": {
+      "distinct": 250,
+      "dtype": "string",
+      "kind": "O",
+      "length_max": 6,
+      "length_min": 6,
+      "null_count": 0,
+      "null_rate": 0.0,
+      "present": true,
+      "top_values": {
+        "S-0064": 3672,
+        "S-0103": 3669,
+        "S-0175": 3673,
+        "S-0199": 3676,
+        "S-0246": 3674
+      }
+    },
+    "temp_max_c": {
+      "distinct": 514,
+      "dtype": "float64",
+      "kind": "f",
+      "mean": 14.762906,
+      "null_count": 0,
+      "null_rate": 0.0,
+      "present": true,
+      "quantiles": {
+        "0.0": -6.9,
+        "0.01": 1.4,
+        "0.05": 4.1,
+        "0.25": 9.0,
+        "0.5": 14.8,
+        "0.75": 20.4,
+        "0.95": 25.4,
+        "0.99": 28.1,
+        "1.0": 70.9
+      },
+      "skew": 0.043466,
+      "stdev": 6.875237,
+      "zero_rate": 0.000267
+    },
+    "temp_min_c": {
+      "distinct": 440,
+      "dtype": "float64",
+      "kind": "f",
+      "mean": 8.005836,
+      "null_count": 0,
+      "null_rate": 0.0,
+      "present": true,
+      "quantiles": {
+        "0.0": -16.1,
+        "0.01": -6.1,
+        "0.05": -3.1,
+        "0.25": 2.3,
+        "0.5": 8.0,
+        "0.75": 13.7,
+        "0.95": 19.1,
+        "0.99": 22.1,
+        "1.0": 31.8
+      },
+      "skew": -0.002645,
+      "stdev": 7.032716,
+      "zero_rate": 0.004155
+    }
+  },
+  "row_count": 913500
+}

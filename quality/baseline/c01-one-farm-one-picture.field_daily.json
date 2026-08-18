@@ -1,0 +1,201 @@
+{
+  "columns": {
+    "area_ha": {
+      "distinct": 444,
+      "dtype": "float64",
+      "kind": "f",
+      "mean": 12.98434,
+      "null_count": 0,
+      "null_rate": 0.0,
+      "present": true,
+      "quantiles": {
+        "0.0": 2.13,
+        "0.01": 3.2875,
+        "0.05": 4.529,
+        "0.25": 7.68,
+        "0.5": 10.97,
+        "0.75": 15.5375,
+        "0.95": 28.845,
+        "0.99": 37.0479,
+        "1.0": 64.5
+      },
+      "skew": 2.110735,
+      "stdev": 7.943044,
+      "zero_rate": 0.0
+    },
+    "crop": {
+      "distinct": 6,
+      "domain": {
+        "Field beans": 26640,
+        "Oilseed rape": 24840,
+        "Potatoes": 33840,
+        "Spring barley": 32040,
+        "Sugar beet": 31680,
+        "Winter wheat": 30960
+      },
+      "dtype": "string",
+      "kind": "O",
+      "length_max": 13,
+      "length_min": 8,
+      "null_count": 0,
+      "null_rate": 0.0,
+      "present": true
+    },
+    "distance_to_station_km": {
+      "distinct": 465,
+      "dtype": "float64",
+      "kind": "f",
+      "mean": 14.42448,
+      "null_count": 0,
+      "null_rate": 0.0,
+      "present": true,
+      "quantiles": {
+        "0.0": 0.85,
+        "0.01": 1.1388,
+        "0.05": 1.986,
+        "0.25": 7.7275,
+        "0.5": 14.03,
+        "0.75": 21.4525,
+        "0.95": 26.625,
+        "0.99": 27.7406,
+        "1.0": 27.98
+      },
+      "skew": 0.025966,
+      "stdev": 7.929135,
+      "zero_rate": 0.0
+    },
+    "farm_id": {
+      "distinct": 63,
+      "dtype": "string",
+      "kind": "O",
+      "length_max": 9,
+      "length_min": 9,
+      "null_count": 0,
+      "null_rate": 0.0,
+      "present": true,
+      "top_values": {
+        "FARM-0001": 2880,
+        "FARM-0035": 2880,
+        "FARM-0036": 2880,
+        "FARM-0037": 2880,
+        "FARM-0048": 2880
+      }
+    },
+    "field_id": {
+      "distinct": 500,
+      "dtype": "string",
+      "kind": "O",
+      "length_max": 7,
+      "length_min": 7,
+      "null_count": 0,
+      "null_rate": 0.0,
+      "present": true,
+      "top_values": {
+        "F-00001": 360,
+        "F-00330": 360,
+        "F-00341": 360,
+        "F-00342": 360,
+        "F-00343": 360
+      }
+    },
+    "ndvi": {
+      "distinct": 7022,
+      "dtype": "float64",
+      "kind": "f",
+      "mean": 0.464215,
+      "null_count": 37613,
+      "null_rate": 0.208961,
+      "present": true,
+      "quantiles": {
+        "0.0": 0.0838,
+        "0.01": 0.1923,
+        "0.05": 0.2284,
+        "0.25": 0.2914,
+        "0.5": 0.4215,
+        "0.75": 0.6505,
+        "0.95": 0.756,
+        "0.99": 0.8011,
+        "1.0": 0.9042
+      },
+      "skew": 0.263695,
+      "stdev": 0.187918,
+      "zero_rate": 0.0
+    },
+    "nearest_station_id": {
+      "distinct": 214,
+      "dtype": "string",
+      "kind": "O",
+      "length_max": 6,
+      "length_min": 6,
+      "null_count": 0,
+      "null_rate": 0.0,
+      "present": true,
+      "top_values": {
+        "S-0054": 1800,
+        "S-0101": 2880,
+        "S-0126": 2160,
+        "S-0138": 2160,
+        "S-0151": 2160
+      }
+    },
+    "observation_date": {
+      "distinct": 360,
+      "dtype": "object",
+      "kind": "O",
+      "length_max": 10,
+      "length_min": 10,
+      "null_count": 0,
+      "null_rate": 0.0,
+      "present": true,
+      "top_values": {
+        "2025-10-06": 500,
+        "2026-06-06": 500,
+        "2026-06-07": 500,
+        "2026-06-08": 500,
+        "2026-06-10": 500
+      }
+    },
+    "soil_moisture_pct": {
+      "distinct": 586,
+      "dtype": "float64",
+      "kind": "f",
+      "mean": 31.009172,
+      "null_count": 0,
+      "null_rate": 0.0,
+      "present": true,
+      "quantiles": {
+        "0.0": 3.0,
+        "0.01": 11.3,
+        "0.05": 17.0,
+        "0.25": 25.3,
+        "0.5": 31.0,
+        "0.75": 36.8,
+        "0.95": 45.0,
+        "0.99": 50.7,
+        "1.0": 62.0
+      },
+      "skew": -0.004185,
+      "stdev": 8.491334,
+      "zero_rate": 0.0
+    },
+    "soil_type": {
+      "distinct": 6,
+      "domain": {
+        "Chalk": 30960,
+        "Clay": 26280,
+        "Peat": 28800,
+        "Sandy clay loam": 30240,
+        "Sandy loam": 29880,
+        "Silty clay loam": 33840
+      },
+      "dtype": "string",
+      "kind": "O",
+      "length_max": 15,
+      "length_min": 4,
+      "null_count": 0,
+      "null_rate": 0.0,
+      "present": true
+    }
+  },
+  "row_count": 180000
+}

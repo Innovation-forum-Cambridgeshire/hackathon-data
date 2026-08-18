@@ -1,0 +1,31 @@
+# Acknowledged findings — the public half of the triage record.
+#
+# THIS FILE IS DELIBERATELY THIN.
+# The full write-up for each finding (impact, likely cause, recommendation,
+# decision, owner) lives in FINDINGS.md in the PRIVATE hackathon-organisers
+# repository. Open bug reports about data we are about to hand to participants
+# are internal; the fact that a failure is already known is not, and the public
+# CI gate needs that fact to tell "known" from "new".
+#
+# So this carries the minimum a machine needs and nothing a reader would call a
+# bug report: an id, enough of the expectation description to match on, and a
+# one-line status.
+#
+# `run_assurance.py --allow-known-findings` exits 0 when every failure matches an
+# entry here. Adding an entry is therefore how a red build is turned green, and
+# it is deliberately a diff someone has to review.
+
+version: 1
+
+findings:
+  - id: F-001
+    table: c05-ahead-of-the-heat.synthetic_cohort
+    # Matched case-insensitively against the expectation's description.
+    match: predicted_risk is between
+    status: open
+    raised: 2026-08-16
+    summary: >-
+      predicted_risk goes slightly negative on a small number of rows while the
+      catalogue declares the column 0-1. Distinct from the deliberate
+      miscalibration, which is asserted separately and is intact.
+    detail: hackathon-organisers → FINDINGS.md
