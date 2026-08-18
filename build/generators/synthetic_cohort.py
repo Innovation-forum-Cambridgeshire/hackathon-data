@@ -141,7 +141,25 @@ def build_cohort(rng: np.random.Generator) -> tuple[list[str], list[list]]:
         # and is wrong about absolute probability is the single most common failure
         # in deployed risk scoring, and in a heat-health setting the absolute number
         # is what triggers a visit. The c05 notebook exists to make this visible.
-        predicted = float(min(0.99, round(true_p * 2.6 + rng.normal(0, 0.03), 4)))
+        # Clamped at BOTH ends. The upper cap was here from the start; the lower
+        # one was not, and without it ~11 of 5,000 rows came out NEGATIVE — the
+        # noise term is wide enough to push the lowest-risk people below zero,
+        # since true_p floors at 0.02 and 0.02 * 2.6 is only 0.052.
+        #
+        # That was a real defect (F-001), not part of the planted miscalibration.
+        # The planted defect is that the score is inflated by ~2.6x and therefore
+        # ranks well but is not a probability; a NEGATIVE score is not inflated,
+        # it is outside the declared 0-1 domain and cannot be read as a risk at
+        # all. It also invited the wrong lesson — "this column is broken" rather
+        # than "this column ranks but does not calibrate".
+        #
+        # max() rather than a re-draw on purpose: re-drawing would consume extra
+        # values from rng and shift every subsequent field in the corpus, for a
+        # fix that needs to touch 11 numbers. This leaves the stream untouched,
+        # so determinism holds and no other column moves.
+        predicted = float(
+            min(0.99, max(0.0, round(true_p * 2.6 + rng.normal(0, 0.03), 4)))
+        )
         band = (
             "High" if predicted >= 0.55 else "Medium" if predicted >= 0.28 else "Low"
         )
