@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Workspace — Innovation Forum × R1X</title>
+<!-- Not indexed. This is a participant tool, not a public page, and it is not
+     covered by the published privacy notice, which scopes to the marketing site
+     only. Until that notice is amended this must not be discoverable. -->
+<meta name="robots" content="noindex, nofollow">
+<style>
+  :root {
+    color-scheme: light;
+    --bg: #fcfcfb; --panel: #f4f4f2; --rule: #e3e3df;
+    --ink: #0b0b0b; --ink-2: #52514e; --ink-3: #6f6e6a;
+    --accent: #00863a;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --bg: #12211a; --panel: #172b21; --rule: #24402f;
+      --ink: #ffffff; --ink-2: #c3d2c7; --ink-3: #93a89a;
+      --accent: #35c46f;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font: 16px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    display: grid; place-items: center; min-height: 100vh; padding: 32px 20px;
+  }
+  main { width: 100%; max-width: 440px; }
+  .kicker {
+    font-size: 12px; letter-spacing: .16em; text-transform: uppercase;
+    color: var(--accent); margin-bottom: 12px;
+  }
+  h1 { font-size: 30px; line-height: 1.15; margin: 0 0 12px; letter-spacing: -.01em; }
+  p { color: var(--ink-2); margin: 0 0 22px; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 10px;
+    background: var(--ink); color: var(--bg); text-decoration: none;
+    padding: 13px 20px; border-radius: 7px; font-weight: 600; font-size: 15px;
+  }
+  .btn:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+  .note {
+    margin-top: 26px; padding: 15px 17px; background: var(--panel);
+    border: 1px solid var(--rule); border-radius: 7px;
+    font-size: 13.5px; color: var(--ink-2);
+  }
+  .err {
+    margin-bottom: 20px; padding: 13px 16px; border-radius: 7px;
+    background: color-mix(in srgb, #d03b3b 12%, transparent);
+    border-left: 3px solid #d03b3b; font-size: 14px;
+  }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<main>
+  <div class="kicker">Innovation Forum × R1X</div>
+  <h1>Team workspace</h1>
+
+  <div class="err" id="err" hidden></div>
+
+  <p>Sign in with the GitHub account you registered with. Your team, your repository
+     and the countdown are all behind here.</p>
+
+  <a class="btn" href="/auth/login">
+    <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+      <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38
+      0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01
+      1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95
+      0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.42 7.42 0 0 1 2-.27c.68 0
+      1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0
+      3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01
+      8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/>
+    </svg>
+    Sign in with GitHub
+  </a>
+
+  <div class="note">
+    <strong>Don't have an account?</strong> It's free and takes about two minutes at
+    <a href="https://github.com/signup" rel="noopener">github.com/signup</a>. GitHub
+    requires you to be 13 or over and is a separate company with its own terms.
+  </div>
+</main>
+
+<script type="module">
+  // Login failures arrive as ?error=... on the redirect back. Each message says
+  // what to do next rather than naming the internal reason — "bad_state" means
+  // nothing to a participant at 09:00 on the Monday.
+  const REASONS = {
+    not_a_member:       "That account isn't on the participant list yet. Check you used the same GitHub account you registered with, then tell an organiser.",
+    membership_pending: "Your invitation to the organisation is still pending. Accept the email invite from GitHub, then sign in again.",
+    bad_state:          "That sign-in link expired. Please try again.",
+    no_code:            "GitHub didn't complete the sign-in. Please try again.",
+    no_token:           "GitHub didn't complete the sign-in. Please try again.",
+    user_lookup_failed: "We couldn't reach GitHub just now. Please try again in a moment.",
+    // Not a failure — GitHub expires access tokens after eight hours, so this
+    // is the normal state on day two of a five-day event. Worded so it does not
+    // read as something going wrong.
+    session_expired:    "You've been signed out after eight hours. Sign in again to pick up where you left off — nothing has been lost.",
+    // Deliberately neutral, and it has to stay that way. This is shown both to
+    // someone removed for a conduct breach and to someone caught by an
+    // administrative slip, and the page cannot tell which. Naming a reason here
+    // would either accuse an innocent person or discuss a safeguarding matter on
+    // a public sign-in screen that anyone can reach.
+    access_ended:       "Your access to the workspace has ended. If you think that's a mistake, please contact an organiser.",
+  };
+  const err = new URLSearchParams(location.search).get("error");
+  if (err) {
+    const box = document.getElementById("err");
+    box.textContent = REASONS[err] || "Sign-in didn't complete. Please try again.";
+    box.hidden = false;
+  }
+</script>
+</body>
+</html>

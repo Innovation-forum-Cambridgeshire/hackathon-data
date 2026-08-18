@@ -1,0 +1,30 @@
+# Security and privacy headers for the static pages.
+#
+# Cloudflare Pages applies these to ASSET responses only. The Functions set their
+# own headers in code (NO_STORE_HEADERS in src/lib/session.ts), because a Function
+# response never passes through this file.
+#
+# WHY A CSP ON A PAGE WITH NO THIRD-PARTY ANYTHING
+# -------------------------------------------------
+# A privacy review found the workspace was loading each participant's avatar from
+# avatars.githubusercontent.com, which handed GitHub their IP address and this
+# origin as a Referer on every single page view. That image is gone and the pages
+# now have zero third-party requests — but "we removed it" is a fact about today,
+# and `default-src 'self'` is a fact about tomorrow. The CSP is what stops the
+# next well-meaning edit from quietly reintroducing an external request.
+#
+# 'unsafe-inline' is present for style-src and script-src because both pages
+# deliberately inline all CSS and JS — that is what keeps them self-contained with
+# no CDN. It weakens the XSS protection a CSP would otherwise give, which is why
+# every insertion of GitHub-supplied text goes through textContent rather than
+# innerHTML, and the one innerHTML site escapes its input. Moving to hashes or a
+# nonce would be strictly better and needs a build step this project does not have.
+
+/*
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; form-action 'self'; frame-ancestors 'none'; base-uri 'none'; object-src 'none'
+  Referrer-Policy: same-origin
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  Cross-Origin-Opener-Policy: same-origin
+  Permissions-Policy: geolocation=(), microphone=(), camera=(), payment=(), usb=(), interest-cohort=()
+  X-Robots-Tag: noindex, nofollow

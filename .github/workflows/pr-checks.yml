@@ -57,12 +57,22 @@ jobs:
         # reconciles still looks like a chargeback table.
         run: |
           python build/test_csv_contract.py
+          python build/validate_rubric.py
           python build/test_llm_plane.py
           python build/test_c01_corpus.py
           python build/test_c02_corpus.py
           python build/test_synthetic_finops.py
           python build/test_c04_corpora.py
           python build/test_c05_corpus.py
+
+      - name: Workspace tests
+        # The session test is the only security-critical assertion in the repo:
+        # the cookie is what stands between "signed in as me" and "signed in as
+        # anyone". The countdown test guards an hour-wide error that is invisible
+        # until the week it matters — BST ends the day before the event starts.
+        run: |
+          node --experimental-strip-types workspace/src/lib/session.test.mjs
+          node workspace/src/lib/countdown.test.mjs
 
       - name: Validate all catalogues
         run: |

@@ -1,0 +1,13 @@
+{
+  "name": "if-hackathon-workspace",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node src/lib/countdown.test.mjs",
+    "dev": "wrangler pages dev public --compatibility-date=2026-08-01",
+    "deploy": "wrangler pages deploy public"
+  },
+  "devDependencies": {
+    "wrangler": "^3.90.0"
+  }
+}
