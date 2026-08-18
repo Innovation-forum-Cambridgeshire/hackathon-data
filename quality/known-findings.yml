@@ -17,15 +17,4 @@
 
 version: 1
 
-findings:
-  - id: F-001
-    table: c05-ahead-of-the-heat.synthetic_cohort
-    # Matched case-insensitively against the expectation's description.
-    match: predicted_risk is between
-    status: open
-    raised: 2026-08-16
-    summary: >-
-      predicted_risk goes slightly negative on a small number of rows while the
-      catalogue declares the column 0-1. Distinct from the deliberate
-      miscalibration, which is asserted separately and is intact.
-    detail: hackathon-organisers → FINDINGS.md
+findings: []
