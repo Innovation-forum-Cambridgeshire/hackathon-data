@@ -144,15 +144,15 @@
       }
     },
     "predicted_risk": {
-      "distinct": 3282,
+      "distinct": 3272,
       "dtype": "float64",
       "kind": "f",
-      "mean": 0.303057,
+      "mean": 0.303077,
       "null_count": 0,
       "null_rate": 0.0,
       "present": true,
       "quantiles": {
-        "0.0": -0.0254,
+        "0.0": 0.0,
         "0.01": 0.024186,
         "0.05": 0.078395,
         "0.25": 0.196275,
@@ -162,9 +162,9 @@
         "0.99": 0.671727,
         "1.0": 0.795
       },
-      "skew": 0.288578,
-      "stdev": 0.144141,
-      "zero_rate": 0.0
+      "skew": 0.290322,
+      "stdev": 0.144099,
+      "zero_rate": 0.0022
     },
     "prior_heat_admission": {
       "distinct": 2,
