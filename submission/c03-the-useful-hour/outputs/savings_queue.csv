@@ -1,0 +1,843 @@
+workload_id,owner,platform,environment,service,util,cost_gbp,action,annual_value_gbp
+WL-00088,Commercial Banking,mainframe,staging,VSAM Storage,2.72,119096.31,Mainframe: idle — reclaim capacity,119096.31
+WL-00418,Collections,mainframe,staging,RACF Security,2.69,103310.1,Mainframe: idle — reclaim capacity,103310.1
+WL-00848,Finance,mainframe,staging,z/OS Connect,2.67,65491.41,Mainframe: idle — reclaim capacity,65491.41
+WL-00053,Mortgages,mainframe,test,CICS Transaction Server,2.67,56981.46,Mainframe: idle — reclaim capacity,56981.46
+WL-00507,Fraud Operations,mainframe,staging,IMS Transaction Manager,2.71,54424.47,Mainframe: idle — reclaim capacity,54424.47
+WL-00639,Customer Operations,mainframe,production,IMS Transaction Manager,2.78,53326.48,Mainframe: idle — reclaim capacity,53326.48
+WL-00403,Fraud Operations,mainframe,development,Db2 for z/OS,2.68,52980.18,Mainframe: idle — reclaim capacity,52980.18
+WL-00758,Internal Audit,mainframe,production,VSAM Storage,2.62,47908.46,Mainframe: idle — reclaim capacity,47908.46
+WL-00433,Finance,mainframe,production,Tape Virtualisation,2.69,43600.94,Mainframe: idle — reclaim capacity,43600.94
+WL-00190,Marketing,mainframe,test,IMS Transaction Manager,2.69,41050.48,Mainframe: idle — reclaim capacity,41050.48
+WL-00168,Commercial Banking,mainframe,development,SMF Analytics,2.59,40373.52,Mainframe: idle — reclaim capacity,40373.52
+WL-00856,Commercial Banking,mainframe,production,COBOL Batch,2.6,34336.8,Mainframe: idle — reclaim capacity,34336.8
+WL-00566,UNALLOCATED — find owner first,mainframe,production,Sysplex Coupling,2.81,31745.13,Mainframe: idle — reclaim capacity,31745.13
+WL-00118,Compliance,mainframe,development,Tape Virtualisation,2.71,30146.88,Mainframe: idle — reclaim capacity,30146.88
+WL-00955,Commercial Banking,mainframe,production,VSAM Storage,2.67,29949.23,Mainframe: idle — reclaim capacity,29949.23
+WL-00851,Insurance,cloud,production,Object Storage,23.74,46787.3,Right-size to 60%,28277.9
+WL-00675,Procurement,mainframe,test,JCL Scheduler,2.71,27133.72,Mainframe: idle — reclaim capacity,27133.72
+WL-00995,Insurance,mainframe,production,Tape Virtualisation,2.78,26607.46,Mainframe: idle — reclaim capacity,26607.46
+WL-00318,Collections,mainframe,production,CICS Transaction Server,2.63,26299.6,Mainframe: idle — reclaim capacity,26299.6
+WL-01124,Wealth Management,mainframe,development,MQ for z/OS,2.61,25497.29,Mainframe: idle — reclaim capacity,25497.29
+WL-00699,Cards,mainframe,production,CICS Transaction Server,2.68,22270.05,Mainframe: idle — reclaim capacity,22270.05
+WL-01106,Insurance,mainframe,production,JCL Scheduler,2.66,21643.95,Mainframe: idle — reclaim capacity,21643.95
+WL-00879,UNALLOCATED — find owner first,mainframe,production,SMF Analytics,2.61,21506.2,Mainframe: idle — reclaim capacity,21506.2
+WL-01088,Legal,mainframe,development,CICS Transaction Server,2.75,19950.28,Mainframe: idle — reclaim capacity,19950.28
+WL-00054,Group Technology,mainframe,test,z/OS Connect,2.67,19752.98,Mainframe: idle — reclaim capacity,19752.98
+WL-00640,Human Resources,mainframe,production,RACF Security,2.77,19265.65,Mainframe: idle — reclaim capacity,19265.65
+WL-00272,Wealth Management,mainframe,test,IMS Transaction Manager,2.72,16396.15,Mainframe: idle — reclaim capacity,16396.15
+WL-00522,Group Technology,mainframe,production,RACF Security,2.7,16257.54,Mainframe: idle — reclaim capacity,16257.54
+WL-00687,Group Technology,cloud,staging,Streaming Ingest,2.65,15256.35,Decommission (idle all year),15256.35
+WL-00398,Wealth Management,mainframe,staging,SMF Analytics,2.78,15242.01,Mainframe: idle — reclaim capacity,15242.01
+WL-00038,Marketing,distributed,production,Nagios Monitoring,2.6,13880.41,Decommission (idle all year),13880.41
+WL-00314,Collections,mainframe,test,CICS Transaction Server,2.79,13245.81,Mainframe: idle — reclaim capacity,13245.81
+WL-01049,Risk,mainframe,development,VSAM Storage,2.7,12458.71,Mainframe: idle — reclaim capacity,12458.71
+WL-00365,Group Technology,distributed,production,Oracle Database,2.65,12337.33,Decommission (idle all year),12337.33
+WL-00733,Digital Channels,distributed,production,NetApp Storage,2.66,12203.04,Decommission (idle all year),12203.04
+WL-00156,UNALLOCATED — find owner first,mainframe,production,IMS Transaction Manager,2.66,10964.73,Mainframe: idle — reclaim capacity,10964.73
+WL-00810,Customer Operations,mainframe,test,VSAM Storage,2.65,10860.56,Mainframe: idle — reclaim capacity,10860.56
+WL-00340,Infrastructure,mainframe,development,Sysplex Coupling,2.62,10805.08,Mainframe: idle — reclaim capacity,10805.08
+WL-00960,Customer Operations,mainframe,production,VSAM Storage,2.87,10289.95,Mainframe: idle — reclaim capacity,10289.95
+WL-00363,Digital Channels,mainframe,production,z/OS Connect,2.71,9717.29,Mainframe: idle — reclaim capacity,9717.29
+WL-00378,Infrastructure,mainframe,production,IMS Transaction Manager,2.7,9601.63,Mainframe: idle — reclaim capacity,9601.63
+WL-01094,UNALLOCATED — find owner first,distributed,test,VMware vSphere,41.9,21168.56,Right-size + weekend off,9393.5
+WL-00984,Customer Operations,cloud,test,Secrets Manager,23.89,12393.81,Right-size + weekend off,8430.37
+WL-01002,Insurance,cloud,production,Streaming Ingest,2.6,8221.65,Decommission (idle all year),8221.65
+WL-00077,Fraud Operations,mainframe,development,COBOL Batch,2.61,7634.84,Mainframe: idle — reclaim capacity,7634.84
+WL-00619,Group Technology,distributed,test,Windows Server,42.33,16932.87,Right-size + weekend off,7376.45
+WL-00002,Infrastructure,cloud,development,Message Queue,24.13,10312.26,Right-size + weekend off,6988.48
+WL-00471,Payments,distributed,production,Windows Server,39.04,18788.36,Right-size to 60%,6564.09
+WL-00227,Digital Channels,distributed,development,NetApp Storage,40.61,14307.42,Right-size + weekend off,6555.13
+WL-00005,Human Resources,distributed,development,Windows Server,40.11,13993.79,Right-size + weekend off,6547.45
+WL-00297,Payments,mainframe,production,Sysplex Coupling,2.74,6465.34,Mainframe: idle — reclaim capacity,6465.34
+WL-00427,Legal,distributed,development,Oracle Database,2.66,6362.98,Decommission (idle all year),6362.98
+WL-00715,Commercial Banking,cloud,staging,Secrets Manager,2.77,6144.13,Decommission (idle all year),6144.13
+WL-00394,Procurement,distributed,production,Active Directory,2.82,6084.9,Decommission (idle all year),6084.9
+WL-00821,Digital Channels,cloud,production,Content Delivery,22.68,9297.09,Right-size to 60%,5783.51
+WL-00620,Insurance,cloud,development,API Gateway,23.72,8302.03,Right-size + weekend off,5678.18
+WL-00255,Wealth Management,cloud,production,Block Storage,23.74,9282.46,Right-size to 60%,5609.4
+WL-00528,Digital Channels,distributed,test,Tomcat,2.58,5568.15,Decommission (idle all year),5568.15
+WL-00352,Risk,cloud,production,Managed PostgreSQL,22.91,8684.1,Right-size to 60%,5368.36
+WL-00262,Retail Banking,cloud,development,Block Storage,24.28,7866.46,Right-size + weekend off,5316.12
+WL-01020,Retail Banking,cloud,production,API Gateway,2.81,5285.88,Decommission (idle all year),5285.88
+WL-00087,Retail Banking,distributed,development,VMware vSphere,2.73,5213.93,Decommission (idle all year),5213.93
+WL-00772,Infrastructure,cloud,staging,Kubernetes Service,22.91,8413.94,Right-size to 60%,5201.7
+WL-00842,Wealth Management,distributed,production,Active Directory,40.22,15550.99,Right-size to 60%,5125.65
+WL-00444,UNALLOCATED — find owner first,cloud,development,Streaming Ingest,24.07,7506.83,Right-size + weekend off,5090.79
+WL-00858,Group Technology,cloud,development,Container Registry,24.5,7461.65,Right-size + weekend off,5032.93
+WL-00216,Cyber Security,cloud,development,Streaming Ingest,23.87,7359.56,Right-size + weekend off,5016.05
+WL-01104,Cyber Security,distributed,production,F5 Load Balancing,40.62,15442.17,Right-size to 60%,4987.54
+WL-00837,Fraud Operations,cloud,staging,Serverless Functions,24.49,8397.69,Right-size to 60%,4970.7
+WL-00079,Human Resources,cloud,test,Message Queue,24.15,7183.6,Right-size + weekend off,4863.91
+WL-00718,Mortgages,distributed,production,Tomcat,41.8,15996.84,Right-size to 60%,4853.32
+WL-01059,Mortgages,distributed,production,Oracle Database,40.09,14404.35,Right-size to 60%,4780.4
+WL-00167,Customer Operations,cloud,development,Message Queue,23.19,6840.73,Right-size + weekend off,4734.34
+WL-00672,Finance,cloud,production,API Gateway,2.75,4649.87,Decommission (idle all year),4649.87
+WL-00483,Payments,cloud,test,Streaming Ingest,24.21,6838.84,Right-size + weekend off,4632.31
+WL-00045,Human Resources,distributed,staging,Windows Server,2.77,4632.03,Decommission (idle all year),4632.03
+WL-00489,Marketing,distributed,production,Nagios Monitoring,2.72,4629.28,Decommission (idle all year),4629.28
+WL-00793,Digital Channels,distributed,production,F5 Load Balancing,2.79,4611.19,Decommission (idle all year),4611.19
+WL-00694,Internal Audit,cloud,test,Kubernetes Service,23.14,6577.8,Right-size + weekend off,4538.86
+WL-00920,Cards,cloud,test,Managed Redis,23.21,6498.73,Right-size + weekend off,4484.75
+WL-00916,Cyber Security,distributed,test,Active Directory,39.03,9331.86,Right-size + weekend off,4463.96
+WL-00572,Customer Operations,distributed,production,NetApp Storage,2.83,4333.77,Decommission (idle all year),4333.77
+WL-00967,Human Resources,cloud,production,Machine Learning Platform,21.17,6679.55,Right-size to 60%,4322.64
+WL-00315,Legal,distributed,staging,Oracle Database,2.74,4226.51,Decommission (idle all year),4226.51
+WL-00905,Marketing,distributed,development,WebSphere Application Server,41.04,9312.28,Right-size + weekend off,4213.1
+WL-00520,Human Resources,distributed,test,Veeam Backup,43.52,9985.58,Right-size + weekend off,4197.96
+WL-00343,Retail Banking,cloud,development,Kubernetes Service,24.1,6169.24,Right-size + weekend off,4187.63
+WL-00796,Customer Operations,distributed,production,Active Directory,2.69,4131.46,Decommission (idle all year),4131.46
+WL-00142,Cyber Security,mainframe,production,IMS Transaction Manager,2.72,4098.44,Mainframe: idle — reclaim capacity,4098.44
+WL-00420,Mortgages,cloud,production,Kubernetes Service,23.81,6794.5,Right-size to 60%,4098.26
+WL-00069,Human Resources,cloud,production,Log Analytics,24.72,6891.01,Right-size to 60%,4052.13
+WL-00235,Compliance,cloud,production,Kubernetes Service,22.89,6477.91,Right-size to 60%,4006.07
+WL-00508,Finance,cloud,production,Managed PostgreSQL,22.65,6297.92,Right-size to 60%,3920.18
+WL-00563,Data and Analytics,cloud,development,Machine Learning Platform,23.05,5592.93,Right-size + weekend off,3875.39
+WL-00833,Internal Audit,cloud,production,Compute Instances,24.33,6476.02,Right-size to 60%,3850.45
+WL-00138,Marketing,cloud,development,Block Storage,21.9,5437.72,Right-size + weekend off,3849.65
+WL-00843,Insurance,cloud,production,Compute Instances,22.65,6153.97,Right-size to 60%,3830.55
+WL-00173,Commercial Banking,distributed,test,WebSphere Application Server,42.48,8737.06,Right-size + weekend off,3792.12
+WL-00319,Wealth Management,distributed,production,VMware vSphere,42.07,12634.7,Right-size to 60%,3775.18
+WL-00226,Wealth Management,cloud,development,Object Storage,23.2,5469.7,Right-size + weekend off,3770.72
+WL-00259,Cyber Security,cloud,development,Block Storage,23.86,5499.12,Right-size + weekend off,3756.18
+WL-00753,Insurance,cloud,test,Data Warehouse,23.13,5404.38,Right-size + weekend off,3730.56
+WL-00919,Commercial Banking,cloud,production,Serverless Functions,24.57,6317.04,Right-size to 60%,3729.71
+WL-00496,Customer Operations,distributed,production,Active Directory,2.63,3692.85,Decommission (idle all year),3692.85
+WL-00569,Insurance,cloud,development,API Gateway,23.05,5306.12,Right-size + weekend off,3674.29
+WL-00381,Risk,distributed,development,Active Directory,2.58,3673.21,Decommission (idle all year),3673.21
+WL-00361,Internal Audit,distributed,test,NetApp Storage,42.12,8268.52,Right-size + weekend off,3645.09
+WL-01103,Human Resources,cloud,development,Streaming Ingest,23.98,5265.46,Right-size + weekend off,3586.55
+WL-01005,Compliance,distributed,production,F5 Load Balancing,39.68,10340.08,Right-size to 60%,3502.6
+WL-00935,Treasury,cloud,test,Block Storage,24.34,5173.25,Right-size + weekend off,3489.86
+WL-00902,Marketing,distributed,test,Windows Server,42.08,7837.62,Right-size + weekend off,3418.87
+WL-00487,Retail Banking,cloud,production,Object Storage,2.7,3409.06,Decommission (idle all year),3409.06
+WL-00780,Commercial Banking,cloud,production,Serverless Functions,23.81,5610.69,Right-size to 60%,3384.01
+WL-00689,Insurance,cloud,staging,Object Storage,22.49,5372.34,Right-size to 60%,3358.23
+WL-00909,Finance,distributed,test,WebSphere Application Server,40.68,7261.93,Right-size + weekend off,3335.89
+WL-01148,UNALLOCATED — find owner first,distributed,test,Windows Server,42.05,7530.86,Right-size + weekend off,3329.95
+WL-00387,Retail Banking,cloud,test,Container Registry,23.21,4566.37,Right-size + weekend off,3156.43
+WL-00792,Finance,distributed,development,Active Directory,41.29,6981.22,Right-size + weekend off,3132.67
+WL-00764,Customer Operations,distributed,production,Red Hat Enterprise Linux,2.73,3119.53,Decommission (idle all year),3119.53
+WL-00963,Cyber Security,cloud,production,Container Registry,24.25,5205.67,Right-size to 60%,3101.7
+WL-00279,Infrastructure,distributed,development,Oracle Database,40.36,6683.5,Right-size + weekend off,3088.66
+WL-00282,Human Resources,cloud,production,Block Storage,23.67,5077.45,Right-size to 60%,3074.62
+WL-00463,Payments,cloud,development,Data Warehouse,22.43,4382.63,Right-size + weekend off,3072.56
+WL-00660,Cards,distributed,staging,SQL Server,40.67,9438.25,Right-size to 60%,3040.19
+WL-00351,Commercial Banking,cloud,production,Container Registry,23.23,4943.14,Right-size to 60%,3029.65
+WL-00742,Cards,cloud,production,Object Storage,22.66,4855.07,Right-size to 60%,3021.52
+WL-00976,Retail Banking,cloud,production,Managed Redis,23.46,4937.53,Right-size to 60%,3007.07
+WL-00334,Finance,distributed,staging,Nagios Monitoring,2.76,2999.52,Decommission (idle all year),2999.52
+WL-00347,Infrastructure,cloud,development,Message Queue,24.21,4418.34,Right-size + weekend off,2986.46
+WL-01056,Human Resources,cloud,production,Kubernetes Service,22.25,4675.01,Right-size to 60%,2941.56
+WL-00880,Insurance,cloud,production,API Gateway,23.94,4875.06,Right-size to 60%,2929.62
+WL-00823,Marketing,cloud,development,Secrets Manager,23.89,4259.23,Right-size + weekend off,2906.15
+WL-00568,Risk,distributed,staging,Tomcat,40.66,8984.07,Right-size to 60%,2895.62
+WL-00721,Risk,cloud,production,Log Analytics,23.56,4760.82,Right-size to 60%,2891.19
+WL-00264,Wealth Management,cloud,production,Managed PostgreSQL,24.06,4673.59,Right-size to 60%,2799.25
+WL-00109,Treasury,cloud,production,Streaming Ingest,2.66,2773.98,Decommission (idle all year),2773.98
+WL-00948,Marketing,cloud,production,Content Delivery,24.4,4675.1,Right-size to 60%,2773.91
+WL-00336,Commercial Banking,cloud,production,Machine Learning Platform,23.66,4539.53,Right-size to 60%,2749.38
+WL-01043,Procurement,distributed,test,SQL Server,40.8,6031.17,Right-size + weekend off,2745.76
+WL-00670,Compliance,distributed,development,VMware vSphere,40.38,5900.47,Right-size + weekend off,2730.06
+WL-00577,Digital Channels,distributed,test,Windows Server,41.76,6139.33,Right-size + weekend off,2717.61
+WL-00469,Digital Channels,cloud,test,Managed Redis,2.65,2708.88,Decommission (idle all year),2708.88
+WL-01068,Legal,cloud,production,Data Warehouse,24.84,4588.72,Right-size to 60%,2688.89
+WL-00393,Cyber Security,cloud,development,Secrets Manager,24.57,4000.68,Right-size + weekend off,2685.12
+WL-00867,Human Resources,distributed,production,NetApp Storage,40.03,7969.57,Right-size to 60%,2652.05
+WL-00214,Mortgages,cloud,test,Data Warehouse,23.8,3888.86,Right-size + weekend off,2651.97
+WL-00685,Human Resources,distributed,development,F5 Load Balancing,40.64,5744.72,Right-size + weekend off,2631.15
+WL-01039,Internal Audit,cloud,staging,Managed Redis,23.5,4324.4,Right-size to 60%,2630.64
+WL-00536,Retail Banking,distributed,staging,NetApp Storage,41.14,8368.46,Right-size to 60%,2630.1
+WL-01013,Legal,cloud,development,Content Delivery,24.23,3860.09,Right-size + weekend off,2614.72
+WL-00276,UNALLOCATED — find owner first,distributed,production,Oracle Database,42.16,8762.38,Right-size to 60%,2605.51
+WL-00195,Marketing,distributed,production,Nagios Monitoring,40.86,8067.43,Right-size to 60%,2573.36
+WL-00760,Finance,cloud,development,Content Delivery,23.64,3752.42,Right-size + weekend off,2572.74
+WL-00499,Risk,distributed,test,Windows Server,41.49,5720.52,Right-size + weekend off,2561.37
+WL-00779,Cards,cloud,development,Machine Learning Platform,2.69,2552.35,Decommission (idle all year),2552.35
+WL-00869,Commercial Banking,cloud,staging,Log Analytics,24.49,4286.45,Right-size to 60%,2536.99
+WL-00266,Customer Operations,distributed,production,F5 Load Balancing,2.63,2530.72,Decommission (idle all year),2530.72
+WL-00579,Human Resources,cloud,production,Secrets Manager,2.65,2530.56,Decommission (idle all year),2530.56
+WL-00498,UNALLOCATED — find owner first,distributed,production,Tomcat,39.16,7277.42,Right-size to 60%,2527.79
+WL-01034,Finance,cloud,test,Managed PostgreSQL,2.74,2525.73,Decommission (idle all year),2525.73
+WL-00651,Compliance,distributed,production,Windows Server,2.65,2496.85,Decommission (idle all year),2496.85
+WL-01095,Risk,cloud,production,Object Storage,2.72,2496.24,Decommission (idle all year),2496.24
+WL-00211,Wealth Management,cloud,production,Secrets Manager,2.68,2476.38,Decommission (idle all year),2476.38
+WL-00788,Human Resources,distributed,production,Active Directory,2.71,2451.4,Decommission (idle all year),2451.4
+WL-00125,Payments,cloud,production,Serverless Functions,23.2,3983.4,Right-size to 60%,2443.21
+WL-00453,Data and Analytics,cloud,staging,Block Storage,23.98,4068.53,Right-size to 60%,2442.7
+WL-00546,Cyber Security,cloud,production,Data Warehouse,23.88,3988.72,Right-size to 60%,2401.23
+WL-00812,Infrastructure,cloud,production,Container Registry,2.65,2397.9,Decommission (idle all year),2397.9
+WL-01065,Infrastructure,cloud,production,Log Analytics,22.03,3758.23,Right-size to 60%,2378.24
+WL-00818,Fraud Operations,cloud,production,Content Delivery,23.82,3918.39,Right-size to 60%,2362.57
+WL-00655,Collections,cloud,development,Object Storage,24.3,3497.44,Right-size + weekend off,2361.98
+WL-00425,Fraud Operations,cloud,development,Compute Instances,2.69,2351.79,Decommission (idle all year),2351.79
+WL-00392,Internal Audit,cloud,development,Serverless Functions,2.81,2342.6,Decommission (idle all year),2342.6
+WL-00677,Human Resources,distributed,production,WebSphere Application Server,39.25,6771.35,Right-size to 60%,2341.65
+WL-00682,Infrastructure,cloud,production,Streaming Ingest,23.1,3807.18,Right-size to 60%,2341.22
+WL-00562,Legal,distributed,production,Oracle Database,40.67,7244.29,Right-size to 60%,2334.08
+WL-00532,Fraud Operations,distributed,production,VMware vSphere,40.66,7206.82,Right-size to 60%,2323.43
+WL-00861,Collections,cloud,production,Managed Redis,23.92,3820.32,Right-size to 60%,2297.01
+WL-00097,Cyber Security,distributed,development,Red Hat Enterprise Linux,39.9,4830.95,Right-size + weekend off,2274.64
+WL-00123,Internal Audit,distributed,production,Tomcat,40.71,7043.26,Right-size to 60%,2264.52
+WL-00191,Payments,cloud,test,Machine Learning Platform,2.67,2252.99,Decommission (idle all year),2252.99
+WL-00019,UNALLOCATED — find owner first,cloud,production,Log Analytics,22.96,3634.24,Right-size to 60%,2243.72
+WL-00988,UNALLOCATED — find owner first,cloud,development,Machine Learning Platform,22.18,3149.2,Right-size + weekend off,2215.92
+WL-00482,Wealth Management,cloud,production,Log Analytics,23.14,3593.92,Right-size to 60%,2207.6
+WL-01100,Customer Operations,cloud,production,Block Storage,23.75,3625.45,Right-size to 60%,2190.3
+WL-00344,Insurance,distributed,production,Windows Server,41.57,7122.87,Right-size to 60%,2188.18
+WL-00451,Digital Channels,cloud,production,Container Registry,24.12,3643.57,Right-size to 60%,2178.92
+WL-00442,Mortgages,cloud,development,Kubernetes Service,24.17,3215.83,Right-size + weekend off,2176.62
+WL-00239,Cards,cloud,production,Container Registry,2.64,2175.68,Decommission (idle all year),2175.68
+WL-00804,Payments,distributed,development,NetApp Storage,2.72,2161.85,Decommission (idle all year),2161.85
+WL-00831,UNALLOCATED — find owner first,distributed,production,Tomcat,41.32,6883.6,Right-size to 60%,2142.84
+WL-00537,Customer Operations,cloud,development,Compute Instances,24.68,3179.42,Right-size + weekend off,2133.76
+WL-00057,Customer Operations,cloud,production,Secrets Manager,24.56,3610.51,Right-size to 60%,2132.33
+WL-00316,Treasury,cloud,development,Serverless Functions,23.14,3055.91,Right-size + weekend off,2112.02
+WL-00001,Payments,cloud,staging,Compute Instances,23.78,3495.76,Right-size to 60%,2110.23
+WL-00170,Collections,distributed,test,Red Hat Enterprise Linux,40.95,4621.13,Right-size + weekend off,2103.25
+WL-00807,Risk,cloud,development,Container Registry,23.99,3085.68,Right-size + weekend off,2101.45
+WL-00743,Wealth Management,distributed,production,Windows Server,39.71,6167.72,Right-size to 60%,2085.76
+WL-00554,Legal,cloud,production,Machine Learning Platform,23.48,3398.72,Right-size to 60%,2068.45
+WL-00114,Fraud Operations,distributed,test,Windows Server,2.72,2065.72,Decommission (idle all year),2065.72
+WL-00136,Finance,cloud,production,Secrets Manager,23.79,3422.59,Right-size to 60%,2065.43
+WL-01113,Fraud Operations,cloud,production,Kubernetes Service,23.46,3390.25,Right-size to 60%,2064.88
+WL-00636,Retail Banking,cloud,test,API Gateway,23.11,2976.6,Right-size + weekend off,2058.46
+WL-00609,Retail Banking,cloud,production,Container Registry,23.72,3393.32,Right-size to 60%,2051.95
+WL-00885,Finance,cloud,test,Block Storage,24.17,2965.21,Right-size + weekend off,2007.09
+WL-00775,Mortgages,cloud,development,Managed PostgreSQL,23.47,2910.29,Right-size + weekend off,2000.71
+WL-00676,Payments,distributed,test,SQL Server,41.52,4429.99,Right-size + weekend off,1989.52
+WL-00310,Customer Operations,cloud,production,Managed PostgreSQL,22.86,3211.2,Right-size to 60%,1987.54
+WL-00822,Mortgages,cloud,development,Log Analytics,24.58,2947.67,Right-size + weekend off,1980.55
+WL-00130,Payments,cloud,production,Message Queue,23.62,3253.25,Right-size to 60%,1972.35
+WL-00157,Legal,cloud,staging,Kubernetes Service,2.54,1965.33,Decommission (idle all year),1965.33
+WL-00523,Group Technology,distributed,production,Oracle Database,41.32,6291.01,Right-size to 60%,1958.86
+WL-01025,Marketing,distributed,production,F5 Load Balancing,43.77,7210.56,Right-size to 60%,1950.18
+WL-01127,Fraud Operations,cloud,development,Managed Redis,23.98,2838.0,Right-size + weekend off,1933.93
+WL-00809,Risk,cloud,production,Container Registry,23.54,3176.5,Right-size to 60%,1930.27
+WL-00868,Digital Channels,cloud,production,Data Warehouse,2.68,1925.06,Decommission (idle all year),1925.06
+WL-00269,Risk,distributed,production,Active Directory,40.74,5962.92,Right-size to 60%,1914.26
+WL-00116,Payments,cloud,staging,Log Analytics,24.84,3257.32,Right-size to 60%,1908.95
+WL-00763,Infrastructure,cloud,production,Compute Instances,23.5,3125.09,Right-size to 60%,1901.15
+WL-00945,Finance,cloud,staging,Secrets Manager,2.57,1898.25,Decommission (idle all year),1898.25
+WL-00029,Infrastructure,distributed,production,VMware vSphere,40.41,5792.8,Right-size to 60%,1891.31
+WL-00616,Legal,cloud,staging,Container Registry,22.44,3019.67,Right-size to 60%,1890.42
+WL-01076,Retail Banking,cloud,production,Machine Learning Platform,24.41,3183.69,Right-size to 60%,1888.64
+WL-00876,Fraud Operations,cloud,production,Compute Instances,24.48,3176.89,Right-size to 60%,1880.68
+WL-00800,Risk,cloud,staging,Compute Instances,22.83,3007.63,Right-size to 60%,1863.33
+WL-00106,Payments,cloud,staging,Serverless Functions,23.51,3039.16,Right-size to 60%,1848.42
+WL-00891,Wealth Management,cloud,production,Content Delivery,22.61,2959.68,Right-size to 60%,1844.52
+WL-01015,Treasury,cloud,production,Streaming Ingest,22.91,2982.64,Right-size to 60%,1843.61
+WL-00966,Internal Audit,cloud,test,Secrets Manager,22.61,2630.66,Right-size + weekend off,1835.06
+WL-00695,Compliance,distributed,development,NetApp Storage,41.19,4047.7,Right-size + weekend off,1828.88
+WL-00894,Group Technology,cloud,production,Object Storage,23.46,2978.16,Right-size to 60%,1813.81
+WL-00143,Compliance,cloud,production,Block Storage,22.95,2923.84,Right-size to 60%,1805.64
+WL-01125,Risk,cloud,test,Compute Instances,24.58,2673.55,Right-size + weekend off,1799.62
+WL-00972,Finance,cloud,development,Content Delivery,2.64,1798.07,Decommission (idle all year),1798.07
+WL-00406,Marketing,distributed,production,Oracle Database,39.55,5231.78,Right-size to 60%,1783.58
+WL-00093,Human Resources,cloud,test,Serverless Functions,22.46,2534.14,Right-size + weekend off,1774.91
+WL-00382,Compliance,distributed,test,F5 Load Balancing,40.24,3814.28,Right-size + weekend off,1773.73
+WL-00923,Payments,cloud,development,Machine Learning Platform,23.59,2579.45,Right-size + weekend off,1771.22
+WL-00748,Commercial Banking,cloud,production,Machine Learning Platform,2.61,1764.18,Decommission (idle all year),1764.18
+WL-00212,Collections,distributed,production,Veeam Backup,40.7,5482.93,Right-size to 60%,1764.0
+WL-00852,UNALLOCATED — find owner first,cloud,production,Kubernetes Service,24.97,3020.69,Right-size to 60%,1763.37
+WL-00711,Customer Operations,cloud,production,Secrets Manager,2.62,1744.27,Decommission (idle all year),1744.27
+WL-00475,Commercial Banking,cloud,production,API Gateway,22.35,2778.08,Right-size to 60%,1743.06
+WL-00278,UNALLOCATED — find owner first,cloud,production,API Gateway,23.46,2853.61,Right-size to 60%,1737.91
+WL-00346,Compliance,cloud,production,Data Warehouse,23.02,2814.08,Right-size to 60%,1734.3
+WL-00013,Cards,cloud,development,Log Analytics,22.88,2488.43,Right-size + weekend off,1731.99
+WL-00254,Collections,distributed,staging,Nagios Monitoring,41.56,5627.97,Right-size to 60%,1729.69
+WL-00802,Data and Analytics,cloud,production,Machine Learning Platform,24.83,2940.01,Right-size to 60%,1723.21
+WL-01143,Marketing,cloud,development,Log Analytics,24.51,2561.3,Right-size + weekend off,1722.96
+WL-00032,Finance,cloud,development,Object Storage,24.51,2548.01,Right-size + weekend off,1716.63
+WL-00926,Risk,distributed,production,WebSphere Application Server,40.44,5258.03,Right-size to 60%,1714.05
+WL-01130,Collections,distributed,test,Active Directory,41.58,3837.01,Right-size + weekend off,1710.55
+WL-00540,Fraud Operations,distributed,production,Nagios Monitoring,40.7,5314.47,Right-size to 60%,1709.92
+WL-00684,Risk,cloud,development,Compute Instances,2.56,1697.9,Decommission (idle all year),1697.9
+WL-00113,Treasury,cloud,test,Compute Instances,2.6,1695.15,Decommission (idle all year),1695.15
+WL-00734,Customer Operations,cloud,staging,Machine Learning Platform,22.24,2681.05,Right-size to 60%,1687.19
+WL-00790,UNALLOCATED — find owner first,distributed,test,SQL Server,39.54,3545.08,Right-size + weekend off,1685.98
+WL-00228,Commercial Banking,cloud,development,Data Warehouse,23.34,2432.38,Right-size + weekend off,1672.07
+WL-00776,Customer Operations,cloud,production,Managed Redis,23.7,2761.47,Right-size to 60%,1670.8
+WL-01116,Retail Banking,cloud,staging,Serverless Functions,22.94,2694.74,Right-size to 60%,1664.45
+WL-00377,Data and Analytics,distributed,production,VMware vSphere,42.46,5690.06,Right-size to 60%,1663.84
+WL-00714,Digital Channels,distributed,development,Nagios Monitoring,39.54,3503.98,Right-size + weekend off,1659.71
+WL-00426,Cards,cloud,production,Message Queue,2.79,1658.09,Decommission (idle all year),1658.09
+WL-00847,Payments,distributed,development,Active Directory,40.83,3635.41,Right-size + weekend off,1656.31
+WL-00066,Cyber Security,distributed,test,SQL Server,37.99,3314.78,Right-size + weekend off,1642.25
+WL-00646,Payments,cloud,production,Serverless Functions,23.97,2723.75,Right-size to 60%,1635.73
+WL-00473,Insurance,distributed,production,Active Directory,40.29,4974.5,Right-size to 60%,1633.88
+WL-01099,Payments,distributed,staging,Nagios Monitoring,40.02,4900.79,Right-size to 60%,1632.19
+WL-00544,Fraud Operations,distributed,production,NetApp Storage,41.13,5182.07,Right-size to 60%,1629.89
+WL-00103,Customer Operations,distributed,production,NetApp Storage,39.89,4834.68,Right-size to 60%,1620.72
+WL-00325,UNALLOCATED — find owner first,distributed,production,Veeam Backup,41.19,5146.12,Right-size to 60%,1613.37
+WL-01069,Wealth Management,cloud,production,Block Storage,21.99,2539.44,Right-size to 60%,1608.56
+WL-00549,Risk,cloud,test,Data Warehouse,23.92,2347.88,Right-size + weekend off,1600.18
+WL-00581,Digital Channels,distributed,staging,Active Directory,40.89,5014.68,Right-size to 60%,1596.96
+WL-00040,Group Technology,cloud,development,Kubernetes Service,24.32,2357.7,Right-size + weekend off,1592.09
+WL-00220,Cyber Security,distributed,production,VMware vSphere,40.9,4987.28,Right-size to 60%,1587.73
+WL-00364,UNALLOCATED — find owner first,cloud,development,Block Storage,22.79,2261.83,Right-size + weekend off,1575.62
+WL-01070,Legal,cloud,production,Managed PostgreSQL,23.66,2597.76,Right-size to 60%,1573.46
+WL-00096,Collections,distributed,staging,Tomcat,40.91,4894.72,Right-size to 60%,1557.33
+WL-00084,UNALLOCATED — find owner first,cloud,production,Block Storage,23.83,2575.11,Right-size to 60%,1552.32
+WL-00085,Commercial Banking,distributed,test,SQL Server,40.26,3341.88,Right-size + weekend off,1549.69
+WL-01119,Human Resources,cloud,production,Compute Instances,23.81,2565.76,Right-size to 60%,1547.41
+WL-00931,Fraud Operations,cloud,production,Compute Instances,23.94,2572.52,Right-size to 60%,1545.96
+WL-00385,Finance,cloud,development,Machine Learning Platform,21.73,2173.77,Right-size + weekend off,1545.01
+WL-00607,Payments,distributed,development,Red Hat Enterprise Linux,39.71,3262.12,Right-size + weekend off,1535.44
+WL-00193,Compliance,distributed,development,WebSphere Application Server,41.21,3359.49,Right-size + weekend off,1511.32
+WL-00944,Cards,cloud,production,Secrets Manager,22.92,2441.99,Right-size to 60%,1509.09
+WL-00410,Procurement,cloud,development,Message Queue,23.76,2205.76,Right-size + weekend off,1507.69
+WL-00327,Insurance,cloud,development,Content Delivery,24.43,2238.28,Right-size + weekend off,1506.46
+WL-00273,Legal,cloud,production,Object Storage,23.2,2450.18,Right-size to 60%,1502.82
+WL-00205,Insurance,distributed,production,Veeam Backup,2.72,1501.92,Decommission (idle all year),1501.92
+WL-00736,Compliance,distributed,development,Windows Server,43.08,3512.26,Right-size + weekend off,1501.4
+WL-00390,Insurance,cloud,staging,Kubernetes Service,24.01,2492.39,Right-size to 60%,1494.85
+WL-00160,Cyber Security,distributed,production,SQL Server,40.98,4661.25,Right-size to 60%,1477.57
+WL-00737,Human Resources,cloud,production,Kubernetes Service,22.35,2352.47,Right-size to 60%,1476.21
+WL-00631,UNALLOCATED — find owner first,cloud,production,Block Storage,23.56,2429.83,Right-size to 60%,1475.86
+WL-00129,UNALLOCATED — find owner first,distributed,test,WebSphere Application Server,42.97,3440.67,Right-size + weekend off,1471.58
+WL-00119,Customer Operations,distributed,production,Nagios Monitoring,41.59,4795.13,Right-size to 60%,1471.47
+WL-00896,Retail Banking,distributed,test,Active Directory,41.07,3232.01,Right-size + weekend off,1462.79
+WL-00853,Marketing,cloud,production,Log Analytics,23.26,2386.35,Right-size to 60%,1461.08
+WL-00907,Insurance,cloud,production,Kubernetes Service,2.67,1448.51,Decommission (idle all year),1448.51
+WL-01032,Fraud Operations,distributed,staging,Oracle Database,2.64,1446.75,Decommission (idle all year),1446.75
+WL-00555,Procurement,cloud,production,Message Queue,22.17,2294.21,Right-size to 60%,1446.57
+WL-00918,Collections,cloud,staging,Kubernetes Service,23.57,2378.4,Right-size to 60%,1444.23
+WL-00519,Digital Channels,distributed,production,SQL Server,42.0,4764.12,Right-size to 60%,1429.08
+WL-01131,Retail Banking,distributed,production,Tomcat,40.0,4280.38,Right-size to 60%,1426.68
+WL-00956,Wealth Management,cloud,production,Data Warehouse,23.68,2341.06,Right-size to 60%,1417.05
+WL-00242,Legal,cloud,production,Block Storage,23.88,2348.2,Right-size to 60%,1413.59
+WL-00681,Retail Banking,distributed,production,WebSphere Application Server,42.04,4712.9,Right-size to 60%,1410.88
+WL-00927,UNALLOCATED — find owner first,cloud,staging,Content Delivery,22.07,2225.81,Right-size to 60%,1407.18
+WL-00371,Collections,distributed,test,Oracle Database,42.06,3208.53,Right-size + weekend off,1400.95
+WL-00782,Group Technology,cloud,staging,API Gateway,24.06,2333.39,Right-size to 60%,1397.88
+WL-00342,Fraud Operations,cloud,production,Serverless Functions,22.35,2221.57,Right-size to 60%,1393.95
+WL-00179,Fraud Operations,cloud,production,API Gateway,24.29,2333.09,Right-size to 60%,1388.64
+WL-00323,Legal,cloud,production,Streaming Ingest,23.37,2273.49,Right-size to 60%,1387.86
+WL-01112,Treasury,distributed,development,Oracle Database,41.95,3153.27,Right-size + weekend off,1386.7
+WL-00527,Legal,distributed,staging,Windows Server,39.68,4083.89,Right-size to 60%,1383.02
+WL-01105,Mortgages,distributed,production,F5 Load Balancing,39.01,3933.87,Right-size to 60%,1376.08
+WL-00998,UNALLOCATED — find owner first,cloud,development,Managed PostgreSQL,23.41,1991.96,Right-size + weekend off,1368.19
+WL-00643,Human Resources,distributed,production,NetApp Storage,41.06,4296.96,Right-size to 60%,1356.05
+WL-00906,UNALLOCATED — find owner first,cloud,production,Serverless Functions,24.17,2254.46,Right-size to 60%,1346.28
+WL-00946,Group Technology,cloud,production,API Gateway,22.03,2126.82,Right-size to 60%,1346.02
+WL-00225,Risk,cloud,production,Streaming Ingest,22.95,2177.92,Right-size to 60%,1344.87
+WL-01048,Insurance,distributed,production,Veeam Backup,39.48,3901.23,Right-size to 60%,1333.92
+WL-00644,Wealth Management,cloud,production,Secrets Manager,23.57,2188.15,Right-size to 60%,1328.63
+WL-00468,Internal Audit,distributed,staging,Windows Server,41.85,4390.96,Right-size to 60%,1328.38
+WL-00462,Payments,cloud,production,API Gateway,25.54,2312.46,Right-size to 60%,1328.0
+WL-00599,Wealth Management,cloud,production,Serverless Functions,23.02,2140.35,Right-size to 60%,1319.17
+WL-01071,Mortgages,distributed,test,NetApp Storage,39.86,2805.22,Right-size + weekend off,1311.21
+WL-00700,Finance,cloud,staging,Managed PostgreSQL,24.74,2226.87,Right-size to 60%,1308.7
+WL-00209,Data and Analytics,cloud,production,Serverless Functions,24.11,2184.69,Right-size to 60%,1306.75
+WL-00552,Wealth Management,distributed,production,Nagios Monitoring,40.4,3991.36,Right-size to 60%,1303.72
+WL-00573,Cyber Security,cloud,production,Serverless Functions,2.79,1301.77,Decommission (idle all year),1301.77
+WL-00688,Customer Operations,cloud,production,API Gateway,22.53,2079.53,Right-size to 60%,1298.68
+WL-01081,Customer Operations,cloud,production,Compute Instances,25.02,2220.48,Right-size to 60%,1294.52
+WL-00021,Cards,distributed,staging,F5 Load Balancing,40.98,4069.28,Right-size to 60%,1289.83
+WL-00037,Human Resources,distributed,production,Tomcat,39.6,3792.5,Right-size to 60%,1289.47
+WL-00612,Human Resources,cloud,production,API Gateway,22.22,2038.7,Right-size to 60%,1283.55
+WL-00881,Data and Analytics,distributed,production,Oracle Database,40.78,4003.95,Right-size to 60%,1282.78
+WL-01134,Legal,cloud,staging,Data Warehouse,23.86,2122.1,Right-size to 60%,1278.1
+WL-00934,Marketing,cloud,production,API Gateway,22.75,2054.93,Right-size to 60%,1275.77
+WL-00070,Insurance,cloud,test,Container Registry,24.39,1888.12,Right-size + weekend off,1273.41
+WL-00850,Treasury,cloud,production,Managed Redis,2.84,1264.29,Decommission (idle all year),1264.29
+WL-00914,Insurance,cloud,staging,Secrets Manager,22.84,2040.89,Right-size to 60%,1264.12
+WL-00846,Fraud Operations,cloud,production,Message Queue,23.96,2095.45,Right-size to 60%,1258.75
+WL-01111,Collections,cloud,production,Data Warehouse,24.01,2095.27,Right-size to 60%,1256.88
+WL-00289,Procurement,cloud,staging,Object Storage,24.91,2143.05,Right-size to 60%,1253.28
+WL-00702,Commercial Banking,distributed,test,Oracle Database,39.63,2668.23,Right-size + weekend off,1253.19
+WL-00429,Fraud Operations,cloud,staging,Data Warehouse,22.57,2005.5,Right-size to 60%,1251.11
+WL-00300,Internal Audit,cloud,production,Managed Redis,23.3,2045.39,Right-size to 60%,1250.95
+WL-01102,Treasury,cloud,production,Secrets Manager,22.65,2007.48,Right-size to 60%,1249.56
+WL-00585,Compliance,cloud,development,Kubernetes Service,23.09,1798.25,Right-size + weekend off,1244.9
+WL-00939,Cyber Security,cloud,production,Block Storage,22.37,1984.97,Right-size to 60%,1244.89
+WL-00457,Fraud Operations,cloud,production,Data Warehouse,24.29,2073.41,Right-size to 60%,1234.13
+WL-00492,Collections,distributed,staging,SQL Server,40.86,3867.74,Right-size to 60%,1233.99
+WL-00567,Internal Audit,distributed,production,Windows Server,40.41,3777.3,Right-size to 60%,1233.25
+WL-01133,Wealth Management,distributed,production,Tomcat,40.82,3853.92,Right-size to 60%,1232.13
+WL-01051,Mortgages,cloud,staging,Secrets Manager,22.55,1971.22,Right-size to 60%,1230.34
+WL-01035,Marketing,distributed,production,WebSphere Application Server,41.25,3931.33,Right-size to 60%,1228.8
+WL-00829,Digital Channels,cloud,staging,Machine Learning Platform,23.51,2019.97,Right-size to 60%,1228.63
+WL-00357,Fraud Operations,cloud,development,Message Queue,25.0,1842.76,Right-size + weekend off,1227.94
+WL-00510,Group Technology,distributed,test,Windows Server,2.81,1225.82,Decommission (idle all year),1225.82
+WL-00650,Payments,cloud,production,Object Storage,23.12,1988.15,Right-size to 60%,1222.02
+WL-00637,Internal Audit,cloud,production,Compute Instances,24.14,2043.68,Right-size to 60%,1221.61
+WL-00082,Cyber Security,distributed,production,Tomcat,2.73,1203.88,Decommission (idle all year),1203.88
+WL-00996,Digital Channels,cloud,production,Streaming Ingest,22.98,1949.92,Right-size to 60%,1203.12
+WL-00526,Cyber Security,cloud,production,Managed Redis,22.85,1938.71,Right-size to 60%,1200.42
+WL-01128,Retail Banking,distributed,production,Tomcat,41.78,3945.82,Right-size to 60%,1198.5
+WL-01137,Insurance,cloud,production,Object Storage,23.81,1986.86,Right-size to 60%,1198.29
+WL-00133,Commercial Banking,cloud,production,Managed PostgreSQL,2.62,1197.87,Decommission (idle all year),1197.87
+WL-00018,Infrastructure,cloud,test,Serverless Functions,23.11,1732.84,Right-size + weekend off,1197.12
+WL-00305,Customer Operations,cloud,production,Machine Learning Platform,24.03,1990.23,Right-size to 60%,1193.16
+WL-01042,UNALLOCATED — find owner first,cloud,development,Managed Redis,23.01,1714.88,Right-size + weekend off,1186.1
+WL-00086,Payments,distributed,production,WebSphere Application Server,41.42,3818.56,Right-size to 60%,1182.2
+WL-00101,Cyber Security,distributed,production,Tomcat,41.53,3819.05,Right-size to 60%,1175.33
+WL-00432,Collections,distributed,staging,NetApp Storage,41.09,3725.44,Right-size to 60%,1174.26
+WL-00288,Wealth Management,distributed,production,Active Directory,40.81,3652.06,Right-size to 60%,1168.24
+WL-00422,Insurance,cloud,production,Container Registry,24.22,1958.71,Right-size to 60%,1168.2
+WL-01063,Wealth Management,distributed,development,WebSphere Application Server,41.05,2571.64,Right-size + weekend off,1165.08
+WL-00424,Mortgages,cloud,production,Managed PostgreSQL,23.54,1904.71,Right-size to 60%,1157.36
+WL-00679,Internal Audit,distributed,production,Tomcat,40.19,3499.4,Right-size to 60%,1155.58
+WL-00292,Mortgages,distributed,production,SQL Server,2.72,1152.96,Decommission (idle all year),1152.96
+WL-00871,Human Resources,cloud,production,Block Storage,2.71,1145.96,Decommission (idle all year),1145.96
+WL-00539,Commercial Banking,distributed,production,WebSphere Application Server,40.24,3456.97,Right-size to 60%,1138.75
+WL-01047,Customer Operations,distributed,staging,Red Hat Enterprise Linux,40.7,3520.67,Right-size to 60%,1132.55
+WL-00014,Customer Operations,cloud,development,Message Queue,24.26,1664.94,Right-size + weekend off,1127.42
+WL-00274,Procurement,cloud,production,Compute Instances,23.29,1830.98,Right-size to 60%,1120.16
+WL-01096,Treasury,cloud,production,Kubernetes Service,23.61,1825.63,Right-size to 60%,1107.11
+WL-00626,Internal Audit,cloud,test,Managed PostgreSQL,23.19,1602.35,Right-size + weekend off,1106.61
+WL-00071,Retail Banking,distributed,production,Veeam Backup,41.87,3653.46,Right-size to 60%,1103.98
+WL-00787,Human Resources,distributed,development,WebSphere Application Server,40.82,2407.09,Right-size + weekend off,1098.54
+WL-00153,Mortgages,distributed,test,F5 Load Balancing,41.08,2426.56,Right-size + weekend off,1097.18
+WL-00647,Fraud Operations,distributed,production,Nagios Monitoring,2.71,1094.41,Decommission (idle all year),1094.41
+WL-00915,Finance,cloud,development,Log Analytics,23.58,1595.1,Right-size + weekend off,1093.72
+WL-00595,Treasury,cloud,development,Message Queue,23.6,1592.7,Right-size + weekend off,1090.67
+WL-00543,Data and Analytics,distributed,development,Red Hat Enterprise Linux,2.69,1089.59,Decommission (idle all year),1089.59
+WL-00857,Insurance,cloud,production,Kubernetes Service,24.13,1822.12,Right-size to 60%,1089.21
+WL-00591,Customer Operations,distributed,development,Active Directory,41.05,2404.12,Right-size + weekend off,1088.36
+WL-00416,Group Technology,distributed,staging,Veeam Backup,41.3,3486.5,Right-size to 60%,1086.79
+WL-00252,Collections,cloud,development,Secrets Manager,24.34,1603.68,Right-size + weekend off,1080.83
+WL-01109,Compliance,cloud,production,Data Warehouse,24.2,1808.28,Right-size to 60%,1078.9
+WL-00970,Customer Operations,cloud,production,Managed PostgreSQL,22.37,1714.0,Right-size to 60%,1075.08
+WL-00169,Insurance,cloud,development,Data Warehouse,24.35,1594.53,Right-size + weekend off,1074.92
+WL-00178,Wealth Management,cloud,production,Secrets Manager,2.64,1067.34,Decommission (idle all year),1067.34
+WL-01150,Wealth Management,distributed,production,Active Directory,42.01,3555.27,Right-size to 60%,1065.77
+WL-01055,Treasury,cloud,production,Secrets Manager,23.7,1756.21,Right-size to 60%,1062.39
+WL-00768,Treasury,cloud,production,Managed Redis,23.86,1762.94,Right-size to 60%,1061.9
+WL-00925,Internal Audit,distributed,development,Tomcat,40.69,2305.22,Right-size + weekend off,1056.49
+WL-00148,Wealth Management,distributed,production,Active Directory,40.76,3290.54,Right-size to 60%,1055.11
+WL-00531,Cyber Security,cloud,production,Message Queue,2.6,1048.5,Decommission (idle all year),1048.5
+WL-00200,Legal,cloud,production,Content Delivery,2.7,1046.25,Decommission (idle all year),1046.25
+WL-00431,Human Resources,cloud,production,Machine Learning Platform,24.54,1768.77,Right-size to 60%,1045.38
+WL-00835,Insurance,distributed,production,Veeam Backup,39.5,3043.45,Right-size to 60%,1040.01
+WL-00098,Commercial Banking,cloud,production,Machine Learning Platform,23.73,1718.81,Right-size to 60%,1039.02
+WL-00024,Mortgages,cloud,production,Block Storage,23.03,1680.02,Right-size to 60%,1035.1
+WL-00076,Group Technology,distributed,development,Nagios Monitoring,2.69,1031.48,Decommission (idle all year),1031.48
+WL-00621,Retail Banking,distributed,production,Veeam Backup,41.26,3301.36,Right-size to 60%,1031.09
+WL-00258,Group Technology,cloud,production,Log Analytics,23.45,1688.64,Right-size to 60%,1028.6
+WL-01052,Mortgages,cloud,production,Managed Redis,22.92,1663.76,Right-size to 60%,1028.07
+WL-00217,Mortgages,distributed,staging,Veeam Backup,41.99,3411.51,Right-size to 60%,1023.94
+WL-00249,Retail Banking,cloud,production,Compute Instances,2.63,1022.25,Decommission (idle all year),1022.25
+WL-01028,Commercial Banking,cloud,production,Kubernetes Service,22.7,1630.2,Right-size to 60%,1013.42
+WL-00815,Risk,distributed,staging,Red Hat Enterprise Linux,40.67,3139.69,Right-size to 60%,1011.61
+WL-00668,Wealth Management,distributed,staging,SQL Server,40.44,3068.7,Right-size to 60%,1000.34
+WL-00864,UNALLOCATED — find owner first,cloud,production,Data Warehouse,23.03,1623.11,Right-size to 60%,1000.0
+WL-01062,Digital Channels,distributed,test,WebSphere Application Server,41.32,2212.83,Right-size + weekend off,993.19
+WL-01038,Cyber Security,cloud,production,Content Delivery,23.39,1623.78,Right-size to 60%,990.71
+WL-00949,Internal Audit,cloud,production,Data Warehouse,2.79,989.55,Decommission (idle all year),989.55
+WL-00313,Human Resources,distributed,production,Red Hat Enterprise Linux,40.16,2963.58,Right-size to 60%,979.71
+WL-01016,Marketing,cloud,production,Data Warehouse,23.94,1628.48,Right-size to 60%,978.79
+WL-00042,UNALLOCATED — find owner first,cloud,test,Object Storage,23.72,1426.91,Right-size + weekend off,976.64
+WL-00811,Data and Analytics,cloud,staging,Managed Redis,23.73,1612.6,Right-size to 60%,974.78
+WL-00075,Collections,cloud,production,Block Storage,24.05,1623.7,Right-size to 60%,972.87
+WL-00707,Risk,cloud,staging,Managed PostgreSQL,22.78,1562.15,Right-size to 60%,968.98
+WL-01058,Collections,cloud,production,Streaming Ingest,23.1,1558.46,Right-size to 60%,958.47
+WL-00759,Mortgages,distributed,staging,Tomcat,40.11,2877.16,Right-size to 60%,954.01
+WL-00964,Compliance,distributed,development,WebSphere Application Server,2.73,951.08,Decommission (idle all year),951.08
+WL-00413,Procurement,cloud,production,Machine Learning Platform,23.76,1573.97,Right-size to 60%,950.79
+WL-00597,Collections,distributed,production,Tomcat,2.66,949.72,Decommission (idle all year),949.72
+WL-00987,Fraud Operations,distributed,production,Nagios Monitoring,2.71,949.1,Decommission (idle all year),949.1
+WL-00411,Commercial Banking,cloud,production,Data Warehouse,23.69,1568.34,Right-size to 60%,949.1
+WL-00497,Marketing,distributed,test,Oracle Database,42.28,2178.54,Right-size + weekend off,949.01
+WL-00883,Digital Channels,distributed,production,Nagios Monitoring,39.5,2750.31,Right-size to 60%,939.54
+WL-00819,Insurance,cloud,production,API Gateway,2.79,938.55,Decommission (idle all year),938.55
+WL-01077,Data and Analytics,cloud,production,Container Registry,24.98,1603.6,Right-size to 60%,935.91
+WL-00338,Fraud Operations,distributed,test,F5 Load Balancing,39.56,1973.8,Right-size + weekend off,934.62
+WL-00074,Cyber Security,cloud,development,API Gateway,2.63,932.04,Decommission (idle all year),932.04
+WL-00583,Marketing,distributed,production,Nagios Monitoring,40.74,2898.29,Right-size to 60%,930.15
+WL-00063,Commercial Banking,cloud,production,Managed Redis,23.48,1525.31,Right-size to 60%,928.37
+WL-00408,Data and Analytics,cloud,production,Streaming Ingest,21.93,1462.81,Right-size to 60%,928.22
+WL-00691,Group Technology,cloud,development,Streaming Ingest,23.24,1329.17,Right-size + weekend off,916.45
+WL-00285,Infrastructure,cloud,production,Object Storage,22.45,1462.38,Right-size to 60%,915.32
+WL-00218,Marketing,cloud,staging,Log Analytics,23.62,1506.0,Right-size to 60%,913.25
+WL-01026,Cards,cloud,test,Managed PostgreSQL,22.56,1299.87,Right-size + weekend off,907.73
+WL-00750,Cyber Security,cloud,production,API Gateway,2.7,907.05,Decommission (idle all year),907.05
+WL-00291,Procurement,cloud,staging,Streaming Ingest,24.0,1510.84,Right-size to 60%,906.52
+WL-00605,UNALLOCATED — find owner first,distributed,staging,Tomcat,41.32,2887.64,Right-size to 60%,899.2
+WL-00712,Compliance,distributed,development,VMware vSphere,40.4,1949.56,Right-size + weekend off,898.9
+WL-01021,Customer Operations,cloud,production,Streaming Ingest,23.65,1483.47,Right-size to 60%,898.82
+WL-00943,Legal,cloud,development,Compute Instances,25.72,1365.51,Right-size + weekend off,896.7
+WL-00765,Data and Analytics,distributed,staging,Windows Server,40.14,2708.06,Right-size to 60%,896.45
+WL-00561,Human Resources,cloud,production,Container Registry,23.32,1463.57,Right-size to 60%,894.73
+WL-00587,Risk,distributed,staging,F5 Load Balancing,2.66,892.06,Decommission (idle all year),892.06
+WL-00727,Fraud Operations,cloud,staging,Block Storage,23.18,1452.23,Right-size to 60%,891.09
+WL-00044,Data and Analytics,distributed,production,Oracle Database,40.75,2777.31,Right-size to 60%,890.88
+WL-00590,Cyber Security,distributed,production,Windows Server,41.57,2898.61,Right-size to 60%,890.46
+WL-00716,Treasury,distributed,production,Tomcat,41.47,2877.15,Right-size to 60%,888.45
+WL-00674,Insurance,cloud,production,Object Storage,22.25,1409.62,Right-size to 60%,886.8
+WL-01147,Fraud Operations,distributed,production,Red Hat Enterprise Linux,40.84,2776.75,Right-size to 60%,886.57
+WL-00557,Marketing,distributed,production,Nagios Monitoring,41.76,2912.9,Right-size to 60%,885.36
+WL-00872,Internal Audit,cloud,production,Message Queue,25.06,1520.15,Right-size to 60%,885.13
+WL-00903,Insurance,cloud,production,Message Queue,23.56,1452.44,Right-size to 60%,882.11
+WL-01014,Collections,distributed,production,Veeam Backup,44.18,3335.18,Right-size to 60%,879.65
+WL-01086,Commercial Banking,distributed,production,Nagios Monitoring,39.84,2616.04,Right-size to 60%,878.77
+WL-01093,Fraud Operations,cloud,staging,Data Warehouse,24.11,1464.52,Right-size to 60%,875.96
+WL-01089,Digital Channels,distributed,development,Veeam Backup,2.74,875.44,Decommission (idle all year),875.44
+WL-00400,Collections,distributed,development,Tomcat,40.93,1927.82,Right-size + weekend off,875.03
+WL-00969,Fraud Operations,distributed,staging,WebSphere Application Server,43.2,3125.55,Right-size to 60%,874.93
+WL-00501,Internal Audit,distributed,development,Nagios Monitoring,41.97,1980.26,Right-size + weekend off,872.76
+WL-00003,Wealth Management,distributed,test,Windows Server,41.65,1955.91,Right-size + weekend off,870.06
+WL-00990,Legal,cloud,staging,Machine Learning Platform,23.68,1436.88,Right-size to 60%,869.71
+WL-00613,Infrastructure,distributed,staging,F5 Load Balancing,41.4,2792.8,Right-size to 60%,865.65
+WL-00840,Payments,distributed,production,Windows Server,2.77,863.21,Decommission (idle all year),863.21
+WL-00930,Commercial Banking,cloud,production,Secrets Manager,23.58,1421.19,Right-size to 60%,862.63
+WL-00506,Procurement,distributed,test,Oracle Database,40.74,1885.25,Right-size + weekend off,862.56
+WL-00730,Internal Audit,cloud,production,Message Queue,22.66,1384.6,Right-size to 60%,861.64
+WL-00141,Mortgages,distributed,production,Veeam Backup,41.33,2758.26,Right-size to 60%,858.45
+WL-01012,Collections,distributed,development,Nagios Monitoring,41.23,1897.57,Right-size + weekend off,858.21
+WL-00961,Human Resources,cloud,development,Data Warehouse,22.86,1227.86,Right-size + weekend off,854.1
+WL-00726,Internal Audit,distributed,development,WebSphere Application Server,2.76,853.2,Decommission (idle all year),853.2
+WL-00678,Procurement,cloud,production,Content Delivery,24.07,1419.73,Right-size to 60%,850.07
+WL-00012,UNALLOCATED — find owner first,distributed,development,F5 Load Balancing,41.14,1883.83,Right-size + weekend off,849.6
+WL-01075,Treasury,distributed,production,Tomcat,39.73,2509.28,Right-size to 60%,847.8
+WL-00778,Payments,cloud,staging,Managed PostgreSQL,22.58,1357.43,Right-size to 60%,846.6
+WL-00627,Data and Analytics,distributed,production,Veeam Backup,41.63,2763.34,Right-size to 60%,846.05
+WL-00177,Procurement,cloud,production,Data Warehouse,22.16,1340.83,Right-size to 60%,845.59
+WL-00663,Customer Operations,cloud,test,Serverless Functions,23.83,1235.96,Right-size + weekend off,843.84
+WL-00126,Wealth Management,cloud,production,Object Storage,22.59,1348.87,Right-size to 60%,840.99
+WL-00724,Infrastructure,cloud,production,Content Delivery,24.05,1403.35,Right-size to 60%,840.9
+WL-00171,Finance,cloud,production,Managed PostgreSQL,23.43,1378.56,Right-size to 60%,840.34
+WL-00866,Commercial Banking,cloud,development,Message Queue,24.96,1257.22,Right-size + weekend off,839.65
+WL-00602,Marketing,cloud,staging,Container Registry,22.44,1338.92,Right-size to 60%,838.1
+WL-01023,Cyber Security,cloud,development,Block Storage,22.62,1191.44,Right-size + weekend off,830.82
+WL-01045,Mortgages,cloud,production,Content Delivery,23.39,1360.76,Right-size to 60%,830.22
+WL-00658,Risk,distributed,production,Veeam Backup,40.35,2529.06,Right-size to 60%,828.22
+WL-00828,Retail Banking,cloud,production,Managed PostgreSQL,23.47,1358.51,Right-size to 60%,827.15
+WL-01087,Data and Analytics,cloud,staging,Serverless Functions,24.8,1406.59,Right-size to 60%,825.16
+WL-01092,Cyber Security,distributed,production,WebSphere Application Server,40.66,2547.52,Right-size to 60%,820.99
+WL-00832,Cards,distributed,production,NetApp Storage,41.59,2671.13,Right-size to 60%,819.39
+WL-00622,Risk,cloud,development,Managed PostgreSQL,22.79,1173.78,Right-size + weekend off,815.97
+WL-00131,Infrastructure,cloud,development,Serverless Functions,2.66,813.07,Decommission (idle all year),813.07
+WL-00245,Marketing,distributed,development,Nagios Monitoring,40.04,1744.07,Right-size + weekend off,812.99
+WL-01057,UNALLOCATED — find owner first,cloud,test,Content Delivery,23.07,1169.55,Right-size + weekend off,810.24
+WL-00186,Collections,cloud,production,Managed Redis,25.76,1416.03,Right-size to 60%,808.18
+WL-00558,UNALLOCATED — find owner first,cloud,production,Log Analytics,23.05,1312.08,Right-size to 60%,808.11
+WL-00121,Data and Analytics,distributed,production,NetApp Storage,42.59,2773.49,Right-size to 60%,804.57
+WL-00900,Data and Analytics,cloud,production,Serverless Functions,22.96,1302.64,Right-size to 60%,804.25
+WL-00877,Customer Operations,cloud,production,Machine Learning Platform,24.77,1368.9,Right-size to 60%,803.76
+WL-00895,Retail Banking,cloud,production,Managed Redis,22.54,1286.51,Right-size to 60%,803.28
+WL-00149,Infrastructure,distributed,production,Active Directory,41.17,2559.04,Right-size to 60%,803.08
+WL-00048,Treasury,cloud,production,Object Storage,22.59,1275.7,Right-size to 60%,795.43
+WL-00049,Fraud Operations,cloud,staging,Machine Learning Platform,23.17,1293.94,Right-size to 60%,794.36
+WL-00337,Fraud Operations,distributed,staging,F5 Load Balancing,2.65,792.77,Decommission (idle all year),792.77
+WL-00653,Digital Channels,distributed,production,Tomcat,40.64,2451.82,Right-size to 60%,791.12
+WL-00224,Cards,cloud,production,Message Queue,22.77,1270.87,Right-size to 60%,788.51
+WL-00673,Marketing,cloud,development,Secrets Manager,24.53,1171.11,Right-size + weekend off,786.62
+WL-00293,Payments,cloud,test,Kubernetes Service,23.17,1139.46,Right-size + weekend off,785.77
+WL-00388,Procurement,distributed,production,Active Directory,41.27,2509.66,Right-size to 60%,783.28
+WL-00769,Treasury,distributed,production,SQL Server,41.47,2534.51,Right-size to 60%,782.78
+WL-01037,Cyber Security,cloud,production,Kubernetes Service,23.57,1289.11,Right-size to 60%,782.73
+WL-00767,Legal,cloud,staging,Message Queue,22.0,1235.61,Right-size to 60%,782.47
+WL-00199,Legal,distributed,production,NetApp Storage,41.2,2491.5,Right-size to 60%,780.85
+WL-00592,Fraud Operations,cloud,production,Compute Instances,24.17,1305.21,Right-size to 60%,779.44
+WL-00396,Payments,distributed,production,WebSphere Application Server,2.7,776.1,Decommission (idle all year),776.1
+WL-00732,Cyber Security,distributed,test,VMware vSphere,42.88,1817.19,Right-size + weekend off,774.68
+WL-00236,Legal,distributed,production,F5 Load Balancing,2.79,772.2,Decommission (idle all year),772.2
+WL-00204,UNALLOCATED — find owner first,cloud,development,Compute Instances,23.59,1127.78,Right-size + weekend off,771.88
+WL-00041,Commercial Banking,cloud,staging,Serverless Functions,23.88,1281.45,Right-size to 60%,771.39
+WL-00421,Group Technology,distributed,development,NetApp Storage,40.92,1684.17,Right-size + weekend off,765.3
+WL-00028,Treasury,cloud,development,Block Storage,23.76,1117.9,Right-size + weekend off,765.18
+WL-00745,Group Technology,distributed,development,Tomcat,2.7,756.0,Decommission (idle all year),756.0
+WL-00134,Internal Audit,cloud,production,Log Analytics,22.84,1218.89,Right-size to 60%,754.85
+WL-00921,Group Technology,cloud,production,Managed Redis,24.15,1261.6,Right-size to 60%,753.83
+WL-00662,Insurance,cloud,production,Object Storage,23.66,1229.95,Right-size to 60%,745.01
+WL-00865,Cyber Security,distributed,production,Windows Server,42.03,2478.81,Right-size to 60%,742.24
+WL-00231,Legal,cloud,staging,Managed Redis,24.3,1246.24,Right-size to 60%,741.51
+WL-00296,Human Resources,cloud,development,Message Queue,22.18,1048.09,Right-size + weekend off,738.5
+WL-00140,Collections,cloud,test,API Gateway,2.64,735.67,Decommission (idle all year),735.67
+WL-00281,UNALLOCATED — find owner first,cloud,production,Log Analytics,23.34,1200.43,Right-size to 60%,733.41
+WL-00928,Collections,cloud,production,Content Delivery,23.3,1191.71,Right-size to 60%,729.01
+WL-00015,Compliance,distributed,production,Red Hat Enterprise Linux,41.82,2401.92,Right-size to 60%,727.78
+WL-00698,Group Technology,cloud,production,Managed Redis,23.46,1185.89,Right-size to 60%,722.14
+WL-00762,Finance,cloud,development,Machine Learning Platform,22.95,1035.55,Right-size + weekend off,719.75
+WL-00551,Collections,cloud,development,Streaming Ingest,23.26,1042.45,Right-size + weekend off,719.18
+WL-00412,Cyber Security,cloud,production,Log Analytics,24.43,1210.76,Right-size to 60%,717.79
+WL-00889,Finance,cloud,production,Kubernetes Service,23.16,1166.15,Right-size to 60%,716.03
+WL-00017,Insurance,cloud,production,Kubernetes Service,23.48,1171.62,Right-size to 60%,713.16
+WL-00754,Internal Audit,distributed,production,Nagios Monitoring,41.02,2251.61,Right-size to 60%,712.31
+WL-01073,UNALLOCATED — find owner first,cloud,production,Compute Instances,22.25,1130.94,Right-size to 60%,711.47
+WL-00165,Wealth Management,distributed,test,Tomcat,41.54,1579.91,Right-size + weekend off,708.02
+WL-00058,Insurance,distributed,production,Oracle Database,40.48,2174.17,Right-size to 60%,707.15
+WL-00629,Procurement,cloud,development,Object Storage,23.62,1029.0,Right-size + weekend off,704.83
+WL-00251,Cyber Security,cloud,staging,Content Delivery,22.99,1139.83,Right-size to 60%,703.13
+WL-00067,UNALLOCATED — find owner first,distributed,development,NetApp Storage,41.56,1570.35,Right-size + weekend off,700.9
+WL-00785,Collections,cloud,development,Data Warehouse,23.36,1016.01,Right-size + weekend off,699.7
+WL-00206,Marketing,cloud,staging,Managed Redis,23.15,1137.86,Right-size to 60%,698.84
+WL-00777,Fraud Operations,cloud,production,API Gateway,22.19,1107.43,Right-size to 60%,697.95
+WL-00155,Procurement,distributed,production,Red Hat Enterprise Linux,42.26,2355.22,Right-size to 60%,696.55
+WL-00545,Commercial Banking,distributed,production,Veeam Backup,40.67,2153.13,Right-size to 60%,693.54
+WL-00460,Digital Channels,distributed,development,NetApp Storage,40.78,1517.23,Right-size + weekend off,691.13
+WL-00202,Finance,distributed,staging,SQL Server,42.28,2334.29,Right-size to 60%,689.47
+WL-00897,Commercial Banking,distributed,production,Tomcat,2.72,682.44,Decommission (idle all year),682.44
+WL-00434,Fraud Operations,cloud,development,Content Delivery,24.18,1006.18,Right-size + weekend off,682.33
+WL-00454,Finance,distributed,production,SQL Server,41.51,2213.03,Right-size to 60%,681.93
+WL-00158,Mortgages,cloud,production,Serverless Functions,22.71,1094.04,Right-size to 60%,679.86
+WL-00369,Compliance,distributed,production,Tomcat,40.38,2076.47,Right-size to 60%,678.95
+WL-00437,Cards,cloud,production,API Gateway,23.79,1120.95,Right-size to 60%,676.48
+WL-00466,UNALLOCATED — find owner first,cloud,production,Serverless Functions,23.57,1110.6,Right-size to 60%,674.3
+WL-00725,Human Resources,distributed,production,Red Hat Enterprise Linux,42.63,2322.24,Right-size to 60%,672.13
+WL-00632,Finance,distributed,production,SQL Server,41.19,2135.58,Right-size to 60%,669.59
+WL-00521,Risk,distributed,production,Windows Server,40.43,2051.24,Right-size to 60%,668.97
+WL-00978,Treasury,cloud,production,Streaming Ingest,22.49,1069.33,Right-size to 60%,668.59
+WL-00625,Human Resources,cloud,production,Streaming Ingest,23.57,1093.36,Right-size to 60%,663.9
+WL-00366,Commercial Banking,cloud,production,Object Storage,22.9,1073.22,Right-size to 60%,663.68
+WL-01009,Finance,distributed,production,Active Directory,41.39,2117.08,Right-size to 60%,656.77
+WL-00942,Cyber Security,distributed,production,Red Hat Enterprise Linux,40.38,2000.57,Right-size to 60%,654.09
+WL-00649,Infrastructure,cloud,production,Data Warehouse,23.62,1075.01,Right-size to 60%,651.75
+WL-00514,Treasury,distributed,development,NetApp Storage,41.78,1472.18,Right-size + weekend off,651.62
+WL-00598,Risk,cloud,development,Message Queue,2.73,650.69,Decommission (idle all year),650.69
+WL-00161,Fraud Operations,cloud,staging,Object Storage,23.6,1069.37,Right-size to 60%,648.66
+WL-00384,Finance,cloud,staging,Object Storage,23.94,1077.29,Right-size to 60%,647.52
+WL-00094,Finance,cloud,staging,Object Storage,22.03,1021.84,Right-size to 60%,646.68
+WL-00435,Internal Audit,cloud,development,Container Registry,22.74,923.89,Right-size + weekend off,643.86
+WL-00260,Mortgages,distributed,development,NetApp Storage,40.05,1370.82,Right-size + weekend off,640.46
+WL-00331,Finance,distributed,development,Red Hat Enterprise Linux,40.7,1391.09,Right-size + weekend off,639.61
+WL-00717,Customer Operations,cloud,production,Data Warehouse,23.28,1044.91,Right-size to 60%,639.54
+WL-00294,UNALLOCATED — find owner first,distributed,development,Oracle Database,41.23,1416.81,Right-size + weekend off,636.67
+WL-01053,Risk,distributed,staging,Red Hat Enterprise Linux,2.83,635.49,Decommission (idle all year),635.49
+WL-00302,Infrastructure,cloud,development,Managed PostgreSQL,21.84,895.08,Right-size + weekend off,633.77
+WL-00031,UNALLOCATED — find owner first,cloud,production,API Gateway,22.9,1023.4,Right-size to 60%,632.89
+WL-00027,UNALLOCATED — find owner first,distributed,test,Active Directory,41.4,1403.15,Right-size + weekend off,629.68
+WL-01018,Customer Operations,distributed,development,Veeam Backup,40.13,1357.27,Right-size + weekend off,628.96
+WL-00904,Customer Operations,distributed,production,NetApp Storage,43.15,2228.42,Right-size to 60%,625.99
+WL-00550,Marketing,cloud,staging,Secrets Manager,24.19,1047.56,Right-size to 60%,625.29
+WL-00710,Collections,cloud,production,Object Storage,23.92,1012.07,Right-size to 60%,608.58
+WL-00144,Retail Banking,distributed,production,Windows Server,40.53,1869.05,Right-size to 60%,606.44
+WL-00196,UNALLOCATED — find owner first,distributed,production,Active Directory,42.36,2059.92,Right-size to 60%,605.6
+WL-00447,Legal,cloud,production,Container Registry,24.08,1008.1,Right-size to 60%,603.59
+WL-00198,Commercial Banking,distributed,development,SQL Server,42.34,1375.54,Right-size + weekend off,602.35
+WL-00030,UNALLOCATED — find owner first,cloud,production,Log Analytics,23.44,987.72,Right-size to 60%,601.88
+WL-01110,Cards,cloud,production,Object Storage,23.65,991.3,Right-size to 60%,600.63
+WL-00570,Fraud Operations,cloud,production,Data Warehouse,24.48,1010.46,Right-size to 60%,598.12
+WL-00373,Infrastructure,cloud,development,Machine Learning Platform,23.35,864.14,Right-size + weekend off,594.75
+WL-00306,Internal Audit,cloud,production,Log Analytics,24.26,995.61,Right-size to 60%,592.99
+WL-00542,Human Resources,cloud,staging,Compute Instances,22.75,951.65,Right-size to 60%,590.85
+WL-00525,Risk,cloud,production,Kubernetes Service,22.19,935.94,Right-size to 60%,589.77
+WL-00784,Fraud Operations,cloud,production,Kubernetes Service,2.67,589.61,Decommission (idle all year),589.61
+WL-00983,Group Technology,cloud,development,Object Storage,24.34,865.66,Right-size + weekend off,584.35
+WL-00708,Procurement,cloud,staging,Log Analytics,22.92,943.96,Right-size to 60%,583.44
+WL-01149,Finance,cloud,production,API Gateway,22.61,934.54,Right-size to 60%,582.43
+WL-00993,Data and Analytics,distributed,development,Tomcat,42.12,1327.78,Right-size + weekend off,582.12
+WL-00102,Wealth Management,distributed,production,WebSphere Application Server,41.1,1847.24,Right-size to 60%,582.0
+WL-00741,Collections,cloud,staging,Log Analytics,23.06,932.05,Right-size to 60%,573.86
+WL-00050,Risk,distributed,production,SQL Server,41.17,1826.4,Right-size to 60%,573.32
+WL-00512,Cyber Security,cloud,development,Message Queue,22.94,821.99,Right-size + weekend off,570.44
+WL-00163,Internal Audit,cloud,staging,Managed PostgreSQL,23.7,932.85,Right-size to 60%,564.35
+WL-01000,Collections,distributed,staging,SQL Server,42.25,1896.0,Right-size to 60%,560.94
+WL-00036,Payments,cloud,staging,Machine Learning Platform,23.3,916.19,Right-size to 60%,560.36
+WL-00263,Cards,distributed,staging,SQL Server,41.72,1838.49,Right-size to 60%,560.03
+WL-00878,Data and Analytics,cloud,production,Message Queue,22.63,895.62,Right-size to 60%,557.77
+WL-00669,Cyber Security,cloud,development,Block Storage,22.61,792.99,Right-size + weekend off,553.88
+WL-00189,Data and Analytics,distributed,production,WebSphere Application Server,41.37,1782.92,Right-size to 60%,553.5
+WL-00399,Data and Analytics,distributed,production,Oracle Database,41.24,1762.69,Right-size to 60%,551.28
+WL-00594,Group Technology,distributed,production,Tomcat,40.78,1719.82,Right-size to 60%,550.91
+WL-00333,Insurance,distributed,test,Veeam Backup,41.38,1226.28,Right-size + weekend off,549.85
+WL-01001,Commercial Banking,cloud,test,Kubernetes Service,24.06,809.0,Right-size + weekend off,548.43
+WL-00564,Collections,cloud,production,Log Analytics,22.79,880.74,Right-size to 60%,546.16
+WL-00132,Mortgages,cloud,staging,Serverless Functions,24.34,904.41,Right-size to 60%,537.5
+WL-00892,Payments,cloud,production,Data Warehouse,23.44,881.84,Right-size to 60%,537.31
+WL-00353,Cards,distributed,development,WebSphere Application Server,39.45,1130.44,Right-size + weekend off,537.23
+WL-00238,Commercial Banking,cloud,test,Container Registry,23.06,773.85,Right-size + weekend off,536.18
+WL-00817,Treasury,cloud,production,Managed Redis,22.6,860.0,Right-size to 60%,536.04
+WL-00574,Risk,distributed,development,Oracle Database,39.43,1122.65,Right-size + weekend off,533.57
+WL-00265,Fraud Operations,cloud,production,Data Warehouse,22.49,852.95,Right-size to 60%,533.28
+WL-01118,Cyber Security,cloud,development,Managed PostgreSQL,22.12,753.38,Right-size + weekend off,530.94
+WL-00298,Retail Banking,cloud,staging,Block Storage,22.29,844.55,Right-size to 60%,530.83
+WL-00981,Payments,distributed,production,VMware vSphere,41.07,1675.99,Right-size to 60%,528.88
+WL-00484,Retail Banking,distributed,development,Active Directory,41.85,1193.73,Right-size + weekend off,528.29
+WL-00304,Wealth Management,cloud,production,Message Queue,23.33,857.64,Right-size to 60%,524.16
+WL-00997,Retail Banking,cloud,production,Streaming Ingest,23.67,864.05,Right-size to 60%,523.24
+WL-00322,Payments,distributed,staging,VMware vSphere,42.23,1760.95,Right-size to 60%,521.47
+WL-00580,Commercial Banking,distributed,production,Red Hat Enterprise Linux,40.41,1595.93,Right-size to 60%,520.95
+WL-00280,Mortgages,distributed,staging,Active Directory,42.49,1769.12,Right-size to 60%,516.19
+WL-00965,Legal,distributed,production,NetApp Storage,40.3,1567.6,Right-size to 60%,514.8
+WL-00882,Data and Analytics,cloud,production,Managed Redis,24.67,870.13,Right-size to 60%,512.29
+WL-00320,Compliance,distributed,production,F5 Load Balancing,43.42,1848.86,Right-size to 60%,510.83
+WL-01146,Digital Channels,cloud,staging,Managed PostgreSQL,2.66,509.37,Decommission (idle all year),509.37
+WL-00947,Treasury,cloud,production,Serverless Functions,23.94,847.51,Right-size to 60%,509.32
+WL-01004,Compliance,distributed,production,Red Hat Enterprise Linux,41.68,1666.33,Right-size to 60%,508.89
+WL-00541,Fraud Operations,cloud,production,Compute Instances,23.72,841.06,Right-size to 60%,508.56
+WL-00761,Payments,distributed,staging,Oracle Database,41.7,1663.42,Right-size to 60%,507.32
+WL-00789,Data and Analytics,cloud,development,Message Queue,23.27,734.21,Right-size + weekend off,506.34
+WL-01141,Human Resources,distributed,production,Windows Server,41.6,1650.09,Right-size to 60%,506.13
+WL-01140,Finance,cloud,production,API Gateway,23.8,832.09,Right-size to 60%,502.07
+WL-00485,Fraud Operations,cloud,production,Object Storage,2.71,501.59,Decommission (idle all year),501.59
+WL-00511,Cyber Security,distributed,production,F5 Load Balancing,40.95,1573.16,Right-size to 60%,499.41
+WL-00461,Customer Operations,distributed,staging,Windows Server,41.12,1584.02,Right-size to 60%,498.49
+WL-00449,Insurance,cloud,production,Compute Instances,22.45,793.71,Right-size to 60%,496.68
+WL-00105,Treasury,cloud,staging,Block Storage,24.15,829.69,Right-size to 60%,495.72
+WL-00477,Treasury,cloud,test,Compute Instances,23.12,715.36,Right-size + weekend off,495.68
+WL-00614,Insurance,distributed,production,Veeam Backup,42.28,1677.61,Right-size to 60%,495.32
+WL-00813,Human Resources,distributed,development,Tomcat,42.52,1136.02,Right-size + weekend off,488.59
+WL-00197,Commercial Banking,cloud,production,Compute Instances,24.08,814.7,Right-size to 60%,487.76
+WL-00208,Procurement,cloud,staging,Kubernetes Service,22.34,771.89,Right-size to 60%,484.44
+WL-00486,Customer Operations,distributed,development,SQL Server,41.29,1077.73,Right-size + weekend off,483.76
+WL-00841,Commercial Banking,cloud,production,Object Storage,23.87,800.69,Right-size to 60%,482.13
+WL-00657,Wealth Management,cloud,production,Streaming Ingest,23.97,802.42,Right-size to 60%,481.91
+WL-00908,Fraud Operations,cloud,production,Streaming Ingest,23.2,777.22,Right-size to 60%,476.67
+WL-00237,Finance,cloud,test,Managed Redis,23.62,693.4,Right-size + weekend off,475.3
+WL-00203,Legal,cloud,development,Serverless Functions,22.4,677.21,Right-size + weekend off,475.09
+WL-00112,Payments,distributed,production,VMware vSphere,40.67,1466.35,Right-size to 60%,472.35
+WL-00791,UNALLOCATED — find owner first,cloud,production,Serverless Functions,22.05,741.85,Right-size to 60%,469.2
+WL-00215,Customer Operations,distributed,production,Tomcat,42.65,1591.32,Right-size to 60%,460.12
+WL-00349,Compliance,cloud,development,Managed Redis,23.91,670.3,Right-size + weekend off,456.99
+WL-00115,Cyber Security,distributed,production,Active Directory,39.92,1349.56,Right-size to 60%,451.73
+WL-00128,Internal Audit,cloud,production,Serverless Functions,23.54,742.91,Right-size to 60%,451.5
+WL-00009,Cyber Security,distributed,staging,Oracle Database,41.06,1424.9,Right-size to 60%,449.75
+WL-00415,Insurance,distributed,production,Red Hat Enterprise Linux,42.97,1583.35,Right-size to 60%,449.38
+WL-00358,Customer Operations,cloud,production,Secrets Manager,2.67,448.31,Decommission (idle all year),448.31
+WL-00706,Legal,distributed,production,SQL Server,41.58,1450.19,Right-size to 60%,445.31
+WL-00610,Payments,cloud,development,Managed PostgreSQL,21.95,629.12,Right-size + weekend off,444.4
+WL-00962,Payments,cloud,development,Kubernetes Service,22.67,637.16,Right-size + weekend off,444.3
+WL-00375,Mortgages,cloud,production,Content Delivery,23.82,733.27,Right-size to 60%,442.15
+WL-00417,Internal Audit,cloud,development,Managed PostgreSQL,23.04,637.92,Right-size + weekend off,441.59
+WL-00825,Fraud Operations,distributed,production,Oracle Database,40.39,1347.02,Right-size to 60%,440.24
+WL-00185,Marketing,distributed,test,NetApp Storage,41.34,974.85,Right-size + weekend off,439.42
+WL-01117,Mortgages,cloud,production,Log Analytics,23.31,715.21,Right-size to 60%,437.38
+WL-01079,Fraud Operations,cloud,test,Secrets Manager,23.14,633.46,Right-size + weekend off,437.18
+WL-01024,Infrastructure,cloud,development,Data Warehouse,23.64,633.33,Right-size + weekend off,433.88
+WL-00559,Retail Banking,distributed,production,Veeam Backup,42.67,1494.63,Right-size to 60%,431.77
+WL-00630,Retail Banking,cloud,production,Managed PostgreSQL,24.17,718.61,Right-size to 60%,429.17
+WL-00757,Treasury,cloud,production,Machine Learning Platform,23.88,712.27,Right-size to 60%,428.8
+WL-00999,Internal Audit,distributed,development,Nagios Monitoring,41.43,954.22,Right-size + weekend off,426.41
+WL-00859,Marketing,cloud,development,Object Storage,22.53,608.84,Right-size + weekend off,425.25
+WL-01123,Group Technology,cloud,development,Object Storage,22.76,609.43,Right-size + weekend off,424.35
+WL-00332,Compliance,cloud,production,Compute Instances,22.77,683.63,Right-size to 60%,424.18
+WL-00933,Commercial Banking,distributed,development,VMware vSphere,40.72,929.75,Right-size + weekend off,423.88
+WL-00529,UNALLOCATED — find owner first,cloud,staging,Object Storage,2.72,422.65,Decommission (idle all year),422.65
+WL-00478,Marketing,cloud,test,Secrets Manager,22.82,604.59,Right-size + weekend off,421.26
+WL-00248,Internal Audit,cloud,development,Managed PostgreSQL,23.66,614.6,Right-size + weekend off,420.31
+WL-00917,UNALLOCATED — find owner first,cloud,production,Serverless Functions,23.46,684.03,Right-size to 60%,416.6
+WL-00977,Retail Banking,distributed,production,Red Hat Enterprise Linux,39.43,1213.56,Right-size to 60%,415.99
+WL-00575,UNALLOCATED — find owner first,cloud,test,Machine Learning Platform,23.03,596.3,Right-size + weekend off,413.21
+WL-00078,Compliance,cloud,production,Serverless Functions,2.9,407.4,Decommission (idle all year),407.4
+WL-00731,Procurement,cloud,production,Compute Instances,2.76,407.36,Decommission (idle all year),407.36
+WL-00407,Fraud Operations,distributed,production,WebSphere Application Server,40.61,1253.3,Right-size to 60%,405.01
+WL-00991,UNALLOCATED — find owner first,distributed,development,Oracle Database,41.27,903.59,Right-size + weekend off,404.12
+WL-00307,Cyber Security,cloud,development,Log Analytics,23.28,580.5,Right-size + weekend off,399.63
+WL-00456,Retail Banking,cloud,production,Managed PostgreSQL,23.39,650.67,Right-size to 60%,396.99
+WL-00899,Fraud Operations,distributed,production,Red Hat Enterprise Linux,40.99,1244.11,Right-size to 60%,394.17
+WL-00008,Mortgages,distributed,development,Tomcat,41.62,880.29,Right-size + weekend off,391.98
+WL-00162,Risk,distributed,test,VMware vSphere,40.46,849.95,Right-size + weekend off,391.9
+WL-00801,UNALLOCATED — find owner first,cloud,production,API Gateway,23.14,635.62,Right-size to 60%,390.46
+WL-00979,Customer Operations,distributed,production,WebSphere Application Server,40.36,1191.62,Right-size to 60%,390.15
+WL-00061,Compliance,cloud,staging,Secrets Manager,23.24,630.76,Right-size to 60%,386.4
+WL-00491,Collections,distributed,production,Oracle Database,40.6,1194.31,Right-size to 60%,386.08
+WL-00380,Wealth Management,cloud,production,Data Warehouse,23.03,621.5,Right-size to 60%,382.98
+WL-00397,Data and Analytics,cloud,test,Streaming Ingest,23.53,558.74,Right-size + weekend off,382.71
+WL-00665,Finance,cloud,staging,Kubernetes Service,23.13,622.07,Right-size to 60%,382.29
+WL-00534,Fraud Operations,cloud,production,Container Registry,24.02,636.88,Right-size to 60%,381.94
+WL-00450,Infrastructure,cloud,staging,Machine Learning Platform,24.17,638.72,Right-size to 60%,381.45
+WL-00295,Human Resources,cloud,development,Object Storage,23.91,560.25,Right-size + weekend off,381.4
+WL-00952,Payments,cloud,production,Serverless Functions,22.73,613.91,Right-size to 60%,381.39
+WL-00004,Data and Analytics,cloud,development,Kubernetes Service,22.24,538.16,Right-size + weekend off,378.41
+WL-00593,Commercial Banking,cloud,development,Object Storage,22.89,544.93,Right-size + weekend off,377.82
+WL-01030,Legal,cloud,production,Serverless Functions,22.93,610.92,Right-size to 60%,377.45
+WL-00690,Group Technology,cloud,production,Managed Redis,22.54,604.56,Right-size to 60%,377.44
+WL-01122,Legal,cloud,test,Managed PostgreSQL,23.29,546.08,Right-size + weekend off,376.33
+WL-00635,Procurement,cloud,production,Container Registry,23.3,614.52,Right-size to 60%,375.88
+WL-01007,Mortgages,cloud,production,Managed Redis,24.22,628.05,Right-size to 60%,374.51
+WL-00023,Payments,distributed,production,Nagios Monitoring,40.78,1160.76,Right-size to 60%,371.85
+WL-00654,Finance,distributed,staging,Windows Server,41.19,1184.17,Right-size to 60%,371.2
+WL-00808,Cards,cloud,production,Streaming Ingest,23.9,616.49,Right-size to 60%,370.87
+WL-00016,Collections,cloud,staging,Machine Learning Platform,24.27,620.95,Right-size to 60%,369.82
+WL-00844,Procurement,cloud,production,API Gateway,23.01,597.71,Right-size to 60%,368.52
+WL-00929,Mortgages,cloud,production,Machine Learning Platform,24.13,612.81,Right-size to 60%,366.35
+WL-00982,Internal Audit,cloud,production,Log Analytics,24.18,612.77,Right-size to 60%,365.86
+WL-00709,Legal,cloud,production,Kubernetes Service,23.27,596.5,Right-size to 60%,365.13
+WL-00006,Fraud Operations,cloud,development,Content Delivery,22.78,520.21,Right-size + weekend off,362.37
+WL-00855,Payments,distributed,development,SQL Server,40.73,785.9,Right-size + weekend off,360.6
+WL-00060,UNALLOCATED — find owner first,cloud,production,Managed Redis,23.91,596.35,Right-size to 60%,358.75
+WL-00713,Retail Banking,cloud,production,Secrets Manager,24.01,595.33,Right-size to 60%,357.07
+WL-00146,Payments,cloud,production,Streaming Ingest,23.5,586.21,Right-size to 60%,356.65
+WL-00992,Cyber Security,cloud,test,Content Delivery,22.96,514.81,Right-size + weekend off,356.22
+WL-00370,Collections,cloud,production,Compute Instances,24.56,596.29,Right-size to 60%,352.24
+WL-00752,Mortgages,cloud,production,Machine Learning Platform,22.43,560.05,Right-size to 60%,350.66
+WL-00618,Data and Analytics,distributed,test,Nagios Monitoring,41.79,788.2,Right-size + weekend off,349.24
+WL-00092,Payments,distributed,development,Windows Server,41.42,776.5,Right-size + weekend off,347.56
+WL-00182,Compliance,distributed,development,SQL Server,41.01,748.6,Right-size + weekend off,340.45
+WL-00505,Fraud Operations,cloud,production,Kubernetes Service,23.9,562.81,Right-size to 60%,338.61
+WL-00440,Collections,distributed,staging,NetApp Storage,41.23,1081.71,Right-size to 60%,338.44
+WL-00786,Cards,distributed,production,Red Hat Enterprise Linux,40.78,1051.61,Right-size to 60%,336.84
+WL-01061,Cards,distributed,development,Nagios Monitoring,41.14,746.48,Right-size + weekend off,336.62
+WL-00159,Marketing,distributed,production,NetApp Storage,40.97,1055.09,Right-size to 60%,334.59
+WL-01060,Mortgages,distributed,production,WebSphere Application Server,40.23,1007.76,Right-size to 60%,331.98
+WL-00020,Legal,distributed,production,Windows Server,41.99,1103.77,Right-size to 60%,331.38
+WL-00034,Wealth Management,cloud,development,Machine Learning Platform,23.84,478.78,Right-size + weekend off,326.56
+WL-01115,Customer Operations,cloud,development,Container Registry,24.13,479.41,Right-size + weekend off,325.03
+WL-00553,Digital Channels,distributed,development,Active Directory,41.6,728.59,Right-size + weekend off,324.6
+WL-01019,Fraud Operations,distributed,production,SQL Server,39.94,970.59,Right-size to 60%,324.5
+WL-00100,UNALLOCATED — find owner first,cloud,test,Block Storage,22.88,466.41,Right-size + weekend off,324.05
+WL-00556,Group Technology,distributed,production,Oracle Database,40.35,986.2,Right-size to 60%,322.92
+WL-00152,Customer Operations,distributed,production,Oracle Database,42.04,1075.91,Right-size to 60%,322.12
+WL-00147,Insurance,cloud,staging,Serverless Functions,23.79,530.16,Right-size to 60%,319.99
+WL-00284,Marketing,distributed,test,Veeam Backup,42.65,741.45,Right-size + weekend off,319.5
+WL-00052,Retail Banking,distributed,development,F5 Load Balancing,40.91,701.68,Right-size + weekend off,318.62
+WL-00836,Collections,cloud,staging,Message Queue,24.53,538.93,Right-size to 60%,318.58
+WL-00547,Customer Operations,cloud,production,Compute Instances,23.89,526.81,Right-size to 60%,317.05
+WL-00729,Insurance,distributed,development,Oracle Database,41.94,711.89,Right-size + weekend off,315.62
+WL-00127,Cyber Security,distributed,production,NetApp Storage,40.83,985.32,Right-size to 60%,314.76
+WL-00957,Compliance,cloud,test,Log Analytics,24.0,451.75,Right-size + weekend off,307.33
+WL-00719,Payments,cloud,production,Block Storage,23.16,496.97,Right-size to 60%,305.15
+WL-00090,Retail Banking,distributed,staging,Nagios Monitoring,40.39,929.03,Right-size to 60%,303.61
+WL-00950,Collections,distributed,production,Red Hat Enterprise Linux,41.57,986.86,Right-size to 60%,303.16
+WL-00854,Insurance,distributed,test,Tomcat,42.11,689.08,Right-size + weekend off,301.98
+WL-01126,Data and Analytics,cloud,production,Log Analytics,22.36,481.03,Right-size to 60%,301.79
+WL-00405,Risk,distributed,production,Veeam Backup,41.79,994.03,Right-size to 60%,301.65
+WL-00047,Cards,cloud,production,Machine Learning Platform,23.15,490.62,Right-size to 60%,301.31
+WL-01003,Customer Operations,cloud,production,Streaming Ingest,24.12,503.09,Right-size to 60%,300.87
+WL-00104,UNALLOCATED — find owner first,distributed,production,SQL Server,42.64,1038.04,Right-size to 60%,300.35
+WL-00064,Treasury,distributed,development,Tomcat,41.84,675.96,Right-size + weekend off,297.99
+WL-00603,Compliance,distributed,production,SQL Server,40.88,927.58,Right-size to 60%,295.61
+WL-01080,Risk,distributed,staging,F5 Load Balancing,42.63,1020.36,Right-size to 60%,295.33
+WL-00383,Group Technology,distributed,staging,NetApp Storage,42.38,1005.19,Right-size to 60%,295.23
+WL-00062,Group Technology,cloud,production,Secrets Manager,24.0,489.99,Right-size to 60%,293.97
+WL-00985,UNALLOCATED — find owner first,distributed,production,F5 Load Balancing,39.34,851.45,Right-size to 60%,293.14
+WL-00827,UNALLOCATED — find owner first,distributed,production,WebSphere Application Server,41.71,959.7,Right-size to 60%,292.62
+WL-00423,Procurement,cloud,production,Managed PostgreSQL,23.93,479.14,Right-size to 60%,288.03
+WL-00839,Treasury,distributed,development,Tomcat,41.97,642.35,Right-size + weekend off,282.09
+WL-00356,Legal,distributed,development,Veeam Backup,41.14,620.82,Right-size + weekend off,280.98
+WL-01145,Group Technology,distributed,production,Active Directory,42.32,949.79,Right-size to 60%,279.8
+WL-01041,Data and Analytics,distributed,production,NetApp Storage,40.76,866.95,Right-size to 60%,278.0
+WL-00728,Fraud Operations,cloud,test,Managed PostgreSQL,24.64,411.24,Right-size + weekend off,276.4
+WL-00604,Human Resources,distributed,production,F5 Load Balancing,40.98,867.79,Right-size to 60%,275.08
+WL-00476,Human Resources,distributed,production,Windows Server,41.86,898.18,Right-size to 60%,271.54
+WL-00502,Compliance,distributed,test,VMware vSphere,42.37,613.68,Right-size + weekend off,266.01
+WL-00122,Insurance,distributed,production,Oracle Database,41.95,877.65,Right-size to 60%,264.08
+WL-00693,Treasury,distributed,production,Tomcat,40.09,779.11,Right-size to 60%,258.58
+WL-00124,Mortgages,distributed,production,Veeam Backup,42.06,854.62,Right-size to 60%,255.52
+WL-00913,Infrastructure,distributed,production,Windows Server,40.5,783.19,Right-size to 60%,254.59
+WL-00379,Treasury,distributed,production,WebSphere Application Server,41.09,788.77,Right-size to 60%,248.64
+WL-00703,Cyber Security,distributed,production,Tomcat,40.19,745.53,Right-size to 60%,246.1
+WL-00755,Risk,cloud,production,Compute Instances,25.15,421.24,Right-size to 60%,244.68
+WL-00667,Data and Analytics,distributed,production,Tomcat,39.08,694.55,Right-size to 60%,242.21
+WL-01107,Group Technology,distributed,production,VMware vSphere,39.62,712.97,Right-size to 60%,242.2
+WL-00035,Compliance,distributed,production,Windows Server,38.89,679.95,Right-size to 60%,239.19
+WL-00615,Finance,distributed,production,Active Directory,40.45,730.63,Right-size to 60%,238.05
+WL-00299,Treasury,distributed,production,F5 Load Balancing,40.49,730.26,Right-size to 60%,237.45
+WL-01040,Data and Analytics,distributed,production,F5 Load Balancing,40.44,726.51,Right-size to 60%,236.82
+WL-00321,Wealth Management,distributed,production,Oracle Database,40.92,741.83,Right-size to 60%,235.92
+WL-00648,Retail Banking,distributed,production,NetApp Storage,39.3,681.43,Right-size to 60%,235.12
+WL-00250,Risk,distributed,production,F5 Load Balancing,40.17,692.3,Right-size to 60%,228.84
+WL-00824,Insurance,distributed,staging,NetApp Storage,41.11,725.74,Right-size to 60%,228.46
+WL-00395,Human Resources,distributed,production,Oracle Database,41.22,728.55,Right-size to 60%,228.0
+WL-00414,Commercial Banking,distributed,production,Tomcat,40.22,681.17,Right-size to 60%,224.52
+WL-00834,Mortgages,distributed,production,Windows Server,41.11,707.06,Right-size to 60%,222.58
+WL-00110,Insurance,distributed,production,NetApp Storage,42.6,760.32,Right-size to 60%,220.53
+WL-00794,Retail Banking,distributed,production,Veeam Backup,40.26,662.93,Right-size to 60%,218.09
+WL-00994,Treasury,distributed,staging,Veeam Backup,40.33,658.87,Right-size to 60%,215.97
+WL-00874,Wealth Management,distributed,staging,Tomcat,40.3,657.25,Right-size to 60%,215.81
+WL-01044,Infrastructure,distributed,staging,WebSphere Application Server,40.81,665.07,Right-size to 60%,212.69
+WL-00046,Treasury,distributed,production,Tomcat,42.35,721.39,Right-size to 60%,212.17
+WL-00617,Risk,distributed,production,F5 Load Balancing,40.01,633.57,Right-size to 60%,211.05
+WL-00494,Payments,distributed,production,VMware vSphere,41.01,660.9,Right-size to 60%,209.18
+WL-00213,Digital Channels,distributed,production,Red Hat Enterprise Linux,40.01,626.73,Right-size to 60%,208.8
+WL-00805,Customer Operations,distributed,production,Red Hat Enterprise Linux,42.14,693.39,Right-size to 60%,206.35
+WL-00345,Internal Audit,distributed,production,WebSphere Application Server,40.81,637.26,Right-size to 60%,203.82
+WL-00219,Wealth Management,distributed,production,WebSphere Application Server,41.61,662.54,Right-size to 60%,203.05
+WL-01008,Marketing,distributed,production,WebSphere Application Server,41.24,628.73,Right-size to 60%,196.61
+WL-00509,Collections,distributed,production,NetApp Storage,42.53,665.28,Right-size to 60%,193.69
+WL-00267,Compliance,distributed,staging,F5 Load Balancing,41.49,626.0,Right-size to 60%,193.17
+WL-00439,Retail Banking,distributed,staging,VMware vSphere,42.67,663.5,Right-size to 60%,191.59
